@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 import fs from 'fs';
 import path from 'path';
 
@@ -12,7 +12,7 @@ fs.mkdirSync(dataDir, { recursive: true });
 
 const isNewDatabase = !fs.existsSync(dbFile);
 
-export const db = new Database(dbFile);
+export const db = new DatabaseSync(dbFile);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS players (
