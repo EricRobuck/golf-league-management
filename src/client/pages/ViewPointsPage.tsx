@@ -45,9 +45,10 @@ export default function ViewPointsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today]);
 
-  const sortedPlayers = [...players].sort((a, b) =>
-    a.lastName === b.lastName ? a.firstName.localeCompare(b.firstName) : a.lastName.localeCompare(b.lastName)
-  );
+  const selectedPlayerIds = new Set(todayLeagueDay?.selectedPlayers.map((entry) => entry.playerId) ?? []);
+  const sortedPlayers = players
+    .filter((player) => selectedPlayerIds.has(player.id))
+    .sort((a, b) => (a.lastName === b.lastName ? a.firstName.localeCompare(b.firstName) : a.lastName.localeCompare(b.lastName)));
 
   const teams = todayLeagueDay?.teams ?? [];
   const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
@@ -80,6 +81,8 @@ export default function ViewPointsPage() {
             </div>
           ))}
         </div>
+      ) : sortedPlayers.length === 0 ? (
+        <p className="empty-state">No golfers signed up for today yet.</p>
       ) : (
         <div className="points-board-grid">
           {sortedPlayers.map((player) => (
