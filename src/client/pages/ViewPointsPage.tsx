@@ -1,47 +1,95 @@
 import { useEffect, useState } from 'react';
-import { getPlayers } from '../api';
-import { Player } from '../types';
+import { getLeagueDays, getPlayers } from '../api';
+import { todayDateString } from '../constants';
+import { LeagueDay, Player, Team } from '../types';
+
+const REFRESH_INTERVAL_MS = 10000;
+
+function playerLabel(player: Player) {
+  return `${player.firstName} ${player.lastName}`;
+}
+
+function totalPoints(player: Player) {
+  return player.frontTarget + player.backTarget;
+}
+
+function teamPointsTotal(team: Team, players: Player[]) {
+  let total = 0;
+  for (const entry of team.players) {
+    const player = players.find((p) => p.id === entry.playerId);
+    if (player) total += totalPoints(player);
+  }
+  return total;
+}
 
 export default function ViewPointsPage() {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [todayLeagueDay, setTodayLeagueDay] = useState<LeagueDay | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const today = todayDateString();
+
+  const load = () => {
+    Promise.all([getPlayers(), getLeagueDays()])
+      .then(([playersResult, leagueDays]) => {
+        setPlayers(playersResult);
+        setTodayLeagueDay(leagueDays.find((day) => day.date === today) ?? null);
+        setError(null);
+      })
+      .catch(() => setError('Unable to load points.'));
+  };
 
   useEffect(() => {
-    getPlayers()
-      .then(setPlayers)
-      .catch(() => setError('Unable to load players.'));
-  }, []);
+    load();
+    const interval = setInterval(load, REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [today]);
 
   const sortedPlayers = [...players].sort((a, b) =>
     a.lastName === b.lastName ? a.firstName.localeCompare(b.firstName) : a.lastName.localeCompare(b.lastName)
   );
 
+  const teams = todayLeagueDay?.teams ?? [];
+  const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
+  const showTeams = sortedTeams.length > 0;
+
   return (
     <div className="page-card">
       <h2 className="section-title">Points</h2>
       {error && <div className="alert">{error}</div>}
-      <div className="table-scroll">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Front</th>
-              <th>Back</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedPlayers.map((player) => (
-              <tr key={player.id}>
-                <td>{player.firstName}</td>
-                <td>{player.lastName}</td>
-                <td>{player.frontTarget}</td>
-                <td>{player.backTarget}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+
+      {showTeams ? (
+        <div className="points-board-teams">
+          {sortedTeams.map((team) => (
+            <div key={team.teamNumber} className="team-card">
+              <h3>Team {team.teamNumber}</h3>
+              {team.players.map((entry) => {
+                const player = players.find((p) => p.id === entry.playerId);
+                if (!player) return null;
+                return (
+                  <div key={entry.playerId} className="points-board-item">
+                    <span>{playerLabel(player)}</span>
+                    <span className="points-value">{totalPoints(player)}</span>
+                  </div>
+                );
+              })}
+              <div className="points-board-team-total">
+                <span>Team Total</span>
+                <span>{teamPointsTotal(team, players)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="points-board-grid">
+          {sortedPlayers.map((player) => (
+            <div key={player.id} className="points-board-item">
+              <span>{playerLabel(player)}</span>
+              <span className="points-value">{totalPoints(player)}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,48 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+.points-board-grid {
+  columns: 190px;
+  column-gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.points-board-item {
+  break-inside: avoid;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.points-board-item .points-value {
+  font-weight: 700;
+  color: #1f4e79;
+}
+
+.points-board-teams {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.points-board-teams .team-card {
+  break-inside: avoid;
+}
+
+.points-board-team-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+}
+
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
