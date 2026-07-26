@@ -13,7 +13,7 @@ import ProfilePage from './pages/ProfilePage';
 import { useCurrentPlayer } from './context/CurrentPlayerContext';
 
 export default function App() {
-  const { currentPlayer, currentPlayerRank, loading, switchPlayer } = useCurrentPlayer();
+  const { currentPlayer, loading, switchPlayer } = useCurrentPlayer();
 
   if (loading) {
     return (
@@ -45,13 +45,6 @@ export default function App() {
             Front {currentPlayer.frontTarget} · Back {currentPlayer.backTarget} · Total{' '}
             {currentPlayer.frontTarget + currentPlayer.backTarget}
           </span>
-          {currentPlayerRank && (
-            <span className="current-player-rank">
-              Rank #{currentPlayerRank.rank}
-              {currentPlayerRank.tieCount > 1 &&
-                ` (tied with ${currentPlayerRank.tieCount - 1} other${currentPlayerRank.tieCount - 1 === 1 ? '' : 's'})`}
-            </span>
-          )}
           <button className="switch-player-btn" title="Not you? Switch golfer" onClick={switchPlayer}>
             Switch
           </button>
