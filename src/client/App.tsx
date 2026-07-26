@@ -52,7 +52,7 @@ export default function App() {
         <nav>
           <Link to="/profile">Profile</Link>
           <Link to="/players">Players</Link>
-          <Link to="/league-days">League Days</Link>
+          <Link to="/league-days">Role Call</Link>
           <Link to="/players/add">Add Player</Link>
           <Link to="/points">View Points</Link>
           <Link to="/enter-score">Enter Score</Link>
