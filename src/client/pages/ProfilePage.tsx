@@ -13,7 +13,7 @@ function playerTotal(player: Player) {
 }
 
 export default function ProfilePage() {
-  const { currentPlayer, currentPlayerRank, players } = useCurrentPlayer();
+  const { currentPlayer, players } = useCurrentPlayer();
   const [todayLeagueDay, setTodayLeagueDay] = useState<LeagueDay | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
@@ -80,13 +80,6 @@ export default function ProfilePage() {
         <span className="meta-chip">Front {currentPlayer.frontTarget}</span>
         <span className="meta-chip">Back {currentPlayer.backTarget}</span>
         <span className="meta-chip meta-chip-accent">Total {playerTotal(currentPlayer)}</span>
-        {currentPlayerRank && (
-          <span className="meta-chip meta-chip-accent">
-            Rank #{currentPlayerRank.rank}
-            {currentPlayerRank.tieCount > 1 &&
-              ` (tied with ${currentPlayerRank.tieCount - 1} other${currentPlayerRank.tieCount - 1 === 1 ? '' : 's'})`}
-          </span>
-        )}
       </div>
 
       <div style={{ marginTop: '1.5rem' }}>

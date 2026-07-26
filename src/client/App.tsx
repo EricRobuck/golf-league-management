@@ -6,7 +6,6 @@ import LeagueDaysPage from './pages/LeagueDaysPage';
 import SelectPlayersPage from './pages/SelectPlayersPage';
 import GeneratedTeamsPage from './pages/GeneratedTeamsPage';
 import ViewPointsPage from './pages/ViewPointsPage';
-import RankPage from './pages/RankPage';
 import TeamScoresPage from './pages/TeamScoresPage';
 import TodayScorePage from './pages/TodayScorePage';
 import WhoAreYouPage from './pages/WhoAreYouPage';
@@ -63,7 +62,6 @@ export default function App() {
           <Link to="/league-days">League Days</Link>
           <Link to="/players/add">Add Player</Link>
           <Link to="/points">View Points</Link>
-          <Link to="/rank">Rank</Link>
           <Link to="/enter-score">Enter Score</Link>
         </nav>
       </header>
@@ -80,7 +78,6 @@ export default function App() {
           <Route path="/league-days/:id/scores" element={<TeamScoresPage />} />
           <Route path="/enter-score" element={<TodayScorePage />} />
           <Route path="/points" element={<ViewPointsPage />} />
-          <Route path="/rank" element={<RankPage />} />
         </Routes>
       </main>
     </div>
