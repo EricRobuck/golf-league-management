@@ -1,1 +1,1112 @@
-[]
+[
+  {
+    "id": "player-00f7bad1-f527-478f-aa15-050d2ebb0fe4",
+    "firstName": "Bruce",
+    "lastName": "Adam",
+    "frontTarget": 17,
+    "backTarget": 18,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-c4a6a126-34a1-447b-aee8-2987a6cb5166",
+    "firstName": "Brett",
+    "lastName": "Arndt",
+    "frontTarget": 10,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T10:59:12.120Z"
+  },
+  {
+    "id": "player-bf1d03d1-4e1f-4588-b633-d8f7805f9156",
+    "firstName": "Scott",
+    "lastName": "Arndt",
+    "frontTarget": 5,
+    "backTarget": 6,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-e563af89-ca8e-4e4b-8374-1bf52f8925b9",
+    "firstName": "Rod",
+    "lastName": "Beck",
+    "frontTarget": 6,
+    "backTarget": 7,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-30dbe55e-07a1-43bb-a751-b9d327f604ac",
+    "firstName": "Gary",
+    "lastName": "Beitler",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-92f8d1d4-aa08-42fb-a7b1-5e311c258b95",
+    "firstName": "Bill",
+    "lastName": "Bergman",
+    "frontTarget": 9,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-1fd8c9dd-bd76-4322-abdb-f1c33de47f0b",
+    "firstName": "Rick",
+    "lastName": "Bieber",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-72948d2e-8f0f-4ab0-8665-583f1e1892c4",
+    "firstName": "Mike",
+    "lastName": "Biehl",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-db4d6505-5097-4282-999c-b8fd76bf655a",
+    "firstName": "Russ",
+    "lastName": "Bowman",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-29d21a1b-e54c-4c59-8a9a-b4daee1edc19",
+    "firstName": "Glenn",
+    "lastName": "Chestnut",
+    "frontTarget": 13,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-ccafc483-4061-4336-8439-3d1488ee1507",
+    "firstName": "Phil",
+    "lastName": "Colon",
+    "frontTarget": 9,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-97579ccd-00ca-49d5-9c31-de38b6f8b58f",
+    "firstName": "Lynn",
+    "lastName": "Crowell",
+    "frontTarget": 7,
+    "backTarget": 7,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9cb534fc-adfa-442a-8f06-833b84d1ac72",
+    "firstName": "Terry",
+    "lastName": "Davis",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T10:59:12.083Z"
+  },
+  {
+    "id": "player-0e639303-f4a8-4e47-894c-b247c795da3c",
+    "firstName": "Smoke",
+    "lastName": "DeTurk",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-15daee32-cac4-4ea1-9af1-85f4855db55a",
+    "firstName": "Tim",
+    "lastName": "Deisher",
+    "frontTarget": 7,
+    "backTarget": 8,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9722183f-0004-4e90-9ed9-988f65d31c5e",
+    "firstName": "Harry",
+    "lastName": "Deitz",
+    "frontTarget": 5,
+    "backTarget": 5,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-17af226f-5597-4949-9314-39c1dd79ce9a",
+    "firstName": "Butch",
+    "lastName": "Delong",
+    "frontTarget": 13,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-b0f8f013-715a-44bb-812c-3e643e8f2415",
+    "firstName": "Jim",
+    "lastName": "Dietz",
+    "frontTarget": 14,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-7600f764-9e17-4b67-b27f-bf142f238234",
+    "firstName": "Bill",
+    "lastName": "Doganes",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-c3a01c22-0605-471e-8533-bab7e214e27a",
+    "firstName": "John",
+    "lastName": "Driscoll",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-0be28932-ff15-4d98-bbcb-a2698ea5e9cc",
+    "firstName": "Bob",
+    "lastName": "Eppihimer",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-b6af00d6-014e-4fa0-9441-415ae01aa85c",
+    "firstName": "Mike",
+    "lastName": "Farrara",
+    "frontTarget": 16,
+    "backTarget": 16,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-6274b2b6-c0a5-4f57-a009-821ea2b9d30c",
+    "firstName": "Bob",
+    "lastName": "Faust",
+    "frontTarget": 12,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-2ec31f77-e07b-447e-ac18-34cea5480f35",
+    "firstName": "George",
+    "lastName": "Faust",
+    "frontTarget": 14,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-0693fa05-b00c-4403-b57a-2a11e71eb62c",
+    "firstName": "George",
+    "lastName": "Fegely",
+    "frontTarget": 9,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-57f7c418-9a9e-4a1d-89bd-17f1fbe82fba",
+    "firstName": "Steve",
+    "lastName": "Fenstermacher",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-0a082e0f-6202-47f0-ad0b-1cc551716057",
+    "firstName": "Mel",
+    "lastName": "Fioravanti",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9143661a-c21b-47b7-8c7a-9bd17dc58b7e",
+    "firstName": "Joe",
+    "lastName": "Fleisher",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-6fdd3292-1a10-4200-8841-f7c125c9f316",
+    "firstName": "Archie",
+    "lastName": "Follweiler",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-8ffff04e-a1fc-4036-a414-9877b3b9354b",
+    "firstName": "Bill",
+    "lastName": "Franks",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-66340acb-de64-44ac-b495-a12afa7c4c87",
+    "firstName": "Eric",
+    "lastName": "Garland",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-44ec2146-67c8-44a1-b72d-714d017e0265",
+    "firstName": "Sam",
+    "lastName": "Garland",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-a8fb1b84-28da-4e8e-989e-5f71f6968885",
+    "firstName": "Mike",
+    "lastName": "Gilson",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9ddb78a8-ef27-42e1-a2f2-e96f30241bb5",
+    "firstName": "Paul",
+    "lastName": "Grady",
+    "frontTarget": 8,
+    "backTarget": 8,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T10:59:12.110Z"
+  },
+  {
+    "id": "player-93d373a7-373e-46b9-866f-ecacdd889960",
+    "firstName": "George",
+    "lastName": "Grim",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-fc81d0b0-9477-4c7a-b6b7-b26bb62e6b42",
+    "firstName": "Scott",
+    "lastName": "Guldin",
+    "frontTarget": 9,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-632cc16b-6b38-4c6f-85d9-f490158b0aae",
+    "firstName": "Ken",
+    "lastName": "Haag",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-3b1b6650-369b-4788-a7e1-62260cf20da1",
+    "firstName": "Randy",
+    "lastName": "Harner",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T10:59:12.101Z"
+  },
+  {
+    "id": "player-d3afecbe-9c7f-425a-bc8c-bfe771ed95a3",
+    "firstName": "Tom",
+    "lastName": "Heinly",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-ffd13b3e-4937-4179-9d78-59afaf7e2cc6",
+    "firstName": "Walt",
+    "lastName": "Hess",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-3cdc80cb-06c3-41ae-9be7-431cf9856565",
+    "firstName": "Lee",
+    "lastName": "Hoch",
+    "frontTarget": 9,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-2c401eac-5504-45d2-ba71-d681b0ad2a7c",
+    "firstName": "Barry",
+    "lastName": "Hoffmaster",
+    "frontTarget": 15,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-aa7a7bfb-7d17-4f7d-93d5-db97deefdb01",
+    "firstName": "Randy",
+    "lastName": "Hoffmaster",
+    "frontTarget": 12,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9935fafb-2b4c-4c9c-b001-066f42fc8913",
+    "firstName": "Don",
+    "lastName": "Holland",
+    "frontTarget": 10,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-c4fdb57c-7303-451b-b92c-81894ef31f75",
+    "firstName": "Mim",
+    "lastName": "Keller",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-12fbd137-1168-4fd7-8b7e-a45a0d224801",
+    "firstName": "Darryl",
+    "lastName": "Kemmerer",
+    "frontTarget": 18,
+    "backTarget": 18,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-81bbe242-e9ab-420c-bfb1-54c822efc894",
+    "firstName": "Dave",
+    "lastName": "Kemmerer",
+    "frontTarget": 5,
+    "backTarget": 6,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-05702cbe-4d9f-4a7d-a038-e01137371cb3",
+    "firstName": "Rick",
+    "lastName": "Kemmerer",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-6cceaf9d-8515-4b85-bf8e-fbeb69746836",
+    "firstName": "Darin",
+    "lastName": "Kemp",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-5b493df1-0bda-410e-b8ca-d7ae904c816e",
+    "firstName": "Lew",
+    "lastName": "Kraeuter",
+    "frontTarget": 6,
+    "backTarget": 8,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T10:59:12.094Z"
+  },
+  {
+    "id": "player-435a5f4a-07c1-4920-9da1-3db70342fa2f",
+    "firstName": "Todd",
+    "lastName": "Kuder",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-0c9c1c05-d42d-45fa-a6b4-11e3402c6399",
+    "firstName": "Rick",
+    "lastName": "Kuhns",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-2a913627-19d5-448b-9d73-13e9dd55c418",
+    "firstName": "Pete",
+    "lastName": "Leck",
+    "frontTarget": 15,
+    "backTarget": 16,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-4ff91c4e-e435-49a5-82dd-b49c97f62b40",
+    "firstName": "Sonny",
+    "lastName": "Lopresto",
+    "frontTarget": 5,
+    "backTarget": 6,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-5db09e4e-e02c-436c-be8d-e2681c15328f",
+    "firstName": "Mike",
+    "lastName": "Mammarella",
+    "frontTarget": 15,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-62fbda75-d776-43c5-89b3-ce7a95fcb76c",
+    "firstName": "Casey",
+    "lastName": "Mayer",
+    "frontTarget": 15,
+    "backTarget": 16,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-ea118ad9-18fe-4c95-b4df-23fccb9594a7",
+    "firstName": "Dale",
+    "lastName": "Mayer",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-91260d98-3fb1-4d84-9639-c73b57015d7a",
+    "firstName": "Dave",
+    "lastName": "Mayer",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-d8ccd585-202c-4b5b-bee9-e6baac7e6633",
+    "firstName": "Dennis",
+    "lastName": "Mayer",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9da43bee-5dcb-4e84-996a-53ae4d86cbea",
+    "firstName": "Jeff",
+    "lastName": "Merkel",
+    "frontTarget": 9,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-72e8185f-e550-4aa2-bd77-18f800337e6f",
+    "firstName": "Dave",
+    "lastName": "Mertz",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-fd06d255-6ded-4688-a895-7c37f68200e4",
+    "firstName": "Dave",
+    "lastName": "Moerder",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-6e54cd26-fe50-4c39-a8fe-7f49922fb149",
+    "firstName": "Jack",
+    "lastName": "Moerder",
+    "frontTarget": 5,
+    "backTarget": 5,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-021eba53-49c5-4234-874b-714a57cdd3d5",
+    "firstName": "Andre",
+    "lastName": "Molina",
+    "frontTarget": 4,
+    "backTarget": 4,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-463615f0-5640-4862-831b-a111b30dd30e",
+    "firstName": "Larry",
+    "lastName": "Moyer",
+    "frontTarget": 10,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-d520874d-cefa-46e2-af98-cd39b7449111",
+    "firstName": "Doug",
+    "lastName": "Neimeyer",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-3311c012-3c9a-4ce6-88d1-42d193210474",
+    "firstName": "Chester",
+    "lastName": "Neppes",
+    "frontTarget": 5,
+    "backTarget": 6,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-50b0c002-ff42-46bc-a3ec-d3ebe5d04a59",
+    "firstName": "Adam",
+    "lastName": "Peters",
+    "frontTarget": 10,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-25334004-c1dc-4d41-a1a0-44f11a84d7be",
+    "firstName": "Kerry",
+    "lastName": "Pieller",
+    "frontTarget": 15,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-c6ae6532-770d-486d-b22b-587f55a1d966",
+    "firstName": "Ron",
+    "lastName": "Ramer",
+    "frontTarget": 2,
+    "backTarget": 3,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-77e1f908-84ec-4d0e-a856-19e0659775bd",
+    "firstName": "Rob",
+    "lastName": "Rarick",
+    "frontTarget": 12,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-8cc0528d-b4a3-4dbd-aca8-c518b3d74e9f",
+    "firstName": "Eric",
+    "lastName": "Reifsnyder",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-dd0b0a56-7a7b-4644-9989-5bb1085e645b",
+    "firstName": "Ken",
+    "lastName": "Reimert",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-396bbff5-8f53-466a-92d5-77b6bdd73424",
+    "firstName": "Sam",
+    "lastName": "Reimert",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-751607c3-053a-4ecd-a425-5253e561817f",
+    "firstName": "Glenn",
+    "lastName": "Roberts",
+    "frontTarget": 10,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-46fcb663-4a56-4b8f-ae0e-8f3c512ced23",
+    "firstName": "Eric",
+    "lastName": "Robuck",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-314ef9c5-9845-466a-b1ec-44e8feacd4b8",
+    "firstName": "Jim",
+    "lastName": "Roth",
+    "frontTarget": 12,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-e2fd34fc-49b7-4929-93eb-97180af6599b",
+    "firstName": "Rennie",
+    "lastName": "Santangelo",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-b256d4c8-67fc-41ee-a301-5786e79a7bd8",
+    "firstName": "Randy",
+    "lastName": "Schaffer",
+    "frontTarget": 3,
+    "backTarget": 4,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-df304a16-ca86-40c1-9480-f75f389f6d52",
+    "firstName": "Lenny",
+    "lastName": "Scholl",
+    "frontTarget": 9,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-30f6bc3a-e23c-4d60-b72b-de7a8b578ec0",
+    "firstName": "Logan",
+    "lastName": "Scholl",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-ab6d92bb-cfd8-4ce8-bd25-791befdf5160",
+    "firstName": "Joe",
+    "lastName": "Sebio",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-fad95f40-3ccc-48ae-8892-bf394e45b7e3",
+    "firstName": "Rick",
+    "lastName": "Seidel",
+    "frontTarget": 9,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-d015a1ea-dfbd-41e9-89a1-7e9e4bb6e45e",
+    "firstName": "Joe",
+    "lastName": "Serrano",
+    "frontTarget": 10,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-ecbc107f-40e8-4f0e-9e02-a7f58ee94a0c",
+    "firstName": "Dale",
+    "lastName": "Seyfert",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-27912645-dedf-45a8-898d-1dea15237a91",
+    "firstName": "Steve",
+    "lastName": "Sharp",
+    "frontTarget": 7,
+    "backTarget": 7,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-6c383c8b-3ab5-441d-a670-1ba7b8388b2c",
+    "firstName": "Allen",
+    "lastName": "Shollenberger",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-337b1f9e-11e0-4d36-b831-660cef3223a5",
+    "firstName": "Barry",
+    "lastName": "Shollenberger",
+    "frontTarget": 13,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-8d55d8ec-3044-454f-b64a-993c3bd942df",
+    "firstName": "Shane",
+    "lastName": "Shollenberger",
+    "frontTarget": 8,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-a50f7027-761e-4d55-b29e-41ce58b7eef8",
+    "firstName": "Zach",
+    "lastName": "Skumatick",
+    "frontTarget": 9,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-48874f01-4c56-4467-80b4-7ed3a1af6e81",
+    "firstName": "Tim",
+    "lastName": "Smith",
+    "frontTarget": 15,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-2aa7337b-4150-4011-973a-dadc4dd83c2d",
+    "firstName": "Wally",
+    "lastName": "Snyder",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-23c183ea-b9fa-4196-9d5a-3cf7d4787182",
+    "firstName": "Barry",
+    "lastName": "Sokol",
+    "frontTarget": 12,
+    "backTarget": 13,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-d535e22a-c17a-4f43-a083-08c57f37cacf",
+    "firstName": "Justin",
+    "lastName": "Soumas",
+    "frontTarget": 14,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-3da85d9c-17ad-46eb-83b0-592450705aa5",
+    "firstName": "Jerome",
+    "lastName": "Stern",
+    "frontTarget": 5,
+    "backTarget": 5,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-8712afbb-88c2-497f-8f66-7cca458371e1",
+    "firstName": "Drew",
+    "lastName": "Strohm",
+    "frontTarget": 9,
+    "backTarget": 9,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-85ea5cc0-f378-4032-a877-6c4238268c11",
+    "firstName": "Ivan",
+    "lastName": "Strunk",
+    "frontTarget": 11,
+    "backTarget": 11,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-290ef66a-841a-42af-ba23-b6e164c4dde4",
+    "firstName": "Dean",
+    "lastName": "Stump",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-ca9b6f16-236f-444e-b2de-7d46d7640c97",
+    "firstName": "Bob",
+    "lastName": "Sunday",
+    "frontTarget": 16,
+    "backTarget": 17,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-4a0dfe56-b68a-47aa-bf4b-250ce29d63b4",
+    "firstName": "Tom",
+    "lastName": "Touhsaent",
+    "frontTarget": 0,
+    "backTarget": 0,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-a93b7d04-6372-4c96-8866-7aa25468e5d8",
+    "firstName": "Tim",
+    "lastName": "Vanek",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-abf352f8-c695-4e2b-b1f1-b512fe89c10d",
+    "firstName": "Joe",
+    "lastName": "Wehrman",
+    "frontTarget": 7,
+    "backTarget": 7,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-1c4b21e9-1bb0-45f2-af30-e06a5758a0cd",
+    "firstName": "Rich",
+    "lastName": "Weigle",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-87cef526-5457-466b-97ad-8e04460aaba7",
+    "firstName": "John",
+    "lastName": "Weller",
+    "frontTarget": 15,
+    "backTarget": 15,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-9c880182-721e-4fc8-a3f9-f4b7cfe8fb6e",
+    "firstName": "Terry",
+    "lastName": "Werley",
+    "frontTarget": 13,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-e67c22f0-a1c8-4888-90d7-8b9914b35baa",
+    "firstName": "Fred",
+    "lastName": "Wieder",
+    "frontTarget": 10,
+    "backTarget": 10,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-5f59b61e-48de-414b-8092-449453fa49f6",
+    "firstName": "Mark",
+    "lastName": "Wieder",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-8e646953-581d-44f8-a0fd-46187d9d0fa1",
+    "firstName": "Tim",
+    "lastName": "Williams",
+    "frontTarget": 12,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-bf3106a9-36aa-4fc0-8bbe-621949688eb3",
+    "firstName": "Dean",
+    "lastName": "Witman",
+    "frontTarget": 11,
+    "backTarget": 12,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-422960a5-2ff5-4a1d-b3a8-10a9d331adae",
+    "firstName": "Geoff",
+    "lastName": "Yoder",
+    "frontTarget": 16,
+    "backTarget": 17,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  },
+  {
+    "id": "player-b085c23e-eb18-4cad-a536-297fc9681170",
+    "firstName": "Mike",
+    "lastName": "Zellers",
+    "frontTarget": 14,
+    "backTarget": 14,
+    "notes": null,
+    "createdAt": "2026-07-24T09:38:07.455Z",
+    "updatedAt": "2026-07-24T09:38:07.455Z"
+  }
+]

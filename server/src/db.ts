@@ -10,8 +10,6 @@ const legacyLeagueDaysFile = path.join(seedDir, 'league-days.json');
 
 fs.mkdirSync(dataDir, { recursive: true });
 
-const isNewDatabase = !fs.existsSync(dbFile);
-
 export const db = new DatabaseSync(dbFile);
 
 db.exec(`
@@ -39,7 +37,8 @@ db.exec(`
   );
 `);
 
-if (isNewDatabase) {
+const playerCount = db.prepare('SELECT COUNT(*) as count FROM players').get() as { count: number };
+if (playerCount.count === 0) {
   migrateLegacyJsonFiles();
 }
 
@@ -62,7 +61,7 @@ function migrateLegacyJsonFiles(): void {
     if (leagueDays.length > 0) {
       const insert = db.prepare(
         `INSERT INTO league_days (id, date, courseId, scoringNine, status, selectedPlayers, teams, createdAt, updatedAt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
       for (const d of leagueDays) {
         insert.run(
