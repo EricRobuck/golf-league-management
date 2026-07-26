@@ -27,6 +27,6 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ message: 'An unexpected server error occurred.' });
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening on http://0.0.0.0:${port}`);
 });
