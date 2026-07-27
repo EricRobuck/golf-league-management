@@ -3,7 +3,7 @@ html {
 }
 
 .points-board-grid {
-  columns: 190px;
+  columns: 250px;
   column-gap: 1.5rem;
   margin-top: 1rem;
 }
@@ -14,9 +14,33 @@ html {
   justify-content: space-between;
   align-items: baseline;
   gap: 0.75rem;
-  padding: 0.35rem 0;
+  padding: 0.4rem 0;
   border-bottom: 1px solid #e2e8f0;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
+}
+
+.points-board-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.points-board-stats {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.points-board-stat {
+  color: #64748b;
+}
+
+.points-board-stat b {
+  font-weight: 600;
+  font-size: 0.75em;
+  color: #94a3b8;
+  margin-right: 0.15rem;
 }
 
 .points-board-item .points-value {
@@ -39,6 +63,7 @@ html {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
+  font-size: 1.05rem;
   border-top: 1px solid #e2e8f0;
   margin-top: 0.4rem;
   padding-top: 0.4rem;

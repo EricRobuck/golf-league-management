@@ -69,8 +69,21 @@ export default function ViewPointsPage() {
                 if (!player) return null;
                 return (
                   <div key={entry.playerId} className="points-board-item">
-                    <span>{playerLabel(player)}</span>
-                    <span className="points-value">{totalPoints(player)}</span>
+                    <span className="points-board-name">{playerLabel(player)}</span>
+                    <span className="points-board-stats">
+                      <span className="points-board-stat">
+                        <b>F</b>
+                        {player.frontTarget}
+                      </span>
+                      <span className="points-board-stat">
+                        <b>B</b>
+                        {player.backTarget}
+                      </span>
+                      <span className="points-board-stat points-value">
+                        <b>T</b>
+                        {totalPoints(player)}
+                      </span>
+                    </span>
                   </div>
                 );
               })}
@@ -87,8 +100,21 @@ export default function ViewPointsPage() {
         <div className="points-board-grid">
           {sortedPlayers.map((player) => (
             <div key={player.id} className="points-board-item">
-              <span>{playerLabel(player)}</span>
-              <span className="points-value">{totalPoints(player)}</span>
+              <span className="points-board-name">{playerLabel(player)}</span>
+              <span className="points-board-stats">
+                <span className="points-board-stat">
+                  <b>F</b>
+                  {player.frontTarget}
+                </span>
+                <span className="points-board-stat">
+                  <b>B</b>
+                  {player.backTarget}
+                </span>
+                <span className="points-board-stat points-value">
+                  <b>T</b>
+                  {totalPoints(player)}
+                </span>
+              </span>
             </div>
           ))}
         </div>
