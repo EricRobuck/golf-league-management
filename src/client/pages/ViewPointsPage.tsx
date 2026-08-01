@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getLeagueDays, getPlayers } from '../api';
 import { todayDateString } from '../constants';
 import { LeagueDay, Player, Team } from '../types';
@@ -24,15 +25,15 @@ function teamPointsTotal(team: Team, players: Player[]) {
 
 export default function ViewPointsPage() {
   const [players, setPlayers] = useState<Player[]>([]);
-  const [todayLeagueDay, setTodayLeagueDay] = useState<LeagueDay | null>(null);
+  const [leagueDays, setLeagueDays] = useState<LeagueDay[]>([]);
   const [error, setError] = useState<string | null>(null);
   const today = todayDateString();
 
   const load = () => {
     Promise.all([getPlayers(), getLeagueDays()])
-      .then(([playersResult, leagueDays]) => {
+      .then(([playersResult, leagueDaysResult]) => {
         setPlayers(playersResult);
-        setTodayLeagueDay(leagueDays.find((day) => day.date === today) ?? null);
+        setLeagueDays(leagueDaysResult);
         setError(null);
       })
       .catch(() => setError('Unable to load points.'));
@@ -45,6 +46,8 @@ export default function ViewPointsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today]);
 
+  const todayLeagueDay = leagueDays.find((day) => day.date === today) ?? null;
+
   const selectedPlayerIds = new Set(todayLeagueDay?.selectedPlayers.map((entry) => entry.playerId) ?? []);
   const sortedPlayers = players
     .filter((player) => selectedPlayerIds.has(player.id))
@@ -54,7 +57,12 @@ export default function ViewPointsPage() {
   const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
   const showTeams = sortedTeams.length > 0;
 
+  const rounds = [...leagueDays]
+    .filter((day) => day.teams.length > 0)
+    .sort((a, b) => b.date.localeCompare(a.date));
+
   return (
+    <Fragment>
     <div className="page-card">
       <h2 className="section-title">Points</h2>
       {error && <div className="alert">{error}</div>}
@@ -118,6 +126,30 @@ export default function ViewPointsPage() {
             </div>
           ))}
         </div>
+      )}
+    </div>
+    <RoundsSection rounds={rounds} />
+    </Fragment>
+  );
+}
+
+function RoundsSection({ rounds }: { rounds: LeagueDay[] }) {
+  return (
+    <div className="page-card" style={{ marginTop: '1.5rem' }}>
+      <h2 className="section-title">Rounds</h2>
+      {rounds.length === 0 ? (
+        <p className="empty-state">No rounds with teams yet.</p>
+      ) : (
+        <ul className="roster-list">
+          {rounds.map((round) => (
+            <li key={round.id} className="roster-item">
+              <span className="player-name">{round.date}</span>
+              <Link className="button secondary" to={`/league-days/${round.id}/scores`}>
+                View Teams
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

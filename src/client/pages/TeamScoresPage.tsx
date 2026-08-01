@@ -117,8 +117,10 @@ export default function TeamScoresPage() {
 
   const sortedTeams = useMemo(() => {
     if (!leagueDay) return [];
-    return [...leagueDay.teams].sort((a, b) => a.teamNumber - b.teamNumber);
-  }, [leagueDay]);
+    return [...leagueDay.teams].sort(
+      (a, b) => teamDiffTotals(b, players).totalDiff - teamDiffTotals(a, players).totalDiff
+    );
+  }, [leagueDay, players]);
 
   const frontHasScores = hasAnyScore(sortedTeams, 'frontScore');
   const backHasScores = hasAnyScore(sortedTeams, 'backScore');
