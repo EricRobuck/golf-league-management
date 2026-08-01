@@ -2,7 +2,7 @@ import express from 'express';
 import { SqlitePlayerRepository } from '../repositories/playerRepository';
 import { SqliteLeagueDayRepository } from '../repositories/leagueDayRepository';
 import { LeagueDay, SelectedPlayer, Team } from '../types/models';
-import { generateTeams } from '../utils/teams';
+import { buildPairHistory, generateTeams } from '../utils/teams';
 
 const router = express.Router();
 const playerRepository = new SqlitePlayerRepository();
@@ -161,7 +161,9 @@ router.post('/:id/generate-teams', async (req, res, next) => {
     if (!leagueDay) {
       return res.status(404).json({ message: 'League day not found.' });
     }
-    const teams: Team[] = generateTeams(leagueDay.selectedPlayers);
+    const allLeagueDays = await leagueDayRepository.getAll();
+    const pairHistory = buildPairHistory(allLeagueDays, leagueDay.id);
+    const teams: Team[] = generateTeams(leagueDay.selectedPlayers, pairHistory);
     leagueDay.teams = teams;
     leagueDay.status = 'teamsGenerated';
     leagueDay.updatedAt = new Date().toISOString();
