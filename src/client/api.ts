@@ -50,6 +50,11 @@ export async function createLeagueDay(payload: Omit<LeagueDay, 'id' | 'createdAt
   return response.data;
 }
 
+export async function patchLeagueDay(id: string, payload: Partial<Pick<LeagueDay, 'date' | 'courseId' | 'scoringNine'>>) {
+  const response = await api.patch<LeagueDay>(`/league-days/${id}`, payload);
+  return response.data;
+}
+
 // Every round is played at Rich Maiden, scoring both nines, on the day it's created.
 export async function ensureTodayLeagueDay() {
   const today = todayDateString();
