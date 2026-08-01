@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { addLeagueDayPlayer, getLeagueDays } from '../api';
+import { addLeagueDayPlayer, getLeagueDays, removeLeagueDayPlayer } from '../api';
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player } from '../types';
@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const [todayLeagueDay, setTodayLeagueDay] = useState<LeagueDay | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const today = todayDateString();
 
   const loadTodayLeagueDay = () => {
@@ -68,6 +69,21 @@ export default function ProfilePage() {
     }
   };
 
+  const handleLeaveToday = async () => {
+    if (!currentPlayer || !todayLeagueDay) return;
+    if (!window.confirm('Are you sure you are not playing today?')) return;
+    setLeaving(true);
+    setError(null);
+    try {
+      await removeLeagueDayPlayer(todayLeagueDay.id, currentPlayer.id);
+      loadTodayLeagueDay();
+    } catch (_err) {
+      setError("Unable to check out of today's round.");
+    } finally {
+      setLeaving(false);
+    }
+  };
+
   if (!currentPlayer) return null;
 
   return (
@@ -89,10 +105,15 @@ export default function ProfilePage() {
           <p className="empty-state">No round has been set up for today yet.</p>
         ) : !isInToday ? (
           <button className="button" onClick={handleJoinToday} disabled={joining}>
-            {joining ? 'Joining...' : 'Play Today'}
+            {joining ? 'Checking in...' : 'Check In'}
           </button>
         ) : !myTeam ? (
-          <p className="hint-note">You're in for today — waiting for teams to be created.</p>
+          <>
+            <p className="hint-note">You're in for today — waiting for teams to be created.</p>
+            <button className="button secondary" style={{ marginTop: '0.75rem' }} onClick={handleLeaveToday} disabled={leaving}>
+              {leaving ? 'Checking out...' : 'Check Out'}
+            </button>
+          </>
         ) : (
           <div className="team-card">
             <h3>Team {myTeam.teamNumber}</h3>
