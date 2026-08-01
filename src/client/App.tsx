@@ -7,6 +7,7 @@ import LeagueDaysPage from './pages/LeagueDaysPage';
 import SelectPlayersPage from './pages/SelectPlayersPage';
 import GeneratedTeamsPage from './pages/GeneratedTeamsPage';
 import ViewPointsPage from './pages/ViewPointsPage';
+import PastRoundsPage from './pages/PastRoundsPage';
 import TeamScoresPage from './pages/TeamScoresPage';
 import TodayScorePage from './pages/TodayScorePage';
 import WhoAreYouPage from './pages/WhoAreYouPage';
@@ -66,6 +67,7 @@ export default function App() {
           {isAdmin && <Link to="/league-days">Role Call</Link>}
           {isAdmin && <Link to="/players/add">Add Player</Link>}
           <Link to="/points">View Points</Link>
+          <Link to="/past-rounds">Past Rounds</Link>
           {isAdmin && <Link to="/enter-score">Enter Score</Link>}
         </nav>
       </header>
@@ -124,6 +126,7 @@ export default function App() {
             }
           />
           <Route path="/points" element={<ViewPointsPage />} />
+          <Route path="/past-rounds" element={<PastRoundsPage />} />
         </Routes>
       </main>
     </div>
