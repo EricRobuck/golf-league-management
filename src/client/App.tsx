@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import PlayersPage from './pages/PlayersPage';
 import AddPlayerPage from './pages/AddPlayerPage';
@@ -11,6 +12,14 @@ import TodayScorePage from './pages/TodayScorePage';
 import WhoAreYouPage from './pages/WhoAreYouPage';
 import ProfilePage from './pages/ProfilePage';
 import { useCurrentPlayer } from './context/CurrentPlayerContext';
+
+function AdminRoute({ children }: { children: ReactElement }) {
+  const { currentPlayer } = useCurrentPlayer();
+  if (!currentPlayer?.isAdmin) {
+    return <Navigate to="/profile" replace />;
+  }
+  return children;
+}
 
 export default function App() {
   const { currentPlayer, loading, switchPlayer } = useCurrentPlayer();
@@ -33,6 +42,8 @@ export default function App() {
     );
   }
 
+  const isAdmin = currentPlayer.isAdmin;
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -52,10 +63,10 @@ export default function App() {
         <nav>
           <Link to="/profile">Profile</Link>
           <Link to="/players">Players</Link>
-          <Link to="/league-days">Role Call</Link>
-          <Link to="/players/add">Add Player</Link>
+          {isAdmin && <Link to="/league-days">Role Call</Link>}
+          {isAdmin && <Link to="/players/add">Add Player</Link>}
           <Link to="/points">View Points</Link>
-          <Link to="/enter-score">Enter Score</Link>
+          {isAdmin && <Link to="/enter-score">Enter Score</Link>}
         </nav>
       </header>
       <main>
@@ -63,13 +74,55 @@ export default function App() {
           <Route path="/" element={<Navigate to="/profile" replace />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/players" element={<PlayersPage />} />
-          <Route path="/players/add" element={<AddPlayerPage />} />
-          <Route path="/players/edit/:id" element={<EditPlayerPage />} />
-          <Route path="/league-days" element={<LeagueDaysPage />} />
-          <Route path="/league-days/:id/select" element={<SelectPlayersPage />} />
-          <Route path="/league-days/:id/teams" element={<GeneratedTeamsPage />} />
+          <Route
+            path="/players/add"
+            element={
+              <AdminRoute>
+                <AddPlayerPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/players/edit/:id"
+            element={
+              <AdminRoute>
+                <EditPlayerPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/league-days"
+            element={
+              <AdminRoute>
+                <LeagueDaysPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/league-days/:id/select"
+            element={
+              <AdminRoute>
+                <SelectPlayersPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/league-days/:id/teams"
+            element={
+              <AdminRoute>
+                <GeneratedTeamsPage />
+              </AdminRoute>
+            }
+          />
           <Route path="/league-days/:id/scores" element={<TeamScoresPage />} />
-          <Route path="/enter-score" element={<TodayScorePage />} />
+          <Route
+            path="/enter-score"
+            element={
+              <AdminRoute>
+                <TodayScorePage />
+              </AdminRoute>
+            }
+          />
           <Route path="/points" element={<ViewPointsPage />} />
         </Routes>
       </main>

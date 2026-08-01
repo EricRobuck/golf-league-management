@@ -30,6 +30,7 @@ export default function AddPlayerPage() {
         frontTarget: form.frontTarget,
         backTarget: form.backTarget,
         notes: form.notes || undefined,
+        isAdmin: false,
       });
       navigate('/players');
     } catch (error: any) {

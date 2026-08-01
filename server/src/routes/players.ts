@@ -60,6 +60,7 @@ router.post('/', async (req, res, next) => {
       frontTarget: payload.frontTarget,
       backTarget: payload.backTarget,
       notes: payload.notes,
+      isAdmin: false,
       createdAt: now,
       updatedAt: now,
     };
@@ -102,6 +103,9 @@ router.patch('/:id', async (req, res, next) => {
     }
     if (payload.backTarget !== undefined && (!Number.isInteger(payload.backTarget) || payload.backTarget < 0)) {
       return res.status(400).json({ message: 'Back target must be a non-negative integer.' });
+    }
+    if (payload.isAdmin !== undefined && typeof payload.isAdmin !== 'boolean') {
+      return res.status(400).json({ message: 'isAdmin must be a boolean.' });
     }
 
     const updated = await repository.update(req.params.id, payload);

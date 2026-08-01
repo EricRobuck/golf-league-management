@@ -5,6 +5,7 @@ export type Player = {
   frontTarget: number;
   backTarget: number;
   notes?: string;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
 };

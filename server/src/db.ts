@@ -20,6 +20,7 @@ db.exec(`
     frontTarget INTEGER NOT NULL,
     backTarget INTEGER NOT NULL,
     notes TEXT,
+    isAdmin INTEGER NOT NULL DEFAULT 0,
     createdAt TEXT NOT NULL,
     updatedAt TEXT NOT NULL
   );
@@ -37,6 +38,11 @@ db.exec(`
   );
 `);
 
+const playerColumns = db.prepare('PRAGMA table_info(players)').all() as { name: string }[];
+if (!playerColumns.some((column) => column.name === 'isAdmin')) {
+  db.exec('ALTER TABLE players ADD COLUMN isAdmin INTEGER NOT NULL DEFAULT 0');
+}
+
 const playerCount = db.prepare('SELECT COUNT(*) as count FROM players').get() as { count: number };
 if (playerCount.count === 0) {
   migrateLegacyJsonFiles();
@@ -47,11 +53,21 @@ function migrateLegacyJsonFiles(): void {
     const players = JSON.parse(fs.readFileSync(legacyPlayersFile, 'utf-8')) as any[];
     if (players.length > 0) {
       const insert = db.prepare(
-        `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, createdAt, updatedAt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, isAdmin, createdAt, updatedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
       for (const p of players) {
-        insert.run(p.id, p.firstName, p.lastName, p.frontTarget, p.backTarget, p.notes ?? null, p.createdAt, p.updatedAt);
+        insert.run(
+          p.id,
+          p.firstName,
+          p.lastName,
+          p.frontTarget,
+          p.backTarget,
+          p.notes ?? null,
+          p.isAdmin ? 1 : 0,
+          p.createdAt,
+          p.updatedAt
+        );
       }
     }
   }

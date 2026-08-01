@@ -9,22 +9,29 @@ export interface PlayerRepository {
   delete(id: string): Promise<void>;
 }
 
-const UPDATABLE_FIELDS: (keyof Player)[] = ['firstName', 'lastName', 'frontTarget', 'backTarget', 'notes'];
+type PlayerRow = Omit<Player, 'isAdmin'> & { isAdmin: number };
+
+function rowToPlayer(row: PlayerRow): Player {
+  return { ...row, isAdmin: Boolean(row.isAdmin) };
+}
+
+const UPDATABLE_FIELDS: (keyof Player)[] = ['firstName', 'lastName', 'frontTarget', 'backTarget', 'notes', 'isAdmin'];
 
 export class SqlitePlayerRepository implements PlayerRepository {
   async getAll(): Promise<Player[]> {
-    return db.prepare('SELECT * FROM players').all() as unknown as Player[];
+    const rows = db.prepare('SELECT * FROM players').all() as unknown as PlayerRow[];
+    return rows.map(rowToPlayer);
   }
 
   async getById(id: string): Promise<Player | null> {
-    const player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
-    return (player as unknown as Player) ?? null;
+    const row = db.prepare('SELECT * FROM players WHERE id = ?').get(id) as unknown as PlayerRow | undefined;
+    return row ? rowToPlayer(row) : null;
   }
 
   async create(player: Player): Promise<Player> {
     db.prepare(
-      `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, isAdmin, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       player.id,
       player.firstName,
@@ -32,6 +39,7 @@ export class SqlitePlayerRepository implements PlayerRepository {
       player.frontTarget,
       player.backTarget,
       player.notes ?? null,
+      player.isAdmin ? 1 : 0,
       player.createdAt,
       player.updatedAt
     );
@@ -51,6 +59,7 @@ export class SqlitePlayerRepository implements PlayerRepository {
       updated.frontTarget,
       updated.backTarget,
       updated.notes ?? null,
+      updated.isAdmin ? 1 : 0,
       updated.updatedAt,
       id
     );
