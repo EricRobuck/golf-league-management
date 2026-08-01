@@ -62,9 +62,13 @@ router.patch('/:id', async (req, res, next) => {
     if (!leagueDay) {
       return res.status(404).json({ message: 'League day not found.' });
     }
-    const payload = req.body as Partial<Pick<LeagueDay, 'date' | 'courseId' | 'scoringNine'>>;
+    const payload = req.body as Partial<Pick<LeagueDay, 'date' | 'courseId' | 'scoringNine' | 'status'>>;
     if (payload.date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(payload.date)) {
       return res.status(400).json({ message: 'Date must be in YYYY-MM-DD format.' });
+    }
+    const validStatuses = ['draft', 'teamsGenerated', 'scoring', 'finalized', 'reopened'];
+    if (payload.status !== undefined && !validStatuses.includes(payload.status)) {
+      return res.status(400).json({ message: 'Invalid status.' });
     }
     const updated = await leagueDayRepository.update(req.params.id, payload);
     res.json(updated);

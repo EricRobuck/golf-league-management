@@ -50,7 +50,7 @@ export async function createLeagueDay(payload: Omit<LeagueDay, 'id' | 'createdAt
   return response.data;
 }
 
-export async function patchLeagueDay(id: string, payload: Partial<Pick<LeagueDay, 'date' | 'courseId' | 'scoringNine'>>) {
+export async function patchLeagueDay(id: string, payload: Partial<Pick<LeagueDay, 'date' | 'courseId' | 'scoringNine' | 'status'>>) {
   const response = await api.patch<LeagueDay>(`/league-days/${id}`, payload);
   return response.data;
 }
