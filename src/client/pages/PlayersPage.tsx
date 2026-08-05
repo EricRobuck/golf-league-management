@@ -61,15 +61,25 @@ export default function PlayersPage() {
                 <td>{player.frontTarget}</td>
                 <td>{player.backTarget}</td>
                 <td>{player.notes ?? ''}</td>
-                <td>{player.isAdmin ? 'Admin' : ''}</td>
+                <td>
+                  {isAdmin ? (
+                    <input
+                      type="checkbox"
+                      checked={player.isAdmin}
+                      onChange={() => handleToggleAdmin(player)}
+                      title={player.isAdmin ? 'Remove admin' : 'Make admin'}
+                    />
+                  ) : player.isAdmin ? (
+                    'Admin'
+                  ) : (
+                    ''
+                  )}
+                </td>
                 {isAdmin && (
-                  <td style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <td>
                     <Link className="button secondary" to={`/players/edit/${player.id}`}>
                       Edit
                     </Link>
-                    <button className="button secondary" onClick={() => handleToggleAdmin(player)}>
-                      {player.isAdmin ? 'Remove Admin' : 'Make Admin'}
-                    </button>
                   </td>
                 )}
               </tr>
