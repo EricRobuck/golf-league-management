@@ -3,7 +3,6 @@ import { SqlitePlayerRepository } from '../repositories/playerRepository';
 import { SqliteLeagueDayRepository } from '../repositories/leagueDayRepository';
 import { LeagueDay, SelectedPlayer, Team } from '../types/models';
 import { buildPairHistory, generateTeams } from '../utils/teams';
-import { distanceInMiles, MAX_CHECKIN_DISTANCE_MILES, RICH_MAIDEN_LOCATION } from '../utils/geo';
 
 const router = express.Router();
 const playerRepository = new SqlitePlayerRepository();
@@ -97,26 +96,13 @@ router.post('/:id/players', async (req, res, next) => {
     if (!leagueDay) {
       return res.status(404).json({ message: 'League day not found.' });
     }
-    const payload = req.body as { playerId: string; latitude?: number; longitude?: number };
+    const payload = req.body as { playerId: string };
     const player = await playerRepository.getById(payload.playerId);
     if (!player) {
       return res.status(404).json({ message: 'Player not found.' });
     }
     if (leagueDay.selectedPlayers.some((entry) => entry.playerId === payload.playerId)) {
       return res.status(409).json({ message: 'Player already selected for this league day.' });
-    }
-    if (typeof payload.latitude === 'number' && typeof payload.longitude === 'number') {
-      const distance = distanceInMiles(
-        payload.latitude,
-        payload.longitude,
-        RICH_MAIDEN_LOCATION.latitude,
-        RICH_MAIDEN_LOCATION.longitude
-      );
-      if (distance > MAX_CHECKIN_DISTANCE_MILES) {
-        return res.status(403).json({
-          message: `You must be within ${MAX_CHECKIN_DISTANCE_MILES} miles of Rich Maiden to check in. You're about ${distance.toFixed(1)} miles away.`,
-        });
-      }
     }
     leagueDay.selectedPlayers.push({
       playerId: payload.playerId,

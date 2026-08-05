@@ -60,12 +60,8 @@ export async function ensureTodayLeagueDay() {
   return createLeagueDay({ date: today, courseId: DEFAULT_COURSE_ID, scoringNine: DEFAULT_SCORING_NINE });
 }
 
-export async function addLeagueDayPlayer(
-  leagueDayId: string,
-  playerId: string,
-  location?: { latitude: number; longitude: number }
-) {
-  const response = await api.post<SelectedPlayer[]>(`/league-days/${leagueDayId}/players`, { playerId, ...location });
+export async function addLeagueDayPlayer(leagueDayId: string, playerId: string) {
+  const response = await api.post<SelectedPlayer[]>(`/league-days/${leagueDayId}/players`, { playerId });
   return response.data;
 }
 
