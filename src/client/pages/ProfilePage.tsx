@@ -5,6 +5,8 @@ import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
 
+const REFRESH_INTERVAL_MS = 12000;
+
 function playerLabel(player: Player) {
   return `${player.firstName} ${player.lastName}`;
 }
@@ -41,6 +43,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadTodayLeagueDay();
+    const interval = setInterval(loadTodayLeagueDay, REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today]);
 

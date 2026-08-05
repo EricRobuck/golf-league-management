@@ -10,6 +10,8 @@ import {
 } from '../api';
 import { LeagueDay, Player } from '../types';
 
+const REFRESH_INTERVAL_MS = 12000;
+
 function playerLabel(player: Player) {
   return `${player.firstName} ${player.lastName}`;
 }
@@ -24,12 +26,17 @@ export default function SelectPlayersPage() {
 
   useEffect(() => {
     if (!id) return;
-    getLeagueDay(id)
-      .then(setLeagueDay)
-      .catch(() => setError('Unable to load league day.'));
-    getPlayers()
-      .then(setPlayers)
-      .catch(() => setError('Unable to load players.'));
+    const load = () => {
+      getLeagueDay(id)
+        .then(setLeagueDay)
+        .catch(() => setError('Unable to load league day.'));
+      getPlayers()
+        .then(setPlayers)
+        .catch(() => setError('Unable to load players.'));
+    };
+    load();
+    const interval = setInterval(load, REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
   }, [id]);
 
   const availablePlayers = useMemo(() => {
