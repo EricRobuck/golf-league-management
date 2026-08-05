@@ -6,6 +6,7 @@ export interface LeagueDayRepository {
   getById(id: string): Promise<LeagueDay | null>;
   create(leagueDay: LeagueDay): Promise<LeagueDay>;
   update(id: string, leagueDay: Partial<LeagueDay>): Promise<LeagueDay | null>;
+  delete(id: string): Promise<void>;
 }
 
 type LeagueDayRow = {
@@ -83,5 +84,9 @@ export class SqliteLeagueDayRepository implements LeagueDayRepository {
       id
     );
     return updated;
+  }
+
+  async delete(id: string): Promise<void> {
+    db.prepare('DELETE FROM league_days WHERE id = ?').run(id);
   }
 }

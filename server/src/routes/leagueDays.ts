@@ -77,6 +77,19 @@ router.patch('/:id', async (req, res, next) => {
   }
 });
 
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const leagueDay = await leagueDayRepository.getById(req.params.id);
+    if (!leagueDay) {
+      return res.status(404).json({ message: 'League day not found.' });
+    }
+    await leagueDayRepository.delete(req.params.id);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/:id/players', async (req, res, next) => {
   try {
     const leagueDay = await leagueDayRepository.getById(req.params.id);
