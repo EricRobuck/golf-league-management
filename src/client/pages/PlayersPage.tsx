@@ -33,13 +33,6 @@ export default function PlayersPage() {
     <div className="page-card">
       <h2 className="section-title">Players</h2>
       {error && <div className="alert">{error}</div>}
-      {isAdmin && (
-        <div style={{ marginBottom: '1rem' }}>
-          <Link className="button" to="/players/add">
-            Add Golfer
-          </Link>
-        </div>
-      )}
       <div className="table-scroll">
         <table className="table">
           <thead>
