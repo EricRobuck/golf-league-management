@@ -48,6 +48,20 @@ html {
   color: #1f4e79;
 }
 
+.points-board-paid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85em;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+
+.points-board-paid input {
+  cursor: pointer;
+}
+
 .points-board-teams {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

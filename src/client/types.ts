@@ -14,6 +14,7 @@ export type SelectedPlayer = {
   playerId: string;
   selectionOrder: number;
   goesFirst?: boolean;
+  paid?: boolean;
   frontScore?: number;
   backScore?: number;
 };
