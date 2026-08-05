@@ -153,7 +153,7 @@ export default function GeneratedTeamsPage() {
       {error && <div className="alert">{error}</div>}
       <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <button className="button secondary" onClick={() => navigate(`/league-days/${id}/select`)}>
-          Back to Roster
+          Role Call
         </button>
         <button className="button" onClick={handleCreateRound} disabled={selectedPlayers.length < 3}>
           Create Round
