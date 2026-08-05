@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getLeagueDays, getPlayers, updateLeagueDayPlayerOrder } from '../api';
+import { getLeagueDays, getPlayers } from '../api';
 import { todayDateString } from '../constants';
-import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, Team } from '../types';
 
 const REFRESH_INTERVAL_MS = 10000;
@@ -24,8 +23,6 @@ function teamPointsTotal(team: Team, players: Player[]) {
 }
 
 export default function ViewPointsPage() {
-  const { currentPlayer } = useCurrentPlayer();
-  const isAdmin = currentPlayer?.isAdmin ?? false;
   const [players, setPlayers] = useState<Player[]>([]);
   const [leagueDays, setLeagueDays] = useState<LeagueDay[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -58,21 +55,6 @@ export default function ViewPointsPage() {
   const teams = todayLeagueDay?.teams ?? [];
   const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
   const showTeams = sortedTeams.length > 0;
-
-  const togglePaid = async (playerId: string) => {
-    if (!todayLeagueDay) return;
-    const updatedSelectedPlayers = todayLeagueDay.selectedPlayers.map((entry) =>
-      entry.playerId === playerId ? { ...entry, paid: !entry.paid } : entry
-    );
-    try {
-      await updateLeagueDayPlayerOrder(todayLeagueDay.id, updatedSelectedPlayers);
-      setLeagueDays((current) =>
-        current.map((day) => (day.id === todayLeagueDay.id ? { ...day, selectedPlayers: updatedSelectedPlayers } : day))
-      );
-    } catch (_err) {
-      setError('Unable to update paid status.');
-    }
-  };
 
   return (
     <div className="page-card">
@@ -118,34 +100,25 @@ export default function ViewPointsPage() {
         <p className="empty-state">No golfers signed up for today yet.</p>
       ) : (
         <div className="points-board-grid">
-          {sortedPlayers.map((player) => {
-            const entry = todayLeagueDay?.selectedPlayers.find((e) => e.playerId === player.id);
-            return (
-              <div key={player.id} className="points-board-item">
-                <span className="points-board-name">{playerLabel(player)}</span>
-                <span className="points-board-stats">
-                  <span className="points-board-stat">
-                    <b>F</b>
-                    {player.frontTarget}
-                  </span>
-                  <span className="points-board-stat">
-                    <b>B</b>
-                    {player.backTarget}
-                  </span>
-                  <span className="points-board-stat points-value">
-                    <b>T</b>
-                    {totalPoints(player)}
-                  </span>
-                  {isAdmin && (
-                    <label className="points-board-paid">
-                      <input type="checkbox" checked={entry?.paid ?? false} onChange={() => togglePaid(player.id)} />
-                      Paid
-                    </label>
-                  )}
+          {sortedPlayers.map((player) => (
+            <div key={player.id} className="points-board-item">
+              <span className="points-board-name">{playerLabel(player)}</span>
+              <span className="points-board-stats">
+                <span className="points-board-stat">
+                  <b>F</b>
+                  {player.frontTarget}
                 </span>
-              </div>
-            );
-          })}
+                <span className="points-board-stat">
+                  <b>B</b>
+                  {player.backTarget}
+                </span>
+                <span className="points-board-stat points-value">
+                  <b>T</b>
+                  {totalPoints(player)}
+                </span>
+              </span>
+            </div>
+          ))}
         </div>
       )}
     </div>

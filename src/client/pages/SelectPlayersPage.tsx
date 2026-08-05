@@ -77,6 +77,19 @@ export default function SelectPlayersPage() {
     }
   };
 
+  const togglePaid = async (playerId: string) => {
+    if (!id || !leagueDay) return;
+    const updatedSelectedPlayers = leagueDay.selectedPlayers.map((entry) =>
+      entry.playerId === playerId ? { ...entry, paid: !entry.paid } : entry
+    );
+    try {
+      await updateLeagueDayPlayerOrder(id, updatedSelectedPlayers);
+      setLeagueDay((current) => (current ? { ...current, selectedPlayers: updatedSelectedPlayers } : current));
+    } catch (_error) {
+      setError('Unable to update paid status.');
+    }
+  };
+
   if (!leagueDay) {
     return (
       <div className="page-card">
@@ -167,7 +180,15 @@ export default function SelectPlayersPage() {
                           </div>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <label className="points-board-paid" title="Mark as paid">
+                          <input
+                            type="checkbox"
+                            checked={entry.paid ?? false}
+                            onChange={() => togglePaid(entry.playerId)}
+                          />
+                          Paid
+                        </label>
                         <button
                           className={`button-icon ${entry.goesFirst ? 'button-icon-active' : 'secondary'}`}
                           title={entry.goesFirst ? 'Remove go-first flag' : 'Mark to go first when teams are created'}
