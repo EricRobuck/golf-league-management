@@ -52,6 +52,24 @@ function hasAnyScore(teams: Team[], field: 'frontScore' | 'backScore') {
   return teams.some((team) => team.players.some((entry) => entry[field] !== undefined));
 }
 
+// When multiple teams tie for a category win, that category's pot is split evenly
+// across the tied teams (not paid out in full to each), with any leftover dollar
+// going to the lowest-numbered team so the total paid never exceeds the pot.
+function splitPotAmongTeams(pot: number, winningTeamNumbers: number[]): Record<number, number> {
+  const shares: Record<number, number> = {};
+  if (winningTeamNumbers.length === 0 || pot === 0) return shares;
+
+  const base = Math.floor(pot / winningTeamNumbers.length);
+  const remainder = pot - base * winningTeamNumbers.length;
+  const ordered = [...winningTeamNumbers].sort((a, b) => a - b);
+
+  ordered.forEach((teamNumber, index) => {
+    shares[teamNumber] = base + (index < remainder ? 1 : 0);
+  });
+
+  return shares;
+}
+
 function individualDiff(entry: SelectedPlayer, player: Player | undefined, category: 'front' | 'back' | 'total') {
   if (!player) return undefined;
   if (category === 'front') return entry.frontScore !== undefined ? entry.frontScore - player.frontTarget : undefined;
@@ -137,23 +155,29 @@ export default function TeamScoresPage() {
   const categoryPot = playerCount; // $3 per golfer, split evenly across front/back/total
 
   const moneyList = useMemo(() => {
-    const frontWinnerNumbers = new Set(frontWinners.teams.map((team) => team.teamNumber));
-    const backWinnerNumbers = new Set(backWinners.teams.map((team) => team.teamNumber));
-    const totalWinnerNumbers = new Set(totalWinners.teams.map((team) => team.teamNumber));
+    const frontShares = frontHasScores
+      ? splitPotAmongTeams(categoryPot, frontWinners.teams.map((team) => team.teamNumber))
+      : {};
+    const backShares = backHasScores
+      ? splitPotAmongTeams(categoryPot, backWinners.teams.map((team) => team.teamNumber))
+      : {};
+    const totalShares = totalHasScores
+      ? splitPotAmongTeams(categoryPot, totalWinners.teams.map((team) => team.teamNumber))
+      : {};
 
     const rows: { playerId: string; player: Player | undefined; teamNumber: number; amount: number; categoriesWon: string[] }[] = [];
 
     for (const team of sortedTeams) {
-      const wonFront = frontHasScores && frontWinnerNumbers.has(team.teamNumber);
-      const wonBack = backHasScores && backWinnerNumbers.has(team.teamNumber);
-      const wonTotal = totalHasScores && totalWinnerNumbers.has(team.teamNumber);
-      const pot = (wonFront ? categoryPot : 0) + (wonBack ? categoryPot : 0) + (wonTotal ? categoryPot : 0);
+      const frontShare = frontShares[team.teamNumber] ?? 0;
+      const backShare = backShares[team.teamNumber] ?? 0;
+      const totalShare = totalShares[team.teamNumber] ?? 0;
+      const pot = frontShare + backShare + totalShare;
       if (pot === 0) continue;
 
       const categoriesWon = [
-        wonFront ? 'Front' : null,
-        wonBack ? 'Back' : null,
-        wonTotal ? 'Total' : null,
+        frontShare > 0 ? 'Front' : null,
+        backShare > 0 ? 'Back' : null,
+        totalShare > 0 ? 'Total' : null,
       ].filter((label): label is string => label !== null);
 
       const payouts = distributeTeamMoney(team, players, pot);
