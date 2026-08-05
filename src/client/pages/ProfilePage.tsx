@@ -4,6 +4,7 @@ import { addLeagueDayPlayer, ensureTodayLeagueDay, getLeagueDays, removeLeagueDa
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
+import { distanceInMiles, getCurrentPosition, MAX_CHECKIN_DISTANCE_MILES, RICH_MAIDEN_LOCATION } from '../utils/geo';
 
 const REFRESH_INTERVAL_MS = 12000;
 
@@ -100,9 +101,29 @@ export default function ProfilePage() {
     if (!currentPlayer) return;
     setJoining(true);
     setError(null);
+
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (_geoError) {
+      setError('Location access is required to check in. Please enable location services and try again.');
+      setJoining(false);
+      return;
+    }
+
+    const { latitude, longitude } = position.coords;
+    const distance = distanceInMiles(latitude, longitude, RICH_MAIDEN_LOCATION.latitude, RICH_MAIDEN_LOCATION.longitude);
+    if (distance > MAX_CHECKIN_DISTANCE_MILES) {
+      setError(
+        `You must be within ${MAX_CHECKIN_DISTANCE_MILES} miles of Rich Maiden to check in. You're about ${distance.toFixed(1)} miles away.`
+      );
+      setJoining(false);
+      return;
+    }
+
     try {
       const day = await ensureTodayLeagueDay();
-      await addLeagueDayPlayer(day.id, currentPlayer.id);
+      await addLeagueDayPlayer(day.id, currentPlayer.id, { latitude, longitude });
       loadTodayLeagueDay();
     } catch (err: any) {
       setError(err.response?.data?.message ?? "Unable to join today's round.");
