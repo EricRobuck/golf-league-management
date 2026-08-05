@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { addLeagueDayPlayer, getLeagueDay, getPlayers, removeLeagueDayPlayer, updateLeagueDayPlayerOrder } from '../api';
 import { LeagueDay, Player } from '../types';
 
@@ -208,15 +208,6 @@ export default function SelectPlayersPage() {
                   );
                 })}
               </ul>
-            )}
-          </div>
-          <div className="panel-footer">
-            {leagueDay.selectedPlayers.length >= 3 ? (
-              <Link className="button secondary" to={`/league-days/${leagueDay.id}/teams`}>
-                View Teams
-              </Link>
-            ) : (
-              <span className="hint-note">At least 3 golfers required to view teams</span>
             )}
           </div>
         </section>
