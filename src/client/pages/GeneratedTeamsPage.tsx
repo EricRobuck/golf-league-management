@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { generateLeagueDayTeams, getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
+import { getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
 import { LeagueDay, Player, Team } from '../types';
 
 function findPlayer(players: Player[], playerId: string) {
@@ -79,17 +79,6 @@ export default function GeneratedTeamsPage() {
     updateLocalTeams(updatedTeams);
   };
 
-  const handleCreateRound = async () => {
-    if (!id) return;
-    try {
-      const generated = await generateLeagueDayTeams(id);
-      setLeagueDay((current) => (current ? { ...current, teams: normalizeTeams(generated), status: 'teamsGenerated' } : current));
-      setSaved(false);
-    } catch (error: any) {
-      setError(error.response?.data?.message ?? 'Unable to create round.');
-    }
-  };
-
   const handleSave = async () => {
     if (!id || !leagueDay) return;
 
@@ -154,9 +143,6 @@ export default function GeneratedTeamsPage() {
       <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <button className="button secondary" onClick={() => navigate(`/league-days/${id}/select`)}>
           Role Call
-        </button>
-        <button className="button" onClick={handleCreateRound} disabled={selectedPlayers.length < 3}>
-          Create Round
         </button>
         <button className="button secondary" onClick={() => window.print()} disabled={!canPrint()}>
           Print Teams

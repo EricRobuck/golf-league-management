@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addLeagueDayPlayer, getLeagueDay, getPlayers, removeLeagueDayPlayer, updateLeagueDayPlayerOrder } from '../api';
+import {
+  addLeagueDayPlayer,
+  generateLeagueDayTeams,
+  getLeagueDay,
+  getPlayers,
+  removeLeagueDayPlayer,
+  updateLeagueDayPlayerOrder,
+} from '../api';
 import { LeagueDay, Player } from '../types';
 
 function playerLabel(player: Player) {
@@ -90,6 +97,19 @@ export default function SelectPlayersPage() {
     }
   };
 
+  const handleCreateRound = async () => {
+    if (!id) return;
+    if (!window.confirm('Are you sure you want to create the round? This will generate teams for all selected golfers.')) {
+      return;
+    }
+    try {
+      await generateLeagueDayTeams(id);
+      navigate(`/league-days/${id}/teams`);
+    } catch (error: any) {
+      setError(error.response?.data?.message ?? 'Unable to create round.');
+    }
+  };
+
   if (!leagueDay) {
     return (
       <div className="page-card">
@@ -107,9 +127,14 @@ export default function SelectPlayersPage() {
             <span className="meta-chip">{leagueDay.date}</span>
           </div>
         </div>
-        <button className="button secondary" onClick={() => navigate('/league-days')}>
-          Back to League Days
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button className="button" onClick={handleCreateRound} disabled={selectedPlayers.length < 3}>
+            Create Round
+          </button>
+          <button className="button secondary" onClick={() => navigate('/league-days')}>
+            Back to League Days
+          </button>
+        </div>
       </div>
 
       {error && <div className="alert">{error}</div>}
