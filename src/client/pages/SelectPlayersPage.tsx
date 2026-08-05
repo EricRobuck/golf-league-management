@@ -41,6 +41,8 @@ export default function SelectPlayersPage() {
   }, [players, leagueDay, search]);
 
   const selectedPlayers = useMemo(() => leagueDay?.selectedPlayers ?? [], [leagueDay]);
+  const allPaid = selectedPlayers.length > 0 && selectedPlayers.every((entry) => entry.paid);
+  const canCreateRound = selectedPlayers.length >= 3 && allPaid;
 
   const addPlayer = async (playerId: string) => {
     if (!id) return;
@@ -127,13 +129,13 @@ export default function SelectPlayersPage() {
             <span className="meta-chip">{leagueDay.date}</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <button className="button" onClick={handleCreateRound} disabled={selectedPlayers.length < 3}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem' }}>
+          <button className="button" onClick={handleCreateRound} disabled={!canCreateRound}>
             Create Round
           </button>
-          <button className="button secondary" onClick={() => navigate('/league-days')}>
-            Back to League Days
-          </button>
+          {selectedPlayers.length >= 3 && !allPaid && (
+            <span className="hint-note">Everyone must be marked Paid before creating the round</span>
+          )}
         </div>
       </div>
 
