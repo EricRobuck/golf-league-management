@@ -48,8 +48,8 @@ export default function TodayScorePage() {
           <button className="button" onClick={handleStartToday}>
             Start Today's Round
           </button>
-          <Link className="button secondary" to="/league-days">
-            View League Days
+          <Link className="button secondary" to="/past-rounds">
+            Past Rounds
           </Link>
         </div>
       </div>
