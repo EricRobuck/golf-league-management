@@ -70,8 +70,8 @@ export default function PlayersPage() {
                 </td>
                 {isAdmin && (
                   <td>
-                    <Link className="button secondary" to={`/players/edit/${player.id}`}>
-                      Edit
+                    <Link className="button-icon secondary" title="Edit" to={`/players/edit/${player.id}`}>
+                      ✎
                     </Link>
                   </td>
                 )}
