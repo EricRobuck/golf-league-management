@@ -36,6 +36,9 @@ export default function TodayScorePage() {
         <h2 className="section-title">Enter Score</h2>
         <p className="empty-state">No round has been started for today ({today}). Rounds start once a golfer checks in on their Profile page.</p>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <Link className="button" to="/players/add">
+            Add Player
+          </Link>
           <Link className="button secondary" to="/past-rounds">
             Past Rounds
           </Link>

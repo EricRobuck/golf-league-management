@@ -150,6 +150,9 @@ export default function GeneratedTeamsPage() {
         <Link className="button secondary" to={`/league-days/${id}/scores`}>
           View Team Scores
         </Link>
+        <Link className="button secondary" to="/players/add">
+          Add Player
+        </Link>
       </div>
       <div style={{ marginBottom: '1rem' }}>
         <strong>League Date:</strong> {leagueDay.date} · <strong>Players:</strong> {selectedPlayers.length}
