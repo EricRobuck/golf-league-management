@@ -34,7 +34,7 @@ export default function PlayersPage() {
       <h2 className="section-title">Players</h2>
       {error && <div className="alert">{error}</div>}
       <div className="table-scroll">
-        <table className="table">
+        <table className="table" style={{ fontSize: '1.15rem' }}>
           <thead>
             <tr>
               <th>First Name</th>
@@ -70,7 +70,12 @@ export default function PlayersPage() {
                 </td>
                 {isAdmin && (
                   <td>
-                    <Link className="button-icon secondary" title="Edit" to={`/players/edit/${player.id}`}>
+                    <Link
+                      className="button-icon secondary"
+                      title="Edit"
+                      to={`/players/edit/${player.id}`}
+                      style={{ width: '2.1rem', height: '2.1rem', fontSize: '0.95rem' }}
+                    >
                       ✎
                     </Link>
                   </td>
