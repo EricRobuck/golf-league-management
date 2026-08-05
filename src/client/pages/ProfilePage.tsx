@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { addLeagueDayPlayer, getLeagueDays, removeLeagueDayPlayer } from '../api';
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
-import { LeagueDay, Player } from '../types';
+import { LeagueDay, Player, SelectedPlayer } from '../types';
 
 function playerLabel(player: Player) {
   return `${player.firstName} ${player.lastName}`;
@@ -10,6 +11,18 @@ function playerLabel(player: Player) {
 
 function playerTotal(player: Player) {
   return player.frontTarget + player.backTarget;
+}
+
+function formatDiff(value: number | undefined) {
+  if (value === undefined) return '-';
+  if (value > 0) return `+${value}`;
+  return String(value);
+}
+
+function entryDiff(entry: SelectedPlayer, player: Player | undefined, field: 'front' | 'back') {
+  if (!player) return undefined;
+  if (field === 'front') return entry.frontScore !== undefined ? entry.frontScore - player.frontTarget : undefined;
+  return entry.backScore !== undefined ? entry.backScore - player.backTarget : undefined;
 }
 
 export default function ProfilePage() {
@@ -44,15 +57,37 @@ export default function ProfilePage() {
 
   const myTeamTotals = useMemo(() => {
     if (!myTeam) return null;
-    let front = 0;
-    let back = 0;
+    let frontNeeded = 0;
+    let backNeeded = 0;
+    let frontScore = 0;
+    let backScore = 0;
+    let hasAnyScore = false;
     for (const entry of myTeam.players) {
       const player = players.find((p) => p.id === entry.playerId);
       if (!player) continue;
-      front += player.frontTarget;
-      back += player.backTarget;
+      frontNeeded += player.frontTarget;
+      backNeeded += player.backTarget;
+      if (entry.frontScore !== undefined) {
+        frontScore += entry.frontScore;
+        hasAnyScore = true;
+      }
+      if (entry.backScore !== undefined) {
+        backScore += entry.backScore;
+        hasAnyScore = true;
+      }
     }
-    return { front, back, total: front + back };
+    return {
+      frontNeeded,
+      backNeeded,
+      totalNeeded: frontNeeded + backNeeded,
+      frontScore,
+      backScore,
+      totalScore: frontScore + backScore,
+      frontDiff: frontScore - frontNeeded,
+      backDiff: backScore - backNeeded,
+      totalDiff: frontScore + backScore - (frontNeeded + backNeeded),
+      hasAnyScore,
+    };
   }, [myTeam, players]);
 
   const handleJoinToday = async () => {
@@ -117,20 +152,38 @@ export default function ProfilePage() {
         ) : (
           <div className="team-card">
             <h3>Team {myTeam.teamNumber}</h3>
+            <div style={{ marginBottom: '1rem' }}>
+              <Link className="button" to={`/league-days/${todayLeagueDay.id}/enter-scores`}>
+                Enter Scores
+              </Link>
+            </div>
             <div className="table-scroll">
               <table className="table">
                 <thead>
                   <tr>
                     <th>Golfer</th>
-                    <th>Front</th>
-                    <th>Back</th>
-                    <th>Total</th>
+                    <th>Front Needed</th>
+                    <th>Front Score</th>
+                    <th>Front +/-</th>
+                    <th>Back Needed</th>
+                    <th>Back Score</th>
+                    <th>Back +/-</th>
+                    <th>Total Needed</th>
+                    <th>Total Score</th>
+                    <th>Total +/-</th>
                   </tr>
                 </thead>
                 <tbody>
                   {myTeam.players.map((entry) => {
                     const player = players.find((p) => p.id === entry.playerId);
                     if (!player) return null;
+                    const frontDiff = entryDiff(entry, player, 'front');
+                    const backDiff = entryDiff(entry, player, 'back');
+                    const totalDiff = frontDiff !== undefined && backDiff !== undefined ? frontDiff + backDiff : undefined;
+                    const totalScore =
+                      entry.frontScore !== undefined && entry.backScore !== undefined
+                        ? entry.frontScore + entry.backScore
+                        : undefined;
                     return (
                       <tr key={entry.playerId}>
                         <td>
@@ -138,8 +191,14 @@ export default function ProfilePage() {
                           {player.id === currentPlayer.id ? ' (You)' : ''}
                         </td>
                         <td>{player.frontTarget}</td>
+                        <td>{entry.frontScore ?? '-'}</td>
+                        <td>{formatDiff(frontDiff)}</td>
                         <td>{player.backTarget}</td>
+                        <td>{entry.backScore ?? '-'}</td>
+                        <td>{formatDiff(backDiff)}</td>
                         <td>{playerTotal(player)}</td>
+                        <td>{totalScore ?? '-'}</td>
+                        <td>{formatDiff(totalDiff)}</td>
                       </tr>
                     );
                   })}
@@ -148,9 +207,15 @@ export default function ProfilePage() {
                   <tfoot>
                     <tr style={{ fontWeight: 700, background: '#f8fafc' }}>
                       <td>Team Total</td>
-                      <td>{myTeamTotals.front}</td>
-                      <td>{myTeamTotals.back}</td>
-                      <td>{myTeamTotals.total}</td>
+                      <td>{myTeamTotals.frontNeeded}</td>
+                      <td>{myTeamTotals.hasAnyScore ? myTeamTotals.frontScore : '-'}</td>
+                      <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.frontDiff : undefined)}</td>
+                      <td>{myTeamTotals.backNeeded}</td>
+                      <td>{myTeamTotals.hasAnyScore ? myTeamTotals.backScore : '-'}</td>
+                      <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.backDiff : undefined)}</td>
+                      <td>{myTeamTotals.totalNeeded}</td>
+                      <td>{myTeamTotals.hasAnyScore ? myTeamTotals.totalScore : '-'}</td>
+                      <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.totalDiff : undefined)}</td>
                     </tr>
                   </tfoot>
                 )}

@@ -10,6 +10,7 @@ import ViewPointsPage from './pages/ViewPointsPage';
 import PastRoundsPage from './pages/PastRoundsPage';
 import TeamScoresPage from './pages/TeamScoresPage';
 import TodayScorePage from './pages/TodayScorePage';
+import EnterScoresPage from './pages/EnterScoresPage';
 import WhoAreYouPage from './pages/WhoAreYouPage';
 import ProfilePage from './pages/ProfilePage';
 import { useCurrentPlayer } from './context/CurrentPlayerContext';
@@ -116,6 +117,7 @@ export default function App() {
             }
           />
           <Route path="/league-days/:id/scores" element={<TeamScoresPage />} />
+          <Route path="/league-days/:id/enter-scores" element={<EnterScoresPage />} />
           <Route
             path="/enter-score"
             element={
