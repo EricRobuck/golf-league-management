@@ -68,7 +68,7 @@ export default function App() {
           {isAdmin && <Link to="/players/add">Add Player</Link>}
           <Link to="/points">View Points</Link>
           <Link to="/past-rounds">Past Rounds</Link>
-          {isAdmin && <Link to="/enter-score">Enter Score</Link>}
+          {isAdmin && <Link to="/enter-score">Admin</Link>}
         </nav>
       </header>
       <main>
