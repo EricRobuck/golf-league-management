@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { deletePlayer, getPlayers, patchPlayer } from '../api';
+import { getPlayers, patchPlayer } from '../api';
 import { Player } from '../types';
 import { Link } from 'react-router-dom';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
@@ -15,18 +15,6 @@ export default function PlayersPage() {
       .then(setPlayers)
       .catch(() => setError('Unable to load players.'));
   }, []);
-
-  const handleDelete = async (player: Player) => {
-    if (!window.confirm(`Delete ${player.firstName} ${player.lastName}? This cannot be undone.`)) {
-      return;
-    }
-    try {
-      await deletePlayer(player.id);
-      setPlayers((current) => current.filter((p) => p.id !== player.id));
-    } catch (_error) {
-      setError('Unable to delete golfer.');
-    }
-  };
 
   const handleToggleAdmin = async (player: Player) => {
     const makeAdmin = !player.isAdmin;
@@ -81,9 +69,6 @@ export default function PlayersPage() {
                     </Link>
                     <button className="button secondary" onClick={() => handleToggleAdmin(player)}>
                       {player.isAdmin ? 'Remove Admin' : 'Make Admin'}
-                    </button>
-                    <button className="button secondary" style={{ background: '#dc2626' }} onClick={() => handleDelete(player)}>
-                      Delete
                     </button>
                   </td>
                 )}

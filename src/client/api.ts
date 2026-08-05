@@ -31,10 +31,6 @@ export async function patchPlayer(id: string, payload: Partial<Player>) {
   return response.data;
 }
 
-export async function deletePlayer(id: string) {
-  await api.delete(`/players/${id}`);
-}
-
 export async function getLeagueDays() {
   const response = await api.get<LeagueDay[]>('/league-days');
   return response.data;
