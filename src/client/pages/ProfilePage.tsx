@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { addLeagueDayPlayer, getLeagueDays, removeLeagueDayPlayer } from '../api';
+import { addLeagueDayPlayer, ensureTodayLeagueDay, getLeagueDays, removeLeagueDayPlayer } from '../api';
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
@@ -50,6 +50,8 @@ export default function ProfilePage() {
     [todayLeagueDay, currentPlayer]
   );
 
+  const teamsPicked = Boolean(todayLeagueDay && todayLeagueDay.teams.length > 0);
+
   const myTeam = useMemo(() => {
     if (!todayLeagueDay || !currentPlayer) return null;
     return todayLeagueDay.teams.find((team) => team.players.some((entry) => entry.playerId === currentPlayer.id)) ?? null;
@@ -91,11 +93,12 @@ export default function ProfilePage() {
   }, [myTeam, players]);
 
   const handleJoinToday = async () => {
-    if (!currentPlayer || !todayLeagueDay) return;
+    if (!currentPlayer) return;
     setJoining(true);
     setError(null);
     try {
-      await addLeagueDayPlayer(todayLeagueDay.id, currentPlayer.id);
+      const day = await ensureTodayLeagueDay();
+      await addLeagueDayPlayer(day.id, currentPlayer.id);
       loadTodayLeagueDay();
     } catch (err: any) {
       setError(err.response?.data?.message ?? "Unable to join today's round.");
@@ -136,8 +139,8 @@ export default function ProfilePage() {
       <div style={{ marginTop: '1.5rem' }}>
         {todayLeagueDay === undefined ? (
           <p>Checking today's round...</p>
-        ) : !todayLeagueDay ? (
-          <p className="empty-state">No round has been set up for today yet.</p>
+        ) : !isInToday && teamsPicked ? (
+          <p className="empty-state">Teams have already been picked for today — check-in is closed.</p>
         ) : !isInToday ? (
           <button className="button" onClick={handleJoinToday} disabled={joining}>
             {joining ? 'Checking in...' : 'Check In'}
@@ -153,7 +156,7 @@ export default function ProfilePage() {
           <div className="team-card">
             <h3>Team {myTeam.teamNumber}</h3>
             <div style={{ marginBottom: '1rem' }}>
-              <Link className="button" to={`/league-days/${todayLeagueDay.id}/enter-scores`}>
+              <Link className="button" to={`/league-days/${todayLeagueDay!.id}/enter-scores`}>
                 Enter Scores
               </Link>
             </div>
