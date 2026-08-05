@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getLeagueDay, updateLeagueDayTeams } from '../api';
+import { getLeagueDay, patchPlayer, updateLeagueDayTeams } from '../api';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
-import { LeagueDay, Team } from '../types';
+import { LeagueDay, Player, Team } from '../types';
+import { adjustTargets } from '../utils/targetAdjustment';
 
 function playerLabel(firstName: string, lastName: string) {
   return `${firstName} ${lastName}`;
@@ -85,6 +86,23 @@ export default function EnterScoresPage() {
         };
       });
       await updateLeagueDayTeams(id, updatedTeams);
+
+      const targetPatches: Promise<Player>[] = [];
+      for (const entry of myTeam.players) {
+        const player = players.find((p) => p.id === entry.playerId);
+        const front = parsed[entry.playerId]?.front;
+        const back = parsed[entry.playerId]?.back;
+        if (!player || front === undefined || back === undefined) continue;
+        const { frontTarget, backTarget } = adjustTargets(player, front, back);
+        const patch: Partial<Player> = {};
+        if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
+        if (backTarget !== player.backTarget) patch.backTarget = backTarget;
+        if (Object.keys(patch).length > 0) {
+          targetPatches.push(patchPlayer(entry.playerId, patch));
+        }
+      }
+      await Promise.all(targetPatches);
+
       navigate('/profile');
     } catch (_err) {
       setError('Unable to save scores.');

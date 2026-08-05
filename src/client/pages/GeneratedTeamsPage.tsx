@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
 import { LeagueDay, Player, Team } from '../types';
+import { adjustTargets } from '../utils/targetAdjustment';
 
 function findPlayer(players: Player[], playerId: string) {
   return players.find((player) => player.id === playerId);
@@ -23,15 +24,6 @@ function teamTotals(team: Team, players: Player[]) {
     { front: 0, back: 0 }
   );
   return { ...totals, total: totals.front + totals.back };
-}
-
-// Every full 3 points a golfer's score is above or below their target nudges
-// that target 1 point in the same direction, capped at a 3-point swing per round.
-function adjustTarget(target: number, score: number): number {
-  const diff = score - target;
-  const magnitude = Math.min(3, Math.floor(Math.abs(diff) / 3));
-  const adjustment = diff < 0 ? -magnitude : magnitude;
-  return Math.max(0, target + adjustment);
 }
 
 export default function GeneratedTeamsPage() {
@@ -102,15 +94,11 @@ export default function GeneratedTeamsPage() {
         for (const entry of team.players) {
           const player = findPlayer(players, entry.playerId);
           if (!player) continue;
+          if (entry.frontScore === undefined || entry.backScore === undefined) continue;
+          const { frontTarget, backTarget } = adjustTargets(player, entry.frontScore, entry.backScore);
           const patch: Partial<Player> = {};
-          if (entry.frontScore !== undefined) {
-            const newFrontTarget = adjustTarget(player.frontTarget, entry.frontScore);
-            if (newFrontTarget !== player.frontTarget) patch.frontTarget = newFrontTarget;
-          }
-          if (entry.backScore !== undefined) {
-            const newBackTarget = adjustTarget(player.backTarget, entry.backScore);
-            if (newBackTarget !== player.backTarget) patch.backTarget = newBackTarget;
-          }
+          if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
+          if (backTarget !== player.backTarget) patch.backTarget = backTarget;
           if (Object.keys(patch).length > 0) {
             targetPatches.push(patchPlayer(entry.playerId, patch));
           }
