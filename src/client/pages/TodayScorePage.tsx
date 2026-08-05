@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ensureTodayLeagueDay, getLeagueDays } from '../api';
+import { getLeagueDays } from '../api';
 import { todayDateString } from '../constants';
 
 export default function TodayScorePage() {
@@ -22,15 +22,6 @@ export default function TodayScorePage() {
       .catch(() => setError('Unable to load league days.'));
   }, [navigate, today]);
 
-  const handleStartToday = async () => {
-    try {
-      const leagueDay = await ensureTodayLeagueDay();
-      navigate(`/league-days/${leagueDay.id}/select`);
-    } catch (_error) {
-      setError('Unable to start today\'s round.');
-    }
-  };
-
   if (error) {
     return (
       <div className="page-card">
@@ -43,11 +34,8 @@ export default function TodayScorePage() {
     return (
       <div className="page-card">
         <h2 className="section-title">Enter Score</h2>
-        <p className="empty-state">No round has been started for today ({today}).</p>
+        <p className="empty-state">No round has been started for today ({today}). Rounds start once a golfer checks in on their Profile page.</p>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <button className="button" onClick={handleStartToday}>
-            Start Today's Round
-          </button>
           <Link className="button secondary" to="/past-rounds">
             Past Rounds
           </Link>
