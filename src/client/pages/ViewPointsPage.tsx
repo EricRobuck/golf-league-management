@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { getLeagueDays, getPlayers } from '../api';
 import { todayDateString } from '../constants';
 import { LeagueDay, Player, Team } from '../types';
+import { isRoundComplete } from '../utils/money';
+import LeagueDayResults from '../components/LeagueDayResults';
 
 const REFRESH_INTERVAL_MS = 10000;
 
@@ -55,13 +57,16 @@ export default function ViewPointsPage() {
   const teams = todayLeagueDay?.teams ?? [];
   const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
   const showTeams = sortedTeams.length > 0;
+  const roundComplete = isRoundComplete(teams);
 
   return (
     <div className="page-card">
       <h2 className="section-title">Points</h2>
       {error && <div className="alert">{error}</div>}
 
-      {showTeams ? (
+      {roundComplete ? (
+        <LeagueDayResults teams={teams} players={players} date={todayLeagueDay!.date} />
+      ) : showTeams ? (
         <div className="points-board-teams">
           {sortedTeams.map((team) => (
             <div key={team.teamNumber} className="team-card">

@@ -4,6 +4,8 @@ import { addLeagueDayPlayer, ensureTodayLeagueDay, getLeagueDays, removeLeagueDa
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
+import { isRoundComplete } from '../utils/money';
+import LeagueDayResults from '../components/LeagueDayResults';
 
 const REFRESH_INTERVAL_MS = 12000;
 
@@ -96,6 +98,16 @@ export default function ProfilePage() {
     };
   }, [myTeam, players]);
 
+  const roundComplete = useMemo(
+    () => Boolean(todayLeagueDay && isRoundComplete(todayLeagueDay.teams)),
+    [todayLeagueDay]
+  );
+
+  const myScoresEntered = useMemo(
+    () => Boolean(myTeam && myTeam.players.every((entry) => entry.frontScore !== undefined && entry.backScore !== undefined)),
+    [myTeam]
+  );
+
   const handleJoinToday = async () => {
     if (!currentPlayer) return;
     setJoining(true);
@@ -160,74 +172,84 @@ export default function ProfilePage() {
           <div className="team-card">
             <h3>Team {myTeam.teamNumber}</h3>
             <div style={{ marginBottom: '1rem' }}>
-              <Link className="button" to={`/league-days/${todayLeagueDay!.id}/enter-scores`}>
-                Enter Scores
-              </Link>
+              {myScoresEntered ? (
+                <button className="button" disabled>
+                  Enter Scores
+                </button>
+              ) : (
+                <Link className="button" to={`/league-days/${todayLeagueDay!.id}/enter-scores`}>
+                  Enter Scores
+                </Link>
+              )}
             </div>
-            <div className="table-scroll">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Golfer</th>
-                    <th>Front Needed</th>
-                    <th>Front Score</th>
-                    <th>Front +/-</th>
-                    <th>Back Needed</th>
-                    <th>Back Score</th>
-                    <th>Back +/-</th>
-                    <th>Total Needed</th>
-                    <th>Total Score</th>
-                    <th>Total +/-</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {myTeam.players.map((entry) => {
-                    const player = players.find((p) => p.id === entry.playerId);
-                    if (!player) return null;
-                    const frontDiff = entryDiff(entry, player, 'front');
-                    const backDiff = entryDiff(entry, player, 'back');
-                    const totalDiff = frontDiff !== undefined && backDiff !== undefined ? frontDiff + backDiff : undefined;
-                    const totalScore =
-                      entry.frontScore !== undefined && entry.backScore !== undefined
-                        ? entry.frontScore + entry.backScore
-                        : undefined;
-                    return (
-                      <tr key={entry.playerId}>
-                        <td>
-                          {playerLabel(player)}
-                          {player.id === currentPlayer.id ? ' (You)' : ''}
-                        </td>
-                        <td>{player.frontTarget}</td>
-                        <td>{entry.frontScore ?? '-'}</td>
-                        <td>{formatDiff(frontDiff)}</td>
-                        <td>{player.backTarget}</td>
-                        <td>{entry.backScore ?? '-'}</td>
-                        <td>{formatDiff(backDiff)}</td>
-                        <td>{playerTotal(player)}</td>
-                        <td>{totalScore ?? '-'}</td>
-                        <td>{formatDiff(totalDiff)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-                {myTeamTotals && (
-                  <tfoot>
-                    <tr style={{ fontWeight: 700, background: '#f8fafc' }}>
-                      <td>Team Total</td>
-                      <td>{myTeamTotals.frontNeeded}</td>
-                      <td>{myTeamTotals.hasAnyScore ? myTeamTotals.frontScore : '-'}</td>
-                      <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.frontDiff : undefined)}</td>
-                      <td>{myTeamTotals.backNeeded}</td>
-                      <td>{myTeamTotals.hasAnyScore ? myTeamTotals.backScore : '-'}</td>
-                      <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.backDiff : undefined)}</td>
-                      <td>{myTeamTotals.totalNeeded}</td>
-                      <td>{myTeamTotals.hasAnyScore ? myTeamTotals.totalScore : '-'}</td>
-                      <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.totalDiff : undefined)}</td>
+            {roundComplete ? (
+              <LeagueDayResults teams={todayLeagueDay!.teams} players={players} date={todayLeagueDay!.date} />
+            ) : (
+              <div className="table-scroll">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Golfer</th>
+                      <th>Front Needed</th>
+                      <th>Front Score</th>
+                      <th>Front +/-</th>
+                      <th>Back Needed</th>
+                      <th>Back Score</th>
+                      <th>Back +/-</th>
+                      <th>Total Needed</th>
+                      <th>Total Score</th>
+                      <th>Total +/-</th>
                     </tr>
-                  </tfoot>
-                )}
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {myTeam.players.map((entry) => {
+                      const player = players.find((p) => p.id === entry.playerId);
+                      if (!player) return null;
+                      const frontDiff = entryDiff(entry, player, 'front');
+                      const backDiff = entryDiff(entry, player, 'back');
+                      const totalDiff = frontDiff !== undefined && backDiff !== undefined ? frontDiff + backDiff : undefined;
+                      const totalScore =
+                        entry.frontScore !== undefined && entry.backScore !== undefined
+                          ? entry.frontScore + entry.backScore
+                          : undefined;
+                      return (
+                        <tr key={entry.playerId}>
+                          <td>
+                            {playerLabel(player)}
+                            {player.id === currentPlayer.id ? ' (You)' : ''}
+                          </td>
+                          <td>{player.frontTarget}</td>
+                          <td>{entry.frontScore ?? '-'}</td>
+                          <td>{formatDiff(frontDiff)}</td>
+                          <td>{player.backTarget}</td>
+                          <td>{entry.backScore ?? '-'}</td>
+                          <td>{formatDiff(backDiff)}</td>
+                          <td>{playerTotal(player)}</td>
+                          <td>{totalScore ?? '-'}</td>
+                          <td>{formatDiff(totalDiff)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  {myTeamTotals && (
+                    <tfoot>
+                      <tr style={{ fontWeight: 700, background: '#f8fafc' }}>
+                        <td>Team Total</td>
+                        <td>{myTeamTotals.frontNeeded}</td>
+                        <td>{myTeamTotals.hasAnyScore ? myTeamTotals.frontScore : '-'}</td>
+                        <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.frontDiff : undefined)}</td>
+                        <td>{myTeamTotals.backNeeded}</td>
+                        <td>{myTeamTotals.hasAnyScore ? myTeamTotals.backScore : '-'}</td>
+                        <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.backDiff : undefined)}</td>
+                        <td>{myTeamTotals.totalNeeded}</td>
+                        <td>{myTeamTotals.hasAnyScore ? myTeamTotals.totalScore : '-'}</td>
+                        <td>{formatDiff(myTeamTotals.hasAnyScore ? myTeamTotals.totalDiff : undefined)}</td>
+                      </tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+            )}
           </div>
         )}
       </div>
