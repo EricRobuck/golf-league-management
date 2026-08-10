@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
-import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import HamburgerMenu from './components/HamburgerMenu';
 import PlayersPage from './pages/PlayersPage';
 import AddPlayerPage from './pages/AddPlayerPage';
 import EditPlayerPage from './pages/EditPlayerPage';
@@ -48,28 +49,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <h1>Golf League Management</h1>
-        <div className="current-player-badge">
-          <span className="current-player-name">
-            {currentPlayer.firstName} {currentPlayer.lastName}
-          </span>
-          <span className="current-player-points">
-            Front {currentPlayer.frontTarget} · Back {currentPlayer.backTarget} · Total{' '}
-            {currentPlayer.frontTarget + currentPlayer.backTarget}
-          </span>
-          <button className="switch-player-btn" title="Not you? Switch golfer" onClick={switchPlayer}>
-            Switch
-          </button>
-        </div>
-        <nav>
-          <Link to="/profile">Profile</Link>
-          <Link to="/players">Players</Link>
-          <Link to="/points">Today</Link>
-          <Link to="/past-rounds">Past Rounds</Link>
-          {isAdmin && <Link to="/enter-score">Admin</Link>}
-        </nav>
-      </header>
+      <HamburgerMenu currentPlayer={currentPlayer} isAdmin={isAdmin} switchPlayer={switchPlayer} />
       <main>
         <Routes>
           <Route path="/" element={<Navigate to="/profile" replace />} />
