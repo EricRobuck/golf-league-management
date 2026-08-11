@@ -10,6 +10,7 @@ import {
 } from '../api';
 import { LeagueDay, Player } from '../types';
 import { playerLabel } from '../utils/playerName';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const REFRESH_INTERVAL_MS = 12000;
 
@@ -20,6 +21,7 @@ export default function SelectPlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!id) return;
@@ -43,6 +45,9 @@ export default function SelectPlayersPage() {
       .filter((player) => !query || playerLabel(player).toLowerCase().includes(query))
       .sort((a, b) => playerLabel(a).localeCompare(playerLabel(b)));
   }, [players, leagueDay, search]);
+
+  const hasSearch = search.trim().length > 0;
+  const showAvailableList = !isMobile || hasSearch;
 
   const selectedPlayers = useMemo(() => leagueDay?.selectedPlayers ?? [], [leagueDay]);
   const canCreateRound = selectedPlayers.length >= 3;
@@ -143,7 +148,9 @@ export default function SelectPlayersPage() {
             />
           </div>
           <div className="panel-body">
-            {availablePlayers.length === 0 ? (
+            {!showAvailableList ? (
+              <p className="empty-state">Search for a golfer above to add them.</p>
+            ) : availablePlayers.length === 0 ? (
               <p className="empty-state">
                 {search ? 'No golfers match your search.' : 'All golfers have been added to the roster.'}
               </p>
@@ -151,12 +158,7 @@ export default function SelectPlayersPage() {
               <ul className="roster-list">
                 {availablePlayers.map((player) => (
                   <li key={player.id} className="roster-item">
-                    <div>
-                      <div className="player-name">{playerLabel(player)}</div>
-                      <div className="player-meta">
-                        Front {player.frontTarget} / Back {player.backTarget}
-                      </div>
-                    </div>
+                    <div className="player-name">{playerLabel(player)}</div>
                     <button className="button-icon" title="Add to roster" onClick={() => addPlayer(player.id)}>
                       +
                     </button>
