@@ -4,10 +4,7 @@ import { getLeagueDay, patchPlayer, updateLeagueDayTeams } from '../api';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
-
-function playerLabel(firstName: string, lastName: string) {
-  return `${firstName} ${lastName}`;
-}
+import { playerLabel } from '../utils/playerName';
 
 export default function EnterScoresPage() {
   const { id } = useParams();
@@ -136,7 +133,7 @@ export default function EnterScoresPage() {
       <div className="form-grid">
         {myTeam.players.map((entry) => {
           const player = players.find((p) => p.id === entry.playerId);
-          const label = player ? playerLabel(player.firstName, player.lastName) : entry.playerId;
+          const label = player ? playerLabel(player) : entry.playerId;
           const value = scores[entry.playerId] ?? { front: '', back: '' };
           return (
             <div key={entry.playerId} className="panel" style={{ padding: '1.1rem 1.25rem' }}>

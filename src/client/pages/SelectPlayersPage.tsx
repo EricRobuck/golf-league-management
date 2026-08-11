@@ -9,12 +9,9 @@ import {
   updateLeagueDayPlayerOrder,
 } from '../api';
 import { LeagueDay, Player } from '../types';
+import { playerLabel } from '../utils/playerName';
 
 const REFRESH_INTERVAL_MS = 12000;
-
-function playerLabel(player: Player) {
-  return `${player.firstName} ${player.lastName}`;
-}
 
 export default function SelectPlayersPage() {
   const { id } = useParams();

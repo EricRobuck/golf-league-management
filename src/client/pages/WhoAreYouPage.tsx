@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
-import { Player } from '../types';
-
-function playerLabel(player: Player) {
-  return `${player.firstName} ${player.lastName}`;
-}
+import { playerLabel } from '../utils/playerName';
 
 export default function WhoAreYouPage() {
   const { players, ranks, loading, error, selectPlayer } = useCurrentPlayer();

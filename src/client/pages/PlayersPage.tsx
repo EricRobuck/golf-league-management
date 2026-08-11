@@ -3,13 +3,13 @@ import { getPlayers, patchPlayer } from '../api';
 import { Player } from '../types';
 import { Link } from 'react-router-dom';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
+import { playerLabel } from '../utils/playerName';
 
-type SortKey = 'firstName' | 'lastName' | 'frontTarget' | 'backTarget' | 'total' | 'notes' | 'isAdmin';
+type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'notes' | 'isAdmin';
 type SortDirection = 'asc' | 'desc';
 
 const COLUMNS: { key: SortKey; label: string }[] = [
-  { key: 'firstName', label: 'First Name' },
-  { key: 'lastName', label: 'Last Name' },
+  { key: 'name', label: 'Name' },
   { key: 'frontTarget', label: 'Front Target' },
   { key: 'backTarget', label: 'Back Target' },
   { key: 'total', label: 'Total' },
@@ -25,9 +25,8 @@ function sortValue(player: Player, key: SortKey): string | number {
       return (player.notes ?? '').toLowerCase();
     case 'isAdmin':
       return player.isAdmin ? 1 : 0;
-    case 'firstName':
-    case 'lastName':
-      return player[key].toLowerCase();
+    case 'name':
+      return playerLabel(player).toLowerCase();
     default:
       return player[key];
   }
@@ -41,7 +40,7 @@ export default function PlayersPage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [sortKey, setSortKey] = useState<SortKey>('lastName');
+  const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   useEffect(() => {
@@ -52,7 +51,7 @@ export default function PlayersPage() {
 
   const handleToggleAdmin = async (player: Player) => {
     const makeAdmin = !player.isAdmin;
-    if (!window.confirm(`${makeAdmin ? 'Make' : 'Remove'} ${player.firstName} ${player.lastName} ${makeAdmin ? 'an admin' : 'as an admin'}?`)) {
+    if (!window.confirm(`${makeAdmin ? 'Make' : 'Remove'} ${playerLabel(player)} ${makeAdmin ? 'an admin' : 'as an admin'}?`)) {
       return;
     }
     try {
@@ -132,8 +131,7 @@ export default function PlayersPage() {
           <tbody>
             {sortedPlayers.map((player) => (
               <tr key={player.id}>
-                <td>{player.firstName}</td>
-                <td>{player.lastName}</td>
+                <td>{playerLabel(player)}</td>
                 <td>
                   {isAdmin ? (
                     <input

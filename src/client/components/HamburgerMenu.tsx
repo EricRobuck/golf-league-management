@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '../types';
+import { playerLabel } from '../utils/playerName';
 
 type HamburgerMenuProps = {
   currentPlayer: Player;
@@ -28,9 +29,7 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
       {open && <div className="hamburger-overlay" onClick={close} />}
       <nav className={open ? 'hamburger-panel hamburger-panel-open' : 'hamburger-panel'}>
         <div className="current-player-badge">
-          <span className="current-player-name">
-            {currentPlayer.firstName} {currentPlayer.lastName}
-          </span>
+          <span className="current-player-name">{playerLabel(currentPlayer)}</span>
           <span className="current-player-points">
             Front {currentPlayer.frontTarget} · Back {currentPlayer.backTarget} · Total{' '}
             {currentPlayer.frontTarget + currentPlayer.backTarget}

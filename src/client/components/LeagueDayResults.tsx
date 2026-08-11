@@ -11,10 +11,7 @@ import {
   teamFrontTotal,
   teamTotal,
 } from '../utils/money';
-
-function playerLabel(player: Player) {
-  return `${player.firstName} ${player.lastName}`;
-}
+import { playerLabel } from '../utils/playerName';
 
 function formatDiff(value: number | undefined) {
   if (value === undefined) return '-';

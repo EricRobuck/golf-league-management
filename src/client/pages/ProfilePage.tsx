@@ -5,13 +5,10 @@ import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
 import { isRoundComplete } from '../utils/money';
+import { playerLabel } from '../utils/playerName';
 import LeagueDayResults from '../components/LeagueDayResults';
 
 const REFRESH_INTERVAL_MS = 12000;
-
-function playerLabel(player: Player) {
-  return `${player.firstName} ${player.lastName}`;
-}
 
 function playerTotal(player: Player) {
   return player.frontTarget + player.backTarget;

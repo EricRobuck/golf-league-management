@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
 import { LeagueDay, Player, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
+import { playerLabel } from '../utils/playerName';
 
 function findPlayer(players: Player[], playerId: string) {
   return players.find((player) => player.id === playerId);
@@ -174,7 +175,7 @@ export default function GeneratedTeamsPage() {
                         return (
                           <tr key={entry.playerId}>
                             <td>
-                              {player ? `${player.firstName} ${player.lastName}` : entry.playerId}
+                              {player ? playerLabel(player) : entry.playerId}
                               <div className="player-meta">
                                 Target: Front {player?.frontTarget ?? '-'} / Back {player?.backTarget ?? '-'}
                               </div>
@@ -202,7 +203,7 @@ export default function GeneratedTeamsPage() {
                                 className="button secondary"
                                 style={{ background: '#dc2626' }}
                                 onClick={() => {
-                                  const name = player ? `${player.firstName} ${player.lastName}` : 'this golfer';
+                                  const name = player ? playerLabel(player) : 'this golfer';
                                   if (window.confirm(`Remove ${name} from Team ${team.teamNumber}?`)) {
                                     removePlayerFromTeam(teamIndex, playerIndex);
                                   }

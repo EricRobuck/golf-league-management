@@ -3,13 +3,10 @@ import { getLeagueDays, getPlayers } from '../api';
 import { todayDateString } from '../constants';
 import { LeagueDay, Player, Team } from '../types';
 import { isRoundComplete } from '../utils/money';
+import { compareByLastName, playerLabel } from '../utils/playerName';
 import LeagueDayResults from '../components/LeagueDayResults';
 
 const REFRESH_INTERVAL_MS = 10000;
-
-function playerLabel(player: Player) {
-  return `${player.firstName} ${player.lastName}`;
-}
 
 function totalPoints(player: Player) {
   return player.frontTarget + player.backTarget;
@@ -52,7 +49,7 @@ export default function ViewPointsPage() {
   const selectedPlayerIds = new Set(todayLeagueDay?.selectedPlayers.map((entry) => entry.playerId) ?? []);
   const sortedPlayers = players
     .filter((player) => selectedPlayerIds.has(player.id))
-    .sort((a, b) => (a.lastName === b.lastName ? a.firstName.localeCompare(b.firstName) : a.lastName.localeCompare(b.lastName)));
+    .sort(compareByLastName);
 
   const teams = todayLeagueDay?.teams ?? [];
   const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
