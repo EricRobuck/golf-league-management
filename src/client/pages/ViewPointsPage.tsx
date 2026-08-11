@@ -12,13 +12,17 @@ function totalPoints(player: Player) {
   return player.frontTarget + player.backTarget;
 }
 
-function teamPointsTotal(team: Team, players: Player[]) {
-  let total = 0;
+function teamPointTotals(team: Team, players: Player[]) {
+  let front = 0;
+  let back = 0;
   for (const entry of team.players) {
     const player = players.find((p) => p.id === entry.playerId);
-    if (player) total += totalPoints(player);
+    if (player) {
+      front += player.frontTarget;
+      back += player.backTarget;
+    }
   }
-  return total;
+  return { front, back, total: front + back };
 }
 
 export default function ViewPointsPage() {
@@ -73,38 +77,45 @@ export default function ViewPointsPage() {
         <LeagueDayResults teams={teams} players={players} date={todayLeagueDay!.date} />
       ) : showTeams ? (
         <div className="points-board-teams">
-          {sortedTeams.map((team) => (
-            <div key={team.teamNumber} className="team-card">
-              <h3>Team {team.teamNumber}</h3>
-              {team.players.map((entry) => {
-                const player = players.find((p) => p.id === entry.playerId);
-                if (!player) return null;
-                return (
-                  <div key={entry.playerId} className="points-board-item">
-                    <span className="points-board-name">{playerLabel(player)}</span>
-                    <span className="points-board-stats">
-                      <span className="points-board-stat">
-                        <b>F</b>
-                        {player.frontTarget}
+          {sortedTeams.map((team) => {
+            const totals = teamPointTotals(team, players);
+            return (
+              <div key={team.teamNumber} className="team-card">
+                <h3>Team {team.teamNumber}</h3>
+                <div className="league-day-meta" style={{ marginBottom: '0.75rem' }}>
+                  <span className="meta-chip meta-chip-accent">Front Total {totals.front}</span>
+                  <span className="meta-chip meta-chip-accent">Back Total {totals.back}</span>
+                </div>
+                {team.players.map((entry) => {
+                  const player = players.find((p) => p.id === entry.playerId);
+                  if (!player) return null;
+                  return (
+                    <div key={entry.playerId} className="points-board-item">
+                      <span className="points-board-name">{playerLabel(player)}</span>
+                      <span className="points-board-stats">
+                        <span className="points-board-stat">
+                          <b>F</b>
+                          {player.frontTarget}
+                        </span>
+                        <span className="points-board-stat">
+                          <b>B</b>
+                          {player.backTarget}
+                        </span>
+                        <span className="points-board-stat points-value">
+                          <b>T</b>
+                          {totalPoints(player)}
+                        </span>
                       </span>
-                      <span className="points-board-stat">
-                        <b>B</b>
-                        {player.backTarget}
-                      </span>
-                      <span className="points-board-stat points-value">
-                        <b>T</b>
-                        {totalPoints(player)}
-                      </span>
-                    </span>
-                  </div>
-                );
-              })}
-              <div className="points-board-team-total">
-                <span>Team Total</span>
-                <span>{teamPointsTotal(team, players)}</span>
+                    </div>
+                  );
+                })}
+                <div className="points-board-team-total">
+                  <span>Team Total</span>
+                  <span>{totals.total}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : sortedPlayers.length === 0 ? (
         <p className="empty-state">No golfers signed up for today yet.</p>

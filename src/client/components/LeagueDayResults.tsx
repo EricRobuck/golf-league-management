@@ -128,6 +128,8 @@ export default function LeagueDayResults({ teams, players, date }: { teams: Team
             <div key={team.teamNumber} className="team-card">
               <h3>Team {team.teamNumber}</h3>
               <div className="league-day-meta" style={{ marginBottom: '0.75rem' }}>
+                <span className="meta-chip meta-chip-accent">Front Total {front}</span>
+                <span className="meta-chip meta-chip-accent">Back Total {back}</span>
                 <span className="meta-chip meta-chip-accent">Total Points {total}</span>
               </div>
               <div className="table-scroll">
