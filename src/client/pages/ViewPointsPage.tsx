@@ -58,10 +58,18 @@ export default function ViewPointsPage() {
   const sortedTeams = [...teams].sort((a, b) => a.teamNumber - b.teamNumber);
   const showTeams = sortedTeams.length > 0;
   const roundComplete = isRoundComplete(teams);
+  const signedUpCount = todayLeagueDay?.selectedPlayers.length ?? 0;
 
   return (
     <div className="page-card">
-      <h2 className="section-title">Points</h2>
+      <div className="select-players-header">
+        <h2 className="section-title" style={{ marginBottom: 0 }}>
+          Points
+        </h2>
+        <span className="meta-chip meta-chip-accent">
+          {signedUpCount} golfer{signedUpCount === 1 ? '' : 's'} signed up
+        </span>
+      </div>
       {error && <div className="alert">{error}</div>}
 
       {roundComplete ? (
