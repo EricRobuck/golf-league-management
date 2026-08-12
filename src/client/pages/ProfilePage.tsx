@@ -182,15 +182,9 @@ export default function ProfilePage() {
           <div className="team-card">
             <h3>Team {myTeam.teamNumber}</h3>
             <div style={{ marginBottom: '1rem' }}>
-              {myScoresEntered ? (
-                <button className="button" disabled>
-                  Enter Scores
-                </button>
-              ) : (
-                <Link className="button" to={`/league-days/${todayLeagueDay!.id}/enter-scores`}>
-                  Enter Scores
-                </Link>
-              )}
+              <Link className="button" to={`/league-days/${todayLeagueDay!.id}/enter-scores`}>
+                {myScoresEntered ? 'Edit Scores' : 'Enter Scores'}
+              </Link>
             </div>
             {roundComplete ? (
               <LeagueDayResults teams={todayLeagueDay!.teams} players={players} />
