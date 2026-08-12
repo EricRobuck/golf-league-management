@@ -77,8 +77,8 @@ export default function ViewPointsPage() {
         <h2 className="section-title" style={{ marginBottom: 0 }}>
           Points
         </h2>
-        <span className="meta-chip meta-chip-accent">
-          {signedUpCount} golfer{signedUpCount === 1 ? '' : 's'} signed up
+        <span className="signed-up-count" title={`${signedUpCount} golfer${signedUpCount === 1 ? '' : 's'} signed up`}>
+          {signedUpCount}
         </span>
       </div>
       {error && <div className="alert">{error}</div>}
