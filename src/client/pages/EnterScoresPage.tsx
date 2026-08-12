@@ -92,6 +92,8 @@ export default function EnterScoresPage() {
               targetPatches.push(patchPlayer(entry.playerId, patch));
             }
             nextEntry.targetAdjusted = true;
+            nextEntry.frontTargetAtSave = player.frontTarget;
+            nextEntry.backTargetAtSave = player.backTarget;
             return nextEntry;
           }),
         };

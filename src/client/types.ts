@@ -17,6 +17,8 @@ export type SelectedPlayer = {
   frontScore?: number;
   backScore?: number;
   targetAdjusted?: boolean;
+  frontTargetAtSave?: number;
+  backTargetAtSave?: number;
 };
 
 export type Team = {

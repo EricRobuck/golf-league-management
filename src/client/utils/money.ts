@@ -12,14 +12,28 @@ export function teamTotal(team: Team) {
   return teamFrontTotal(team) + teamBackTotal(team);
 }
 
+// A player's target keeps drifting after every round, so diffing against the
+// live Player record would compare this round's score to a target it never
+// actually played against (worst case: the target this very round just moved
+// toward, via the post-save adjustment). Entries saved since the fix carry a
+// frozen frontTargetAtSave/backTargetAtSave; older entries fall back to the
+// live target since no snapshot exists for them.
+function targetAtSave(entry: SelectedPlayer, player: Player) {
+  return {
+    front: entry.frontTargetAtSave ?? player.frontTarget,
+    back: entry.backTargetAtSave ?? player.backTarget,
+  };
+}
+
 export function teamDiffTotals(team: Team, players: Player[]) {
   let frontDiff = 0;
   let backDiff = 0;
   for (const entry of team.players) {
     const player = players.find((p) => p.id === entry.playerId);
     if (!player) continue;
-    if (entry.frontScore !== undefined) frontDiff += entry.frontScore - player.frontTarget;
-    if (entry.backScore !== undefined) backDiff += entry.backScore - player.backTarget;
+    const target = targetAtSave(entry, player);
+    if (entry.frontScore !== undefined) frontDiff += entry.frontScore - target.front;
+    if (entry.backScore !== undefined) backDiff += entry.backScore - target.back;
   }
   return { frontDiff, backDiff, totalDiff: frontDiff + backDiff };
 }
@@ -69,10 +83,11 @@ export function splitPotAmongTeams(pot: number, winningTeamNumbers: number[]): R
 
 export function individualDiff(entry: SelectedPlayer, player: Player | undefined, category: 'front' | 'back' | 'total') {
   if (!player) return undefined;
-  if (category === 'front') return entry.frontScore !== undefined ? entry.frontScore - player.frontTarget : undefined;
-  if (category === 'back') return entry.backScore !== undefined ? entry.backScore - player.backTarget : undefined;
-  const front = entry.frontScore !== undefined ? entry.frontScore - player.frontTarget : undefined;
-  const back = entry.backScore !== undefined ? entry.backScore - player.backTarget : undefined;
+  const target = targetAtSave(entry, player);
+  if (category === 'front') return entry.frontScore !== undefined ? entry.frontScore - target.front : undefined;
+  if (category === 'back') return entry.backScore !== undefined ? entry.backScore - target.back : undefined;
+  const front = entry.frontScore !== undefined ? entry.frontScore - target.front : undefined;
+  const back = entry.backScore !== undefined ? entry.backScore - target.back : undefined;
   return front !== undefined && back !== undefined ? front + back : undefined;
 }
 

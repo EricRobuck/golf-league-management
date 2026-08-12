@@ -20,10 +20,22 @@ function formatDiff(value: number | undefined) {
   return String(value);
 }
 
+// A player's target keeps moving after every round, so a round already saved
+// for some teammates but not others needs to compare each entry's score to
+// the target that was frozen when THAT entry was saved, not whatever the
+// live target has since become.
+function targetAtSave(entry: SelectedPlayer, player: Player) {
+  return {
+    front: entry.frontTargetAtSave ?? player.frontTarget,
+    back: entry.backTargetAtSave ?? player.backTarget,
+  };
+}
+
 function entryDiff(entry: SelectedPlayer, player: Player | undefined, field: 'front' | 'back') {
   if (!player) return undefined;
-  if (field === 'front') return entry.frontScore !== undefined ? entry.frontScore - player.frontTarget : undefined;
-  return entry.backScore !== undefined ? entry.backScore - player.backTarget : undefined;
+  const target = targetAtSave(entry, player);
+  if (field === 'front') return entry.frontScore !== undefined ? entry.frontScore - target.front : undefined;
+  return entry.backScore !== undefined ? entry.backScore - target.back : undefined;
 }
 
 export default function ProfilePage() {
@@ -70,8 +82,9 @@ export default function ProfilePage() {
     for (const entry of myTeam.players) {
       const player = players.find((p) => p.id === entry.playerId);
       if (!player) continue;
-      frontNeeded += player.frontTarget;
-      backNeeded += player.backTarget;
+      const target = targetAtSave(entry, player);
+      frontNeeded += target.front;
+      backNeeded += target.back;
       if (entry.frontScore !== undefined) {
         frontScore += entry.frontScore;
         hasAnyScore = true;
@@ -202,6 +215,7 @@ export default function ProfilePage() {
                     {myTeam.players.map((entry) => {
                       const player = players.find((p) => p.id === entry.playerId);
                       if (!player) return null;
+                      const target = targetAtSave(entry, player);
                       const frontDiff = entryDiff(entry, player, 'front');
                       const backDiff = entryDiff(entry, player, 'back');
                       const totalDiff = frontDiff !== undefined && backDiff !== undefined ? frontDiff + backDiff : undefined;
@@ -215,13 +229,13 @@ export default function ProfilePage() {
                             {playerLabel(player)}
                             {player.id === currentPlayer.id ? ' (You)' : ''}
                           </td>
-                          <td>{player.frontTarget}</td>
+                          <td>{target.front}</td>
                           <td>{entry.frontScore ?? '-'}</td>
                           <td>{formatDiff(frontDiff)}</td>
-                          <td>{player.backTarget}</td>
+                          <td>{target.back}</td>
                           <td>{entry.backScore ?? '-'}</td>
                           <td>{formatDiff(backDiff)}</td>
-                          <td>{playerTotal(player)}</td>
+                          <td>{target.front + target.back}</td>
                           <td>{totalScore ?? '-'}</td>
                           <td>{formatDiff(totalDiff)}</td>
                         </tr>

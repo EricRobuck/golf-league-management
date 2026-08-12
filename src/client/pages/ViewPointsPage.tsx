@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getLeagueDays, getPlayers } from '../api';
 import { todayDateString } from '../constants';
-import { LeagueDay, Player, Team } from '../types';
+import { LeagueDay, Player, SelectedPlayer, Team } from '../types';
 import { isRoundComplete } from '../utils/money';
 import { compareByLastName, playerLabel } from '../utils/playerName';
 import LeagueDayResults from '../components/LeagueDayResults';
@@ -12,14 +12,24 @@ function totalPoints(player: Player) {
   return player.frontTarget + player.backTarget;
 }
 
+// Once an entry's round is saved its target may have already moved on, so
+// prefer the target frozen at save time over the player's live target.
+function entryTarget(entry: SelectedPlayer, player: Player) {
+  return {
+    front: entry.frontTargetAtSave ?? player.frontTarget,
+    back: entry.backTargetAtSave ?? player.backTarget,
+  };
+}
+
 function teamPointTotals(team: Team, players: Player[]) {
   let front = 0;
   let back = 0;
   for (const entry of team.players) {
     const player = players.find((p) => p.id === entry.playerId);
     if (player) {
-      front += player.frontTarget;
-      back += player.backTarget;
+      const target = entryTarget(entry, player);
+      front += target.front;
+      back += target.back;
     }
   }
   return { front, back, total: front + back };
@@ -89,21 +99,22 @@ export default function ViewPointsPage() {
                 {team.players.map((entry) => {
                   const player = players.find((p) => p.id === entry.playerId);
                   if (!player) return null;
+                  const target = entryTarget(entry, player);
                   return (
                     <div key={entry.playerId} className="points-board-item">
                       <span className="points-board-name">{playerLabel(player)}</span>
                       <span className="points-board-stats">
                         <span className="points-board-stat">
                           <b>F</b>
-                          {player.frontTarget}
+                          {target.front}
                         </span>
                         <span className="points-board-stat">
                           <b>B</b>
-                          {player.backTarget}
+                          {target.back}
                         </span>
                         <span className="points-board-stat points-value">
                           <b>T</b>
-                          {totalPoints(player)}
+                          {target.front + target.back}
                         </span>
                       </span>
                     </div>

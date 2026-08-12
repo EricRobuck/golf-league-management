@@ -102,7 +102,12 @@ export default function GeneratedTeamsPage() {
           if (Object.keys(patch).length > 0) {
             targetPatches.push(patchPlayer(entry.playerId, patch));
           }
-          return { ...entry, targetAdjusted: true };
+          return {
+            ...entry,
+            targetAdjusted: true,
+            frontTargetAtSave: player.frontTarget,
+            backTargetAtSave: player.backTarget,
+          };
         }),
       }));
 

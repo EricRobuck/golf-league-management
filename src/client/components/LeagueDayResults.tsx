@@ -5,6 +5,7 @@ import {
   findWinners,
   formatMoney,
   hasAnyScore,
+  individualDiff,
   teamBackTotal,
   teamDiffTotals,
   teamFrontTotal,
@@ -142,9 +143,9 @@ export default function LeagueDayResults({ teams, players }: { teams: Team[]; pl
                   <tbody>
                     {team.players.map((entry) => {
                       const player = players.find((p) => p.id === entry.playerId);
-                      const frontDiff = player && entry.frontScore !== undefined ? entry.frontScore - player.frontTarget : undefined;
-                      const backDiff = player && entry.backScore !== undefined ? entry.backScore - player.backTarget : undefined;
-                      const totalDiff = frontDiff !== undefined && backDiff !== undefined ? frontDiff + backDiff : undefined;
+                      const frontDiff = individualDiff(entry, player, 'front');
+                      const backDiff = individualDiff(entry, player, 'back');
+                      const totalDiff = individualDiff(entry, player, 'total');
                       return (
                         <tr key={entry.playerId}>
                           <td>{player ? playerLabel(player) : entry.playerId}</td>
