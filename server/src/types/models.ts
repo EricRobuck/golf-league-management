@@ -16,6 +16,7 @@ export type SelectedPlayer = {
   goesFirst?: boolean;
   frontScore?: number;
   backScore?: number;
+  targetAdjusted?: boolean;
 };
 
 export type LeagueDay = {

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getLeagueDay, patchPlayer, updateLeagueDayTeams } from '../api';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
-import { LeagueDay, Player, Team } from '../types';
+import { LeagueDay, Player, SelectedPlayer, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
 
@@ -71,33 +71,32 @@ export default function EnterScoresPage() {
     setSaving(true);
     setError(null);
     try {
+      const targetPatches: Promise<Player>[] = [];
       const updatedTeams: Team[] = leagueDay.teams.map((team) => {
         if (team.teamNumber !== myTeam.teamNumber) return team;
         return {
           ...team,
-          players: team.players.map((entry) => ({
-            ...entry,
-            frontScore: parsed[entry.playerId]?.front,
-            backScore: parsed[entry.playerId]?.back,
-          })),
+          players: team.players.map((entry) => {
+            const front = parsed[entry.playerId]?.front;
+            const back = parsed[entry.playerId]?.back;
+            const nextEntry: SelectedPlayer = { ...entry, frontScore: front, backScore: back };
+            const player = players.find((p) => p.id === entry.playerId);
+            if (!player || front === undefined || back === undefined || entry.targetAdjusted) {
+              return nextEntry;
+            }
+            const { frontTarget, backTarget } = adjustTargets(player, front, back);
+            const patch: Partial<Player> = {};
+            if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
+            if (backTarget !== player.backTarget) patch.backTarget = backTarget;
+            if (Object.keys(patch).length > 0) {
+              targetPatches.push(patchPlayer(entry.playerId, patch));
+            }
+            nextEntry.targetAdjusted = true;
+            return nextEntry;
+          }),
         };
       });
       await updateLeagueDayTeams(id, updatedTeams);
-
-      const targetPatches: Promise<Player>[] = [];
-      for (const entry of myTeam.players) {
-        const player = players.find((p) => p.id === entry.playerId);
-        const front = parsed[entry.playerId]?.front;
-        const back = parsed[entry.playerId]?.back;
-        if (!player || front === undefined || back === undefined) continue;
-        const { frontTarget, backTarget } = adjustTargets(player, front, back);
-        const patch: Partial<Player> = {};
-        if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
-        if (backTarget !== player.backTarget) patch.backTarget = backTarget;
-        if (Object.keys(patch).length > 0) {
-          targetPatches.push(patchPlayer(entry.playerId, patch));
-        }
-      }
       await Promise.all(targetPatches);
 
       navigate('/profile');

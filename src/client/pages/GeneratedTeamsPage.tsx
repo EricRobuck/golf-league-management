@@ -87,15 +87,14 @@ export default function GeneratedTeamsPage() {
     }
 
     try {
-      const normalized = normalizeTeams(teams);
-      await updateLeagueDayTeams(id, normalized);
-
       const targetPatches: Promise<Player>[] = [];
-      for (const team of normalized) {
-        for (const entry of team.players) {
+      const normalized = normalizeTeams(teams).map((team) => ({
+        ...team,
+        players: team.players.map((entry) => {
           const player = findPlayer(players, entry.playerId);
-          if (!player) continue;
-          if (entry.frontScore === undefined || entry.backScore === undefined) continue;
+          if (!player || entry.frontScore === undefined || entry.backScore === undefined || entry.targetAdjusted) {
+            return entry;
+          }
           const { frontTarget, backTarget } = adjustTargets(player, entry.frontScore, entry.backScore);
           const patch: Partial<Player> = {};
           if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
@@ -103,8 +102,11 @@ export default function GeneratedTeamsPage() {
           if (Object.keys(patch).length > 0) {
             targetPatches.push(patchPlayer(entry.playerId, patch));
           }
-        }
-      }
+          return { ...entry, targetAdjusted: true };
+        }),
+      }));
+
+      await updateLeagueDayTeams(id, normalized);
       await Promise.all(targetPatches);
 
       setLeagueDay((current) => (current ? { ...current, teams: normalized } : current));
