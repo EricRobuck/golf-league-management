@@ -100,23 +100,47 @@ export default function ViewPointsPage() {
                   const player = players.find((p) => p.id === entry.playerId);
                   if (!player) return null;
                   const target = entryTarget(entry, player);
+                  const totalScore =
+                    entry.frontScore !== undefined && entry.backScore !== undefined
+                      ? entry.frontScore + entry.backScore
+                      : undefined;
                   return (
                     <div key={entry.playerId} className="points-board-item">
                       <span className="points-board-name">{playerLabel(player)}</span>
-                      <span className="points-board-stats">
-                        <span className="points-board-stat">
-                          <b>F</b>
-                          {target.front}
+                      <div className="points-board-row">
+                        <span className="points-board-row-label">Needed</span>
+                        <span className="points-board-stats">
+                          <span className="points-board-stat">
+                            <b>F</b>
+                            {target.front}
+                          </span>
+                          <span className="points-board-stat">
+                            <b>B</b>
+                            {target.back}
+                          </span>
+                          <span className="points-board-stat points-value">
+                            <b>T</b>
+                            {target.front + target.back}
+                          </span>
                         </span>
-                        <span className="points-board-stat">
-                          <b>B</b>
-                          {target.back}
+                      </div>
+                      <div className="points-board-row">
+                        <span className="points-board-row-label">Score</span>
+                        <span className="points-board-stats points-board-scores">
+                          <span className="points-board-stat">
+                            <b>F</b>
+                            {entry.frontScore ?? '–'}
+                          </span>
+                          <span className="points-board-stat">
+                            <b>B</b>
+                            {entry.backScore ?? '–'}
+                          </span>
+                          <span className="points-board-stat points-value">
+                            <b>T</b>
+                            {totalScore ?? '–'}
+                          </span>
                         </span>
-                        <span className="points-board-stat points-value">
-                          <b>T</b>
-                          {target.front + target.back}
-                        </span>
-                      </span>
+                      </div>
                     </div>
                   );
                 })}

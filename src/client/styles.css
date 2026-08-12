@@ -814,6 +814,31 @@ main {
   font-size: 1.08rem;
 }
 
+.points-board-teams .points-board-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
+}
+
+.points-board-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.points-board-row-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+  flex-shrink: 0;
+}
+
+.points-board-scores .points-value {
+  color: var(--color-accent);
+}
+
 .points-board-name {
   overflow: hidden;
   text-overflow: ellipsis;
