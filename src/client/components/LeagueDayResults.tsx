@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { todayDateString } from '../constants';
 import { Player, Team } from '../types';
 import {
   computeMoneyList,
@@ -19,7 +18,7 @@ function formatDiff(value: number | undefined) {
   return String(value);
 }
 
-export default function LeagueDayResults({ teams, players, date }: { teams: Team[]; players: Player[]; date: string }) {
+export default function LeagueDayResults({ teams, players }: { teams: Team[]; players: Player[] }) {
   const sortedTeams = useMemo(
     () => [...teams].sort((a, b) => teamDiffTotals(b, players).totalDiff - teamDiffTotals(a, players).totalDiff),
     [teams, players]
@@ -43,10 +42,6 @@ export default function LeagueDayResults({ teams, players, date }: { teams: Team
 
   if (sortedTeams.length === 0) {
     return <p className="empty-state">No teams yet — create the round first.</p>;
-  }
-
-  if (date !== todayDateString()) {
-    return <p className="empty-state">Results are only available on the day the round was played.</p>;
   }
 
   return (

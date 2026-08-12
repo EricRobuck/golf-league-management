@@ -180,7 +180,7 @@ export default function ProfilePage() {
               )}
             </div>
             {roundComplete ? (
-              <LeagueDayResults teams={todayLeagueDay!.teams} players={players} date={todayLeagueDay!.date} />
+              <LeagueDayResults teams={todayLeagueDay!.teams} players={players} />
             ) : (
               <div className="table-scroll">
                 <table className="table">

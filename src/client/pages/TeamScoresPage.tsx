@@ -42,7 +42,7 @@ export default function TeamScoresPage() {
         </button>
       </div>
 
-      <LeagueDayResults teams={leagueDay.teams} players={players} date={leagueDay.date} />
+      <LeagueDayResults teams={leagueDay.teams} players={players} />
 
       <div style={{ marginTop: '1rem' }}>
         <Link className="button secondary" to="/league-days">

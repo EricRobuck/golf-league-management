@@ -74,7 +74,7 @@ export default function ViewPointsPage() {
       {error && <div className="alert">{error}</div>}
 
       {roundComplete ? (
-        <LeagueDayResults teams={teams} players={players} date={todayLeagueDay!.date} />
+        <LeagueDayResults teams={teams} players={players} />
       ) : showTeams ? (
         <div className="points-board-teams">
           {sortedTeams.map((team) => {
