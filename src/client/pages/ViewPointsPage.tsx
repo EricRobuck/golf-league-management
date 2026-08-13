@@ -32,7 +32,7 @@ function teamPointTotals(team: Team, players: Player[]) {
       back += target.back;
     }
   }
-  return { front, back, total: front + back };
+  return { front, back };
 }
 
 export default function ViewPointsPage() {
@@ -144,10 +144,6 @@ export default function ViewPointsPage() {
                     </div>
                   );
                 })}
-                <div className="points-board-team-total">
-                  <span>Team Total</span>
-                  <span>{totals.total}</span>
-                </div>
               </div>
             );
           })}
