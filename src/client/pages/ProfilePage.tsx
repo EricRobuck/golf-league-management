@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { addLeagueDayPlayer, ensureTodayLeagueDay, getLeagueDays, removeLeagueDayPlayer } from '../api';
+import { getLeagueDays } from '../api';
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
@@ -42,8 +42,6 @@ export default function ProfilePage() {
   const { currentPlayer, players } = useCurrentPlayer();
   const [todayLeagueDay, setTodayLeagueDay] = useState<LeagueDay | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
-  const [joining, setJoining] = useState(false);
-  const [leaving, setLeaving] = useState(false);
   const today = todayDateString();
 
   const loadTodayLeagueDay = () => {
@@ -118,36 +116,6 @@ export default function ProfilePage() {
     [myTeam]
   );
 
-  const handleJoinToday = async () => {
-    if (!currentPlayer) return;
-    setJoining(true);
-    setError(null);
-    try {
-      const day = await ensureTodayLeagueDay();
-      await addLeagueDayPlayer(day.id, currentPlayer.id);
-      loadTodayLeagueDay();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Unable to join today's round.");
-    } finally {
-      setJoining(false);
-    }
-  };
-
-  const handleLeaveToday = async () => {
-    if (!currentPlayer || !todayLeagueDay) return;
-    if (!window.confirm('Are you sure you are not playing today?')) return;
-    setLeaving(true);
-    setError(null);
-    try {
-      await removeLeagueDayPlayer(todayLeagueDay.id, currentPlayer.id);
-      loadTodayLeagueDay();
-    } catch (_err) {
-      setError("Unable to check out of today's round.");
-    } finally {
-      setLeaving(false);
-    }
-  };
-
   if (!currentPlayer) return null;
 
   return (
@@ -168,16 +136,9 @@ export default function ProfilePage() {
         ) : !isInToday && teamsPicked ? (
           <p className="empty-state">Teams have already been picked for today — check-in is closed.</p>
         ) : !isInToday ? (
-          <button className="button" onClick={handleJoinToday} disabled={joining}>
-            {joining ? 'Checking in...' : 'Check In'}
-          </button>
+          <p className="empty-state">You're not signed up for today's round.</p>
         ) : !myTeam ? (
-          <>
-            <p className="hint-note">You're in for today — waiting for teams to be created.</p>
-            <button className="button secondary" style={{ marginTop: '0.75rem' }} onClick={handleLeaveToday} disabled={leaving}>
-              {leaving ? 'Checking out...' : 'Check Out'}
-            </button>
-          </>
+          <p className="hint-note">You're in for today — waiting for teams to be created.</p>
         ) : (
           <div className="team-card">
             <h3>Team {myTeam.teamNumber}</h3>
