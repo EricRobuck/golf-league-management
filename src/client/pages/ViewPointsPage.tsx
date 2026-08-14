@@ -151,26 +151,27 @@ export default function ViewPointsPage() {
       ) : sortedPlayers.length === 0 ? (
         <p className="empty-state">No golfers signed up for today yet.</p>
       ) : (
-        <div className="points-board-grid">
-          {sortedPlayers.map((player) => (
-            <div key={player.id} className="points-board-item">
-              <span className="points-board-name">{playerLabel(player)}</span>
-              <span className="points-board-stats">
-                <span className="points-board-stat">
-                  <b>F</b>
-                  {player.frontTarget}
-                </span>
-                <span className="points-board-stat">
-                  <b>B</b>
-                  {player.backTarget}
-                </span>
-                <span className="points-board-stat points-value">
-                  <b>T</b>
-                  {totalPoints(player)}
-                </span>
-              </span>
-            </div>
-          ))}
+        <div className="table-scroll">
+          <table className="table signed-up-table">
+            <thead>
+              <tr>
+                <th>Golfer</th>
+                <th>Front</th>
+                <th>Back</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedPlayers.map((player) => (
+                <tr key={player.id}>
+                  <td>{playerLabel(player)}</td>
+                  <td>{player.frontTarget}</td>
+                  <td>{player.backTarget}</td>
+                  <td>{totalPoints(player)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

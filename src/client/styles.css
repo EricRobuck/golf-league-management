@@ -460,6 +460,14 @@ main {
   border-bottom: none;
 }
 
+.signed-up-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.signed-up-table tbody tr:nth-child(even):hover {
+  background: #f1f5f9;
+}
+
 /* ============================================================
    Winners / money
    ============================================================ */
@@ -777,24 +785,6 @@ main {
 /* ============================================================
    Points board
    ============================================================ */
-.points-board-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.25rem 1.5rem;
-  margin-top: 1rem;
-}
-
-.points-board-grid .points-board-item {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
-}
-
-.points-board-grid .points-board-name {
-  white-space: normal;
-  font-weight: 600;
-}
-
 .signed-up-count {
   font-size: 3.25rem;
   font-weight: 800;
@@ -888,10 +878,6 @@ main {
   .split-columns {
     grid-template-columns: 1fr;
   }
-
-  .points-board-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 480px) {
@@ -928,10 +914,6 @@ main {
     border-radius: var(--radius-md);
     width: 100%;
     box-sizing: border-box;
-  }
-
-  .points-board-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .signed-up-count {
