@@ -54,6 +54,9 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
         <Link to="/players" onClick={close}>
           Players
         </Link>
+        <Link to="/leaderboard" onClick={close}>
+          Leaderboard
+        </Link>
         <Link to="/points" onClick={close}>
           Today
         </Link>

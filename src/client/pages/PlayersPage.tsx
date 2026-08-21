@@ -42,6 +42,7 @@ export default function PlayersPage() {
   const [saved, setSaved] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getPlayers()
@@ -101,20 +102,30 @@ export default function PlayersPage() {
   };
 
   const sortedPlayers = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    const filtered = query ? players.filter((player) => playerLabel(player).toLowerCase().includes(query)) : players;
     const factor = sortDirection === 'asc' ? 1 : -1;
-    return [...players].sort((a, b) => {
+    return [...filtered].sort((a, b) => {
       const valueA = sortValue(a, sortKey);
       const valueB = sortValue(b, sortKey);
       if (valueA < valueB) return -1 * factor;
       if (valueA > valueB) return 1 * factor;
       return 0;
     });
-  }, [players, sortKey, sortDirection]);
+  }, [players, search, sortKey, sortDirection]);
 
   return (
     <div className="page-card">
       <h2 className="section-title">Players</h2>
       {error && <div className="alert">{error}</div>}
+      <div className="panel-search" style={{ marginBottom: '1rem' }}>
+        <input
+          type="search"
+          placeholder="Search golfers..."
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+      </div>
       <div className="table-scroll">
         <table className="table" style={{ fontSize: '1.15rem' }}>
           <thead>

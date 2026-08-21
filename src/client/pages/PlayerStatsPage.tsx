@@ -5,6 +5,7 @@ import { LeagueDay, Player } from '../types';
 import { compareByLastName, playerLabel } from '../utils/playerName';
 
 type PairingRow = { player: Player; count: number };
+type RoundRow = { date: string; front: number; back: number; total: number };
 
 export default function PlayerStatsPage() {
   const { id } = useParams();
@@ -32,6 +33,7 @@ export default function PlayerStatsPage() {
     let roundsPlayed = 0;
     const totalScores: number[] = [];
     const nineScores: number[] = [];
+    const recentRounds: RoundRow[] = [];
 
     for (const day of leagueDays) {
       if (day.teams.length === 0) continue;
@@ -52,8 +54,11 @@ export default function PlayerStatsPage() {
       if (myEntry && myEntry.frontScore !== undefined && myEntry.backScore !== undefined) {
         totalScores.push(myEntry.frontScore + myEntry.backScore);
         nineScores.push(myEntry.frontScore, myEntry.backScore);
+        recentRounds.push({ date: day.date, front: myEntry.frontScore, back: myEntry.backScore, total: myEntry.frontScore + myEntry.backScore });
       }
     }
+
+    recentRounds.sort((a, b) => b.date.localeCompare(a.date));
 
     const pairings: PairingRow[] = [...pairingCounts.entries()]
       .map(([playerId, count]) => {
@@ -71,6 +76,7 @@ export default function PlayerStatsPage() {
       highestNine: nineScores.length > 0 ? Math.max(...nineScores) : undefined,
       lowestNine: nineScores.length > 0 ? Math.min(...nineScores) : undefined,
       pairings,
+      recentRounds,
     };
   }, [id, leagueDays, players]);
 
@@ -111,6 +117,34 @@ export default function PlayerStatsPage() {
         <span className="meta-chip">Went First {stats.firstCount}</span>
         <span className="meta-chip">Went Last {stats.lastCount}</span>
       </div>
+
+      <h3 style={{ marginTop: '1.75rem' }}>Recent Rounds</h3>
+      {stats.recentRounds.length === 0 ? (
+        <p className="empty-state">No scores entered yet.</p>
+      ) : (
+        <div className="table-scroll">
+          <table className="table signed-up-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Front</th>
+                <th>Back</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats.recentRounds.map((round) => (
+                <tr key={round.date}>
+                  <td>{round.date}</td>
+                  <td>{round.front}</td>
+                  <td>{round.back}</td>
+                  <td>{round.total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <h3 style={{ marginTop: '1.75rem' }}>Played With</h3>
       {stats.pairings.length === 0 ? (

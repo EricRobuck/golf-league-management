@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import HamburgerMenu from './components/HamburgerMenu';
 import PlayersPage from './pages/PlayersPage';
 import PlayerStatsPage from './pages/PlayerStatsPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 import AddPlayerPage from './pages/AddPlayerPage';
 import EditPlayerPage from './pages/EditPlayerPage';
 import LeagueDaysPage from './pages/LeagueDaysPage';
@@ -109,6 +110,7 @@ export default function App() {
           />
           <Route path="/points" element={<ViewPointsPage />} />
           <Route path="/past-rounds" element={<PastRoundsPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
         </Routes>
       </main>
     </div>
