@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import HamburgerMenu from './components/HamburgerMenu';
 import PlayersPage from './pages/PlayersPage';
+import PlayerStatsPage from './pages/PlayerStatsPage';
 import AddPlayerPage from './pages/AddPlayerPage';
 import EditPlayerPage from './pages/EditPlayerPage';
 import LeagueDaysPage from './pages/LeagueDaysPage';
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/profile" replace />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/players" element={<PlayersPage />} />
+          <Route path="/players/:id/stats" element={<PlayerStatsPage />} />
           <Route
             path="/players/add"
             element={

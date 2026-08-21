@@ -48,6 +48,9 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
         <Link to="/profile" onClick={close}>
           Profile
         </Link>
+        <Link to={`/players/${currentPlayer.id}/stats`} onClick={close}>
+          My Stats
+        </Link>
         <Link to="/players" onClick={close}>
           Players
         </Link>

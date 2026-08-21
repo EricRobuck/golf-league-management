@@ -125,6 +125,7 @@ export default function PlayersPage() {
                   {sortKey === column.key ? (sortDirection === 'asc' ? ' ▲' : ' ▼') : ''}
                 </th>
               ))}
+              <th>Stats</th>
               {isAdmin && <th>Actions</th>}
             </tr>
           </thead>
@@ -173,6 +174,11 @@ export default function PlayersPage() {
                   ) : (
                     ''
                   )}
+                </td>
+                <td>
+                  <Link className="button secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.85rem' }} to={`/players/${player.id}/stats`}>
+                    Stats
+                  </Link>
                 </td>
                 {isAdmin && (
                   <td>
