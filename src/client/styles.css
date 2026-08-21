@@ -775,6 +775,60 @@ main {
 }
 
 /* ============================================================
+   Score trend chart
+   ============================================================ */
+.score-trend-chart {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.score-trend-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+}
+
+.score-trend-axis-label {
+  font-size: 11px;
+  fill: var(--color-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-trend-end-label {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--color-text);
+}
+
+.score-trend-tooltip {
+  position: absolute;
+  top: 0.25rem;
+  transform: translateX(-50%);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 0.4rem 0.65rem;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.score-trend-tooltip-value {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-trend-tooltip-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
    Points board
    ============================================================ */
 .signed-up-count {

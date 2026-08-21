@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getLeagueDays, getPlayers } from '../api';
 import { LeagueDay, Player } from '../types';
 import { compareByLastName, playerLabel } from '../utils/playerName';
+import ScoreTrendChart from '../components/ScoreTrendChart';
 
 type PairingRow = { player: Player; count: number };
 type RoundRow = { date: string; front: number; back: number; total: number };
@@ -117,6 +118,13 @@ export default function PlayerStatsPage() {
         <span className="meta-chip">Went First {stats.firstCount}</span>
         <span className="meta-chip">Went Last {stats.lastCount}</span>
       </div>
+
+      <h3 style={{ marginTop: '1.75rem' }}>Score Trend</h3>
+      {stats.recentRounds.length === 0 ? (
+        <p className="empty-state">No scores entered yet.</p>
+      ) : (
+        <ScoreTrendChart points={[...stats.recentRounds].reverse()} />
+      )}
 
       <h3 style={{ marginTop: '1.75rem' }}>Recent Rounds</h3>
       {stats.recentRounds.length === 0 ? (
