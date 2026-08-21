@@ -1,5 +1,37 @@
 import { LeagueDay, SelectedPlayer, Team } from '../types/models';
 
+export type TeamRotationRestrictions = {
+  // Golfers on Team 1 (first tee-off) last time they played — kept off Team 1
+  // again this round unless their goesFirst star overrides it.
+  avoidFirstTeamIds?: Set<string>;
+  // Golfers on the last team (last tee-off) last time they played — kept off
+  // the last team again this round. No override exists for this one.
+  avoidLastTeamIds?: Set<string>;
+};
+
+// Looks at the most recent prior round with teams already generated (by
+// date, regardless of gaps) and returns who was on its first and last teams,
+// so the next round's generation can avoid repeating those placements.
+export function buildRotationRestrictions(
+  leagueDays: LeagueDay[],
+  currentDate: string,
+  excludeLeagueDayId?: string
+): TeamRotationRestrictions {
+  const previous = leagueDays
+    .filter((day) => day.id !== excludeLeagueDayId && day.date < currentDate && day.teams.length > 0)
+    .sort((a, b) => b.date.localeCompare(a.date))[0];
+
+  if (!previous) return {};
+
+  const firstTeam = previous.teams[0];
+  const lastTeam = previous.teams[previous.teams.length - 1];
+
+  return {
+    avoidFirstTeamIds: firstTeam ? new Set(firstTeam.players.map((player) => player.playerId)) : undefined,
+    avoidLastTeamIds: lastTeam ? new Set(lastTeam.players.map((player) => player.playerId)) : undefined,
+  };
+}
+
 function shuffle<T>(items: T[]): T[] {
   const shuffled = [...items];
   for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -88,18 +120,28 @@ function computeTeamSizes(totalPlayers: number): number[] {
   return sizes;
 }
 
-export function generateTeams(players: SelectedPlayer[], pairHistory: Map<string, number> = new Map()): Team[] {
+export function generateTeams(
+  players: SelectedPlayer[],
+  pairHistory: Map<string, number> = new Map(),
+  restrictions: TeamRotationRestrictions = {}
+): Team[] {
   const totalPlayers = players.length;
   if (totalPlayers < 3) {
     throw new Error('At least three golfers are required to construct teams.');
   }
 
+  const avoidFirstTeamIds = restrictions.avoidFirstTeamIds ?? new Set<string>();
+  const avoidLastTeamIds = restrictions.avoidLastTeamIds ?? new Set<string>();
+
   const teamSizes = computeTeamSizes(totalPlayers);
   const slots: SelectedPlayer[][] = teamSizes.map(() => []);
+  const lastSlotIndex = slots.length - 1;
 
   // goesFirst players fill the front slots of team 1 first (so they sit in the
   // first tee-off spots there); any overflow beyond team 1's capacity spills
-  // into the front of team 2, and so on.
+  // into the front of team 2, and so on. This is a deliberate admin action, so
+  // it overrides the "no repeat" rotation below even for someone who was on
+  // Team 1 last time.
   const flaggedQueue = shuffle(players.filter((player) => player.goesFirst));
   slots.forEach((slot, i) => {
     while (flaggedQueue.length > 0 && slot.length < teamSizes[i]) {
@@ -121,13 +163,17 @@ export function generateTeams(players: SelectedPlayer[], pairHistory: Map<string
     .sort((a, b) => b.weight - a.weight)
     .map((entry) => entry.player);
 
-  for (const player of ordered) {
+  const findBestSlotIndexes = (playerId: string, enforceRotation: boolean) => {
     let bestScore = Infinity;
     let bestSlotIndexes: number[] = [];
     slots.forEach((slot, i) => {
       if (slot.length >= teamSizes[i]) return;
+      if (enforceRotation) {
+        if (i === 0 && avoidFirstTeamIds.has(playerId)) return;
+        if (i === lastSlotIndex && avoidLastTeamIds.has(playerId)) return;
+      }
       const score = pairScore(
-        player.playerId,
+        playerId,
         slot.map((p) => p.playerId),
         pairHistory
       );
@@ -138,6 +184,14 @@ export function generateTeams(players: SelectedPlayer[], pairHistory: Map<string
         bestSlotIndexes.push(i);
       }
     });
+    return bestSlotIndexes;
+  };
+
+  for (const player of ordered) {
+    // Fall back to ignoring the no-repeat rotation only if honoring it would
+    // leave this player with nowhere to go (e.g. a very small round).
+    const restricted = findBestSlotIndexes(player.playerId, true);
+    const bestSlotIndexes = restricted.length > 0 ? restricted : findBestSlotIndexes(player.playerId, false);
     const chosen = bestSlotIndexes[Math.floor(Math.random() * bestSlotIndexes.length)];
     slots[chosen].push(player);
   }

@@ -2,7 +2,7 @@ import express from 'express';
 import { SqlitePlayerRepository } from '../repositories/playerRepository';
 import { SqliteLeagueDayRepository } from '../repositories/leagueDayRepository';
 import { LeagueDay, SelectedPlayer, Team } from '../types/models';
-import { buildPairHistory, generateTeams } from '../utils/teams';
+import { buildPairHistory, buildRotationRestrictions, generateTeams } from '../utils/teams';
 
 const router = express.Router();
 const playerRepository = new SqlitePlayerRepository();
@@ -176,7 +176,8 @@ router.post('/:id/generate-teams', async (req, res, next) => {
     }
     const allLeagueDays = await leagueDayRepository.getAll();
     const pairHistory = buildPairHistory(allLeagueDays, leagueDay.id);
-    const teams: Team[] = generateTeams(leagueDay.selectedPlayers, pairHistory);
+    const rotationRestrictions = buildRotationRestrictions(allLeagueDays, leagueDay.date, leagueDay.id);
+    const teams: Team[] = generateTeams(leagueDay.selectedPlayers, pairHistory, rotationRestrictions);
     leagueDay.teams = teams;
     leagueDay.status = 'teamsGenerated';
     leagueDay.updatedAt = new Date().toISOString();
