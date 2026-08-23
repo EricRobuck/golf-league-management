@@ -68,6 +68,11 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
             Admin
           </Link>
         )}
+        {isAdmin && (
+          <Link to="/status-report" onClick={close}>
+            Status Report
+          </Link>
+        )}
       </nav>
     </>
   );

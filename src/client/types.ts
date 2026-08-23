@@ -1,3 +1,5 @@
+export type MemberStatus = 'Riding Member' | 'Walking Member' | 'Non Member' | 'Employee';
+
 export type Player = {
   id: string;
   firstName: string;
@@ -6,6 +8,7 @@ export type Player = {
   backTarget: number;
   notes?: string;
   isAdmin: boolean;
+  status?: MemberStatus;
   createdAt: string;
   updatedAt: string;
 };

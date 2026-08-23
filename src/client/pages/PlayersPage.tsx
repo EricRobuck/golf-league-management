@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getPlayers, patchPlayer } from '../api';
+import { MEMBER_STATUSES } from '../constants';
 import { Player } from '../types';
 import { Link } from 'react-router-dom';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { playerLabel } from '../utils/playerName';
 
-type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'notes' | 'isAdmin';
+type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'notes' | 'status' | 'isAdmin';
 type SortDirection = 'asc' | 'desc';
 
 const COLUMNS: { key: SortKey; label: string }[] = [
@@ -14,6 +15,7 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: 'backTarget', label: 'Back Target' },
   { key: 'total', label: 'Total' },
   { key: 'notes', label: 'Notes' },
+  { key: 'status', label: 'Status' },
   { key: 'isAdmin', label: 'Admin' },
 ];
 
@@ -23,6 +25,8 @@ function sortValue(player: Player, key: SortKey): string | number {
       return player.frontTarget + player.backTarget;
     case 'notes':
       return (player.notes ?? '').toLowerCase();
+    case 'status':
+      return player.status ?? '';
     case 'isAdmin':
       return player.isAdmin ? 1 : 0;
     case 'name':
@@ -80,6 +84,13 @@ export default function PlayersPage() {
     setSaved(false);
   };
 
+  const handleStatusChange = (playerId: string, value: string) => {
+    const status = (value || undefined) as Player['status'];
+    setPlayers((current) => current.map((p) => (p.id === playerId ? { ...p, status } : p)));
+    setDirtyIds((current) => new Set(current).add(playerId));
+    setSaved(false);
+  };
+
   const handleSave = async () => {
     if (dirtyIds.size === 0) return;
     setSaving(true);
@@ -88,7 +99,11 @@ export default function PlayersPage() {
       const updated = await Promise.all(
         Array.from(dirtyIds).map((playerId) => {
           const player = players.find((p) => p.id === playerId)!;
-          return patchPlayer(playerId, { frontTarget: player.frontTarget, backTarget: player.backTarget });
+          return patchPlayer(playerId, {
+            frontTarget: player.frontTarget,
+            backTarget: player.backTarget,
+            status: player.status,
+          });
         })
       );
       setPlayers((current) => current.map((p) => updated.find((u) => u.id === p.id) ?? p));
@@ -172,6 +187,23 @@ export default function PlayersPage() {
                 </td>
                 <td>{player.frontTarget + player.backTarget}</td>
                 <td>{player.notes ?? ''}</td>
+                <td>
+                  {isAdmin ? (
+                    <select
+                      value={player.status ?? ''}
+                      onChange={(event) => handleStatusChange(player.id, event.target.value)}
+                    >
+                      <option value="">—</option>
+                      {MEMBER_STATUSES.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    player.status ?? ''
+                  )}
+                </td>
                 <td>
                   {isAdmin ? (
                     <input

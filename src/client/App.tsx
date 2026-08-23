@@ -11,6 +11,7 @@ import SelectPlayersPage from './pages/SelectPlayersPage';
 import GeneratedTeamsPage from './pages/GeneratedTeamsPage';
 import ViewPointsPage from './pages/ViewPointsPage';
 import PastRoundsPage from './pages/PastRoundsPage';
+import RoundStatusReportPage from './pages/RoundStatusReportPage';
 import TeamScoresPage from './pages/TeamScoresPage';
 import TodayScorePage from './pages/TodayScorePage';
 import EnterScoresPage from './pages/EnterScoresPage';
@@ -110,6 +111,14 @@ export default function App() {
           />
           <Route path="/points" element={<ViewPointsPage />} />
           <Route path="/past-rounds" element={<PastRoundsPage />} />
+          <Route
+            path="/status-report"
+            element={
+              <AdminRoute>
+                <RoundStatusReportPage />
+              </AdminRoute>
+            }
+          />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
         </Routes>
       </main>

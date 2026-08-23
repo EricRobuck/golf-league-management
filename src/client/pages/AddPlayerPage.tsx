@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPlayer } from '../api';
+import { MEMBER_STATUSES } from '../constants';
+import { MemberStatus } from '../types';
 
 export default function AddPlayerPage() {
   const navigate = useNavigate();
@@ -10,6 +12,7 @@ export default function AddPlayerPage() {
     frontTarget: 0,
     backTarget: 0,
     notes: '',
+    status: '' as MemberStatus | '',
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +34,7 @@ export default function AddPlayerPage() {
         backTarget: form.backTarget,
         notes: form.notes || undefined,
         isAdmin: false,
+        status: form.status || undefined,
       });
       navigate('/players');
     } catch (error: any) {
@@ -62,6 +66,17 @@ export default function AddPlayerPage() {
         <div className="form-field">
           <label>Notes</label>
           <textarea value={form.notes} onChange={(e) => handleChange('notes', e.target.value)} />
+        </div>
+        <div className="form-field">
+          <label>Status</label>
+          <select value={form.status} onChange={(e) => handleChange('status', e.target.value)}>
+            <option value="">—</option>
+            {MEMBER_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <button type="submit" className="button">

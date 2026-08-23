@@ -1,13 +1,19 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { SqlitePlayerRepository } from '../repositories/playerRepository';
-import { Player } from '../types/models';
+import { MEMBER_STATUSES, Player } from '../types/models';
 
 const router = express.Router();
 const repository = new SqlitePlayerRepository();
 
 function isValidTarget(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
+// null means "no status set" — the DB column is nullable and round-trips as
+// null (not undefined) for players who haven't been assigned one yet.
+function isValidStatus(value: unknown): value is Player['status'] | null {
+  return value === null || (typeof value === 'string' && (MEMBER_STATUSES as string[]).includes(value));
 }
 
 router.get('/', async (_req, res, next) => {
@@ -43,6 +49,9 @@ router.post('/', async (req, res, next) => {
     if (!isValidTarget(payload.backTarget)) {
       return res.status(400).json({ message: 'Back target must be a non-negative integer.' });
     }
+    if (payload.status !== undefined && !isValidStatus(payload.status)) {
+      return res.status(400).json({ message: 'Invalid status.' });
+    }
 
     const players = await repository.getAll();
     const duplicate = players.find(
@@ -61,6 +70,7 @@ router.post('/', async (req, res, next) => {
       backTarget: payload.backTarget,
       notes: payload.notes,
       isAdmin: false,
+      status: payload.status,
       createdAt: now,
       updatedAt: now,
     };
@@ -84,6 +94,9 @@ router.put('/:id', async (req, res, next) => {
     if (!isValidTarget(payload.backTarget)) {
       return res.status(400).json({ message: 'Back target must be a non-negative integer.' });
     }
+    if (payload.status !== undefined && !isValidStatus(payload.status)) {
+      return res.status(400).json({ message: 'Invalid status.' });
+    }
 
     const updated = await repository.update(req.params.id, payload);
     if (!updated) {
@@ -106,6 +119,9 @@ router.patch('/:id', async (req, res, next) => {
     }
     if (payload.isAdmin !== undefined && typeof payload.isAdmin !== 'boolean') {
       return res.status(400).json({ message: 'isAdmin must be a boolean.' });
+    }
+    if (payload.status !== undefined && !isValidStatus(payload.status)) {
+      return res.status(400).json({ message: 'Invalid status.' });
     }
 
     const updated = await repository.update(req.params.id, payload);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPlayer, updatePlayer } from '../api';
+import { MEMBER_STATUSES } from '../constants';
 import { Player } from '../types';
 
 export default function EditPlayerPage() {
@@ -31,6 +32,7 @@ export default function EditPlayerPage() {
         frontTarget: player.frontTarget,
         backTarget: player.backTarget,
         notes: player.notes,
+        status: player.status,
       });
       navigate('/players');
     } catch (error: any) {
@@ -77,6 +79,17 @@ export default function EditPlayerPage() {
         <div className="form-field">
           <label>Notes</label>
           <textarea value={player.notes ?? ''} onChange={(e) => handleChange('notes', e.target.value)} />
+        </div>
+        <div className="form-field">
+          <label>Status</label>
+          <select value={player.status ?? ''} onChange={(e) => handleChange('status', e.target.value)}>
+            <option value="">—</option>
+            {MEMBER_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <button type="submit" className="button">
