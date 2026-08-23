@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { playerLabel } from '../utils/playerName';
 
-type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'notes' | 'status' | 'isAdmin';
+type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'status' | 'isAdmin';
 type SortDirection = 'asc' | 'desc';
 
 const COLUMNS: { key: SortKey; label: string }[] = [
@@ -14,7 +14,6 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: 'frontTarget', label: 'Front Target' },
   { key: 'backTarget', label: 'Back Target' },
   { key: 'total', label: 'Total' },
-  { key: 'notes', label: 'Notes' },
   { key: 'status', label: 'Status' },
   { key: 'isAdmin', label: 'Admin' },
 ];
@@ -23,8 +22,6 @@ function sortValue(player: Player, key: SortKey): string | number {
   switch (key) {
     case 'total':
       return player.frontTarget + player.backTarget;
-    case 'notes':
-      return (player.notes ?? '').toLowerCase();
     case 'status':
       return player.status ?? '';
     case 'isAdmin':
@@ -44,6 +41,8 @@ export default function PlayersPage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [savingRowId, setSavingRowId] = useState<string | null>(null);
+  const [savedRowId, setSavedRowId] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [search, setSearch] = useState('');
@@ -82,6 +81,7 @@ export default function PlayersPage() {
     setPlayers((current) => current.map((p) => (p.id === playerId ? { ...p, [field]: numeric } : p)));
     setDirtyIds((current) => new Set(current).add(playerId));
     setSaved(false);
+    setSavedRowId(null);
   };
 
   const handleStatusChange = (playerId: string, value: string) => {
@@ -89,6 +89,7 @@ export default function PlayersPage() {
     setPlayers((current) => current.map((p) => (p.id === playerId ? { ...p, status } : p)));
     setDirtyIds((current) => new Set(current).add(playerId));
     setSaved(false);
+    setSavedRowId(null);
   };
 
   const handleSave = async () => {
@@ -113,6 +114,31 @@ export default function PlayersPage() {
       setError('Unable to save changes.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveRow = async (playerId: string) => {
+    setSavingRowId(playerId);
+    setSavedRowId(null);
+    setError(null);
+    try {
+      const player = players.find((p) => p.id === playerId)!;
+      const updated = await patchPlayer(playerId, {
+        frontTarget: player.frontTarget,
+        backTarget: player.backTarget,
+        status: player.status,
+      });
+      setPlayers((current) => current.map((p) => (p.id === playerId ? updated : p)));
+      setDirtyIds((current) => {
+        const next = new Set(current);
+        next.delete(playerId);
+        return next;
+      });
+      setSavedRowId(playerId);
+    } catch (_error) {
+      setError('Unable to save changes.');
+    } finally {
+      setSavingRowId(null);
     }
   };
 
@@ -151,7 +177,7 @@ export default function PlayersPage() {
                   {sortKey === column.key ? (sortDirection === 'asc' ? ' ▲' : ' ▼') : ''}
                 </th>
               ))}
-              <th>Stats</th>
+              {isAdmin && <th>Save</th>}
               {isAdmin && <th>Actions</th>}
             </tr>
           </thead>
@@ -186,7 +212,6 @@ export default function PlayersPage() {
                   )}
                 </td>
                 <td>{player.frontTarget + player.backTarget}</td>
-                <td>{player.notes ?? ''}</td>
                 <td>
                   {isAdmin ? (
                     <select
@@ -218,11 +243,18 @@ export default function PlayersPage() {
                     ''
                   )}
                 </td>
-                <td>
-                  <Link className="button secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.85rem' }} to={`/players/${player.id}/stats`}>
-                    Stats
-                  </Link>
-                </td>
+                {isAdmin && (
+                  <td>
+                    <button
+                      className="button secondary"
+                      style={{ padding: '0.4rem 0.85rem', fontSize: '0.85rem' }}
+                      onClick={() => handleSaveRow(player.id)}
+                      disabled={savingRowId === player.id || !dirtyIds.has(player.id)}
+                    >
+                      {savingRowId === player.id ? 'Saving...' : savedRowId === player.id ? 'Saved!' : 'Save'}
+                    </button>
+                  </td>
+                )}
                 {isAdmin && (
                   <td>
                     <Link
