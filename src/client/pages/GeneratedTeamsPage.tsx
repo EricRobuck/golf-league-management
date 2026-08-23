@@ -34,7 +34,9 @@ export default function GeneratedTeamsPage() {
   const [leagueDay, setLeagueDay] = useState<LeagueDay | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [dirtyTeams, setDirtyTeams] = useState<Set<number>>(new Set());
+  const [savingTeam, setSavingTeam] = useState<number | null>(null);
+  const [savedTeam, setSavedTeam] = useState<number | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -49,9 +51,10 @@ export default function GeneratedTeamsPage() {
   const selectedPlayers = useMemo(() => leagueDay?.selectedPlayers ?? [], [leagueDay]);
   const teams = useMemo(() => leagueDay?.teams ?? [], [leagueDay]);
 
-  const updateLocalTeams = (updatedTeams: Team[]) => {
+  const updateLocalTeams = (updatedTeams: Team[], changedTeamNumber: number) => {
     setLeagueDay((current) => (current ? { ...current, teams: normalizeTeams(updatedTeams) } : current));
-    setSaved(false);
+    setDirtyTeams((current) => new Set(current).add(changedTeamNumber));
+    setSavedTeam((current) => (current === changedTeamNumber ? null : current));
   };
 
   const removePlayerFromTeam = (teamIndex: number, playerIndex: number) => {
@@ -60,7 +63,7 @@ export default function GeneratedTeamsPage() {
     const sourceTeam = { ...updatedTeams[teamIndex], players: [...updatedTeams[teamIndex].players] };
     sourceTeam.players.splice(playerIndex, 1);
     updatedTeams[teamIndex] = sourceTeam;
-    updateLocalTeams(updatedTeams);
+    updateLocalTeams(updatedTeams, sourceTeam.teamNumber);
   };
 
   const handleScoreChange = (teamIndex: number, playerIndex: number, field: 'frontScore' | 'backScore', value: string) => {
@@ -70,56 +73,67 @@ export default function GeneratedTeamsPage() {
     const entry = { ...team.players[playerIndex], [field]: value === '' ? undefined : Number(value) };
     team.players[playerIndex] = entry;
     updatedTeams[teamIndex] = team;
-    updateLocalTeams(updatedTeams);
+    updateLocalTeams(updatedTeams, team.teamNumber);
   };
 
-  const handleSave = async () => {
+  const handleSaveTeam = async (teamNumber: number) => {
     if (!id || !leagueDay) return;
+    const targetTeam = teams.find((team) => team.teamNumber === teamNumber);
+    if (!targetTeam) return;
 
-    for (const team of teams) {
-      for (const entry of team.players) {
-        for (const value of [entry.frontScore, entry.backScore]) {
-          if (value !== undefined && (!Number.isInteger(value) || value < 0)) {
-            setError('Scores must be non-negative whole numbers.');
-            return;
-          }
+    for (const entry of targetTeam.players) {
+      for (const value of [entry.frontScore, entry.backScore]) {
+        if (value !== undefined && (!Number.isInteger(value) || value < 0)) {
+          setError('Scores must be non-negative whole numbers.');
+          return;
         }
       }
     }
 
+    setSavingTeam(teamNumber);
+    setError(null);
     try {
       const targetPatches: Promise<Player>[] = [];
-      const normalized = normalizeTeams(teams).map((team) => ({
-        ...team,
-        players: team.players.map((entry) => {
-          const player = findPlayer(players, entry.playerId);
-          if (!player || entry.frontScore === undefined || entry.backScore === undefined || entry.targetAdjusted) {
-            return entry;
-          }
-          const { frontTarget, backTarget } = adjustTargets(player, entry.frontScore, entry.backScore);
-          const patch: Partial<Player> = {};
-          if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
-          if (backTarget !== player.backTarget) patch.backTarget = backTarget;
-          if (Object.keys(patch).length > 0) {
-            targetPatches.push(patchPlayer(entry.playerId, patch));
-          }
-          return {
-            ...entry,
-            targetAdjusted: true,
-            frontTargetAtSave: player.frontTarget,
-            backTargetAtSave: player.backTarget,
-          };
-        }),
-      }));
+      const normalized = normalizeTeams(teams).map((team) => {
+        if (team.teamNumber !== teamNumber) return team;
+        return {
+          ...team,
+          players: team.players.map((entry) => {
+            const player = findPlayer(players, entry.playerId);
+            if (!player || entry.frontScore === undefined || entry.backScore === undefined || entry.targetAdjusted) {
+              return entry;
+            }
+            const { frontTarget, backTarget } = adjustTargets(player, entry.frontScore, entry.backScore);
+            const patch: Partial<Player> = {};
+            if (frontTarget !== player.frontTarget) patch.frontTarget = frontTarget;
+            if (backTarget !== player.backTarget) patch.backTarget = backTarget;
+            if (Object.keys(patch).length > 0) {
+              targetPatches.push(patchPlayer(entry.playerId, patch));
+            }
+            return {
+              ...entry,
+              targetAdjusted: true,
+              frontTargetAtSave: player.frontTarget,
+              backTargetAtSave: player.backTarget,
+            };
+          }),
+        };
+      });
 
       await updateLeagueDayTeams(id, normalized);
       await Promise.all(targetPatches);
 
       setLeagueDay((current) => (current ? { ...current, teams: normalized } : current));
-      setSaved(true);
-      setError(null);
+      setDirtyTeams((current) => {
+        const next = new Set(current);
+        next.delete(teamNumber);
+        return next;
+      });
+      setSavedTeam(teamNumber);
     } catch (_error) {
       setError('Unable to save.');
+    } finally {
+      setSavingTeam(null);
     }
   };
 
@@ -226,15 +240,19 @@ export default function GeneratedTeamsPage() {
                     </tbody>
                   </table>
                 </div>
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                  <button
+                    className="button"
+                    onClick={() => handleSaveTeam(team.teamNumber)}
+                    disabled={savingTeam === team.teamNumber || !dirtyTeams.has(team.teamNumber)}
+                  >
+                    {savingTeam === team.teamNumber ? 'Saving...' : 'Save Team'}
+                  </button>
+                  {savedTeam === team.teamNumber && <span className="unsaved-note" style={{ color: '#15803d' }}>Saved!</span>}
+                </div>
               </div>
             );
           })}
-          <div style={{ width: '100%', marginTop: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <button className="button" onClick={handleSave}>
-              Save
-            </button>
-            {saved && <span className="unsaved-note" style={{ color: '#15803d' }}>Saved!</span>}
-          </div>
         </div>
       ) : (
         <p>No teams generated yet.</p>
