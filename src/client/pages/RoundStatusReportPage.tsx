@@ -11,6 +11,8 @@ export default function RoundStatusReportPage() {
   const [leagueDays, setLeagueDays] = useState<LeagueDay[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const today = todayDateString();
+  const [selectedDate, setSelectedDate] = useState(today);
 
   useEffect(() => {
     Promise.all([getLeagueDays(), getPlayers()])
@@ -22,12 +24,18 @@ export default function RoundStatusReportPage() {
   }, []);
 
   const byId = useMemo(() => new Map(players.map((player) => [player.id, player])), [players]);
-  const today = todayDateString();
-  const todaysDay = useMemo(() => leagueDays.find((day) => day.date === today), [leagueDays, today]);
+
+  const availableDates = useMemo(() => {
+    const dates = new Set(leagueDays.filter((day) => day.teams.length > 0).map((day) => day.date));
+    dates.add(today);
+    return [...dates].sort((a, b) => b.localeCompare(a));
+  }, [leagueDays, today]);
+
+  const selectedDay = useMemo(() => leagueDays.find((day) => day.date === selectedDate), [leagueDays, selectedDate]);
 
   const report = useMemo(() => {
-    if (!todaysDay || todaysDay.teams.length === 0) return null;
-    const playerIds = new Set(todaysDay.teams.flatMap((team) => team.players.map((entry) => entry.playerId)));
+    if (!selectedDay || selectedDay.teams.length === 0) return null;
+    const playerIds = new Set(selectedDay.teams.flatMap((team) => team.players.map((entry) => entry.playerId)));
     const categories = new Map<MemberStatus | typeof UNASSIGNED_LABEL, Player[]>();
     for (const label of CATEGORY_LABELS) categories.set(label, []);
     for (const playerId of playerIds) {
@@ -38,15 +46,25 @@ export default function RoundStatusReportPage() {
         .push(player ?? { id: playerId, firstName: playerId, lastName: '', frontTarget: 0, backTarget: 0, isAdmin: false, createdAt: '', updatedAt: '' });
     }
     return { categories, total: playerIds.size };
-  }, [todaysDay, byId]);
+  }, [selectedDay, byId]);
 
   return (
     <div className="page-card">
-      <h2 className="section-title">Status Report — {today}</h2>
+      <h2 className="section-title">Status Report</h2>
       {error && <div className="alert">{error}</div>}
+      <div className="form-field" style={{ maxWidth: '16rem', marginBottom: '1.25rem' }}>
+        <label>Date</label>
+        <select value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)}>
+          {availableDates.map((date) => (
+            <option key={date} value={date}>
+              {date === today ? `${date} (Today)` : date}
+            </option>
+          ))}
+        </select>
+      </div>
       {!error && !report ? (
         <p className="empty-state">
-          {todaysDay ? "Teams haven't been generated for today's round yet." : 'No round has been created for today yet.'}
+          {selectedDay ? "Teams haven't been generated for that round yet." : 'No round has been created for that day yet.'}
         </p>
       ) : report ? (
         <div className="team-card">
