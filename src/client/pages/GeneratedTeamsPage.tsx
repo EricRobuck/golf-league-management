@@ -4,6 +4,7 @@ import { getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../
 import { LeagueDay, Player, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
+import DailyMessageEditor from '../components/DailyMessageEditor';
 
 function findPlayer(players: Player[], playerId: string) {
   return players.find((player) => player.id === playerId);
@@ -136,6 +137,7 @@ export default function GeneratedTeamsPage() {
     <div className="page-card">
       <h2 className="section-title">Generated Teams</h2>
       {error && <div className="alert">{error}</div>}
+      <DailyMessageEditor date={leagueDay.date} />
       <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <button className="button secondary" onClick={() => navigate(`/league-days/${id}/select`)}>
           Role Call

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getLeagueDays } from '../api';
 import { todayDateString } from '../constants';
+import DailyMessageEditor from '../components/DailyMessageEditor';
 
 export default function TodayScorePage() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function TodayScorePage() {
       <div className="page-card">
         <h2 className="section-title">Enter Score</h2>
         <p className="empty-state">No round has been started for today ({today}). Rounds start once a golfer checks in on their Profile page.</p>
+        <DailyMessageEditor date={today} />
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <Link className="button" to="/players/add">
             Add Player
