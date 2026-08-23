@@ -134,11 +134,11 @@ export default function GeneratedTeamsPage() {
   }
 
   return (
-    <div className="page-card">
+    <div className="page-card generated-teams-page">
       <h2 className="section-title">Generated Teams</h2>
       {error && <div className="alert">{error}</div>}
       <DailyMessageEditor date={leagueDay.date} />
-      <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+      <div className="page-toolbar">
         <button className="button secondary" onClick={() => navigate(`/league-days/${id}/select`)}>
           Role Call
         </button>

@@ -33,7 +33,7 @@ export default function DailyMessageEditor({ date }: { date: string }) {
   };
 
   return (
-    <div className="form-field" style={{ marginBottom: '1rem' }}>
+    <div className="form-field daily-message-editor">
       <label>Message of the Day ({date})</label>
       {error && <div className="alert">{error}</div>}
       <textarea
@@ -43,9 +43,9 @@ export default function DailyMessageEditor({ date }: { date: string }) {
           setSaved(false);
         }}
         placeholder="Leave a note for everyone today..."
-        rows={3}
+        rows={2}
       />
-      <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+      <div className="daily-message-editor-actions">
         <button className="button secondary" onClick={handleSave} disabled={saving || draft === message}>
           {saving ? 'Saving...' : 'Save Message'}
         </button>

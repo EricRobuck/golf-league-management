@@ -578,6 +578,63 @@ main {
 }
 
 /* ============================================================
+   Generated Teams (admin) — compact, understated controls
+   ============================================================ */
+.generated-teams-page .daily-message-editor {
+  margin-bottom: 1rem;
+  max-width: 28rem;
+}
+
+.generated-teams-page .daily-message-editor label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.generated-teams-page .daily-message-editor textarea {
+  padding: 0.5rem 0.65rem;
+  font-size: 0.88rem;
+  border-radius: 8px;
+}
+
+.generated-teams-page .daily-message-editor-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.generated-teams-page .page-toolbar {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.generated-teams-page .button {
+  min-height: 2.15rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.generated-teams-page .button.secondary {
+  background: #ffffff;
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+}
+
+.generated-teams-page .button.secondary:hover {
+  background: #f1f5f9;
+  box-shadow: none;
+}
+
+/* ============================================================
    Select-players / panels
    ============================================================ */
 .select-players-header {
