@@ -1,7 +1,7 @@
 import express from 'express';
 import { SqlitePlayerRepository } from '../repositories/playerRepository';
 import { SqliteLeagueDayRepository } from '../repositories/leagueDayRepository';
-import { LeagueDay, SelectedPlayer, Team } from '../types/models';
+import { ClosestToPin, CTP_BACK_HOLES, CTP_FRONT_HOLES, LeagueDay, SelectedPlayer, Team } from '../types/models';
 import { buildPairHistory, buildRotationRestrictions, generateTeams } from '../utils/teams';
 
 const router = express.Router();
@@ -163,6 +163,51 @@ router.put('/:id/teams', async (req, res, next) => {
     leagueDay.updatedAt = new Date().toISOString();
     await leagueDayRepository.update(leagueDay.id, { teams: leagueDay.teams, updatedAt: leagueDay.updatedAt });
     res.json(leagueDay.teams);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/:id/closest-to-pin', async (req, res, next) => {
+  try {
+    const leagueDay = await leagueDayRepository.getById(req.params.id);
+    if (!leagueDay) {
+      return res.status(404).json({ message: 'League day not found.' });
+    }
+    // A field of `null` explicitly clears it back to unset; `undefined` (an
+    // omitted key) leaves whatever is already saved untouched — JSON drops
+    // undefined keys entirely, so this is the only way a client can signal
+    // "leave this alone" vs. "reset this" in the same partial-update request.
+    const payload = req.body as {
+      frontHole?: number | null;
+      backHole?: number | null;
+      frontWinningTeam?: number | null;
+      backWinningTeam?: number | null;
+    };
+    const teamNumbers = new Set(leagueDay.teams.map((team) => team.teamNumber));
+
+    if (payload.frontHole != null && !(CTP_FRONT_HOLES as readonly number[]).includes(payload.frontHole)) {
+      return res.status(400).json({ message: 'Front hole must be 4, 6, or 8.' });
+    }
+    if (payload.backHole != null && !(CTP_BACK_HOLES as readonly number[]).includes(payload.backHole)) {
+      return res.status(400).json({ message: 'Back hole must be 12, 14, or 17.' });
+    }
+    if (payload.frontWinningTeam != null && !teamNumbers.has(payload.frontWinningTeam)) {
+      return res.status(400).json({ message: 'Front winning team is not a team in this round.' });
+    }
+    if (payload.backWinningTeam != null && !teamNumbers.has(payload.backWinningTeam)) {
+      return res.status(400).json({ message: 'Back winning team is not a team in this round.' });
+    }
+
+    const closestToPin: ClosestToPin = { ...leagueDay.closestToPin };
+    if (payload.frontHole !== undefined) closestToPin.frontHole = (payload.frontHole ?? undefined) as ClosestToPin['frontHole'];
+    if (payload.backHole !== undefined) closestToPin.backHole = (payload.backHole ?? undefined) as ClosestToPin['backHole'];
+    if (payload.frontWinningTeam !== undefined) closestToPin.frontWinningTeam = payload.frontWinningTeam ?? undefined;
+    if (payload.backWinningTeam !== undefined) closestToPin.backWinningTeam = payload.backWinningTeam ?? undefined;
+
+    const updatedAt = new Date().toISOString();
+    await leagueDayRepository.update(leagueDay.id, { closestToPin, updatedAt });
+    res.json(closestToPin);
   } catch (error) {
     next(error);
   }

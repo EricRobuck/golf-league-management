@@ -34,6 +34,7 @@ db.exec(`
     status TEXT NOT NULL,
     selectedPlayers TEXT NOT NULL,
     teams TEXT NOT NULL,
+    closestToPin TEXT,
     createdAt TEXT NOT NULL,
     updatedAt TEXT NOT NULL
   );
@@ -51,6 +52,11 @@ if (!playerColumns.some((column) => column.name === 'isAdmin')) {
 }
 if (!playerColumns.some((column) => column.name === 'status')) {
   db.exec('ALTER TABLE players ADD COLUMN status TEXT');
+}
+
+const leagueDayColumns = db.prepare('PRAGMA table_info(league_days)').all() as { name: string }[];
+if (!leagueDayColumns.some((column) => column.name === 'closestToPin')) {
+  db.exec('ALTER TABLE league_days ADD COLUMN closestToPin TEXT');
 }
 
 const playerCount = db.prepare('SELECT COUNT(*) as count FROM players').get() as { count: number };

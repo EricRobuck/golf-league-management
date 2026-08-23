@@ -82,7 +82,7 @@ export default function LeaderboardPage() {
       // Only fully-scored rounds have settled winners — a round still in
       // progress shouldn't contribute half-determined money to the season total.
       if (isRoundComplete(day.teams)) {
-        for (const moneyRow of computeMoneyList(day.teams, players)) {
+        for (const moneyRow of computeMoneyList(day.teams, players, day.closestToPin)) {
           moneyWon.set(moneyRow.playerId, (moneyWon.get(moneyRow.playerId) ?? 0) + moneyRow.amount);
         }
       }

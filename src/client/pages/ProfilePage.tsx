@@ -7,6 +7,7 @@ import { LeagueDay, Player, SelectedPlayer } from '../types';
 import { isRoundComplete } from '../utils/money';
 import { playerLabel } from '../utils/playerName';
 import LeagueDayResults from '../components/LeagueDayResults';
+import ClosestToPinSummary from '../components/ClosestToPinSummary';
 
 const REFRESH_INTERVAL_MS = 12000;
 
@@ -162,6 +163,7 @@ export default function ProfilePage() {
       <h2 className="section-title">My Profile</h2>
       {error && <div className="alert">{error}</div>}
       {message && <div className="announcement">{message}</div>}
+      <ClosestToPinSummary closestToPin={todayLeagueDay?.closestToPin} />
 
       <div className="profile-name">{playerLabel(currentPlayer)}</div>
       <div className="league-day-meta">
@@ -195,7 +197,7 @@ export default function ProfilePage() {
               </Link>
             </div>
             {roundComplete ? (
-              <LeagueDayResults teams={todayLeagueDay!.teams} players={players} />
+              <LeagueDayResults teams={todayLeagueDay!.teams} players={players} closestToPin={todayLeagueDay!.closestToPin} />
             ) : (
               <div className="table-scroll">
                 <table className="table">

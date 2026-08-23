@@ -5,6 +5,7 @@ import { LeagueDay, Player, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
 import DailyMessageEditor from '../components/DailyMessageEditor';
+import ClosestToPinEditor from '../components/ClosestToPinEditor';
 
 function findPlayer(players: Player[], playerId: string) {
   return players.find((player) => player.id === playerId);
@@ -151,6 +152,7 @@ export default function GeneratedTeamsPage() {
     <div className="page-card generated-teams-page">
       {error && <div className="alert">{error}</div>}
       <DailyMessageEditor date={leagueDay.date} />
+      <ClosestToPinEditor leagueDay={leagueDay} onUpdate={setLeagueDay} />
       <div className="page-toolbar">
         <button className="button secondary" onClick={() => navigate(`/league-days/${id}/select`)}>
           Role Call

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Player, Team } from '../types';
+import { ClosestToPin, Player, Team } from '../types';
 import {
   computeMoneyList,
   findWinners,
@@ -12,6 +12,7 @@ import {
   teamTotal,
 } from '../utils/money';
 import { playerLabel } from '../utils/playerName';
+import ClosestToPinSummary from './ClosestToPinSummary';
 
 function formatDiff(value: number | undefined) {
   if (value === undefined) return '-';
@@ -19,7 +20,15 @@ function formatDiff(value: number | undefined) {
   return String(value);
 }
 
-export default function LeagueDayResults({ teams, players }: { teams: Team[]; players: Player[] }) {
+export default function LeagueDayResults({
+  teams,
+  players,
+  closestToPin,
+}: {
+  teams: Team[];
+  players: Player[];
+  closestToPin?: ClosestToPin;
+}) {
   const sortedTeams = useMemo(
     () => [...teams].sort((a, b) => teamDiffTotals(b, players).totalDiff - teamDiffTotals(a, players).totalDiff),
     [teams, players]
@@ -39,7 +48,7 @@ export default function LeagueDayResults({ teams, players }: { teams: Team[]; pl
   );
   const categoryPot = playerCount; // $3 per golfer, split evenly across front/back/total
 
-  const moneyList = useMemo(() => computeMoneyList(sortedTeams, players), [sortedTeams, players]);
+  const moneyList = useMemo(() => computeMoneyList(sortedTeams, players, closestToPin), [sortedTeams, players, closestToPin]);
 
   if (sortedTeams.length === 0) {
     return <p className="empty-state">No teams yet — create the round first.</p>;
@@ -85,6 +94,8 @@ export default function LeagueDayResults({ teams, players }: { teams: Team[]; pl
           <div className="winner-pot">{formatMoney(categoryPot)} available</div>
         </div>
       </div>
+
+      <ClosestToPinSummary closestToPin={closestToPin} />
 
       <div className="page-card" style={{ marginBottom: '1.5rem' }}>
         <h3 style={{ marginTop: 0 }}>Money Won</h3>

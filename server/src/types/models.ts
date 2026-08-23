@@ -26,6 +26,16 @@ export type SelectedPlayer = {
   backTargetAtSave?: number;
 };
 
+export const CTP_FRONT_HOLES = [4, 6, 8] as const;
+export const CTP_BACK_HOLES = [12, 14, 17] as const;
+
+export type ClosestToPin = {
+  frontHole?: (typeof CTP_FRONT_HOLES)[number];
+  backHole?: (typeof CTP_BACK_HOLES)[number];
+  frontWinningTeam?: number;
+  backWinningTeam?: number;
+};
+
 export type LeagueDay = {
   id: string;
   date: string;
@@ -34,6 +44,7 @@ export type LeagueDay = {
   status: 'draft' | 'teamsGenerated' | 'scoring' | 'finalized' | 'reopened';
   selectedPlayers: SelectedPlayer[];
   teams: Team[];
+  closestToPin?: ClosestToPin;
   createdAt: string;
   updatedAt: string;
 };

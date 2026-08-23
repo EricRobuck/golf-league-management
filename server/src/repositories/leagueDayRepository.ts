@@ -17,6 +17,7 @@ type LeagueDayRow = {
   status: string;
   selectedPlayers: string;
   teams: string;
+  closestToPin: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -30,12 +31,13 @@ function rowToLeagueDay(row: LeagueDayRow): LeagueDay {
     status: row.status as LeagueDay['status'],
     selectedPlayers: JSON.parse(row.selectedPlayers),
     teams: JSON.parse(row.teams),
+    closestToPin: row.closestToPin ? JSON.parse(row.closestToPin) : undefined,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
 }
 
-const UPDATABLE_FIELDS: (keyof LeagueDay)[] = ['date', 'courseId', 'scoringNine', 'status', 'selectedPlayers', 'teams'];
+const UPDATABLE_FIELDS: (keyof LeagueDay)[] = ['date', 'courseId', 'scoringNine', 'status', 'selectedPlayers', 'teams', 'closestToPin'];
 
 export class SqliteLeagueDayRepository implements LeagueDayRepository {
   async getAll(): Promise<LeagueDay[]> {
@@ -50,8 +52,8 @@ export class SqliteLeagueDayRepository implements LeagueDayRepository {
 
   async create(leagueDay: LeagueDay): Promise<LeagueDay> {
     db.prepare(
-      `INSERT INTO league_days (id, date, courseId, scoringNine, status, selectedPlayers, teams, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO league_days (id, date, courseId, scoringNine, status, selectedPlayers, teams, closestToPin, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       leagueDay.id,
       leagueDay.date,
@@ -60,6 +62,7 @@ export class SqliteLeagueDayRepository implements LeagueDayRepository {
       leagueDay.status,
       JSON.stringify(leagueDay.selectedPlayers),
       JSON.stringify(leagueDay.teams),
+      leagueDay.closestToPin ? JSON.stringify(leagueDay.closestToPin) : null,
       leagueDay.createdAt,
       leagueDay.updatedAt
     );
@@ -80,6 +83,7 @@ export class SqliteLeagueDayRepository implements LeagueDayRepository {
       updated.status,
       JSON.stringify(updated.selectedPlayers),
       JSON.stringify(updated.teams),
+      updated.closestToPin ? JSON.stringify(updated.closestToPin) : null,
       updated.updatedAt,
       id
     );

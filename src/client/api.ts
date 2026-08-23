@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DailyMessage, LeagueDay, Player, SelectedPlayer } from './types';
+import { ClosestToPin, DailyMessage, LeagueDay, Player, SelectedPlayer } from './types';
 import { DEFAULT_COURSE_ID, DEFAULT_SCORING_NINE, todayDateString } from './constants';
 
 const api = axios.create({
@@ -81,6 +81,13 @@ export async function generateLeagueDayTeams(leagueDayId: string) {
 
 export async function updateLeagueDayTeams(leagueDayId: string, teams: { teamNumber: number; players: SelectedPlayer[] }[]) {
   const response = await api.put(`/league-days/${leagueDayId}/teams`, { teams });
+  return response.data;
+}
+
+export type ClosestToPinUpdate = { [K in keyof ClosestToPin]?: ClosestToPin[K] | null };
+
+export async function updateClosestToPin(leagueDayId: string, payload: ClosestToPinUpdate) {
+  const response = await api.put<ClosestToPin>(`/league-days/${leagueDayId}/closest-to-pin`, payload);
   return response.data;
 }
 

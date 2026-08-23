@@ -1,4 +1,4 @@
-import { Player, SelectedPlayer, Team } from '../types';
+import { ClosestToPin, Player, SelectedPlayer, Team } from '../types';
 
 export function teamFrontTotal(team: Team) {
   return team.players.reduce((total, entry) => total + (entry.frontScore ?? 0), 0);
@@ -136,8 +136,47 @@ export type MoneyRow = {
   categoriesWon: string[];
 };
 
+// $1 per golfer, split between whichever team(s) won closest-to-pin — the
+// whole pot if one team swept both holes, split in half if two different
+// teams won front and back (same tie-splitting rule as the other categories).
+export function computeClosestToPinMoney(closestToPin: ClosestToPin | undefined, teams: Team[], players: Player[]): MoneyRow[] {
+  if (!closestToPin) return [];
+  const { frontHole, backHole, frontWinningTeam, backWinningTeam } = closestToPin;
+  if (frontWinningTeam === undefined && backWinningTeam === undefined) return [];
+
+  const playerCount = new Set(teams.flatMap((team) => team.players.map((entry) => entry.playerId))).size;
+  const pot = playerCount;
+
+  const winningTeamNumbers = [...new Set([frontWinningTeam, backWinningTeam].filter((value): value is number => value !== undefined))];
+  const shares = splitPotAmongTeams(pot, winningTeamNumbers);
+
+  const rows: MoneyRow[] = [];
+  for (const team of teams) {
+    const share = shares[team.teamNumber] ?? 0;
+    if (share === 0) continue;
+
+    const categoriesWon: string[] = [];
+    if (frontWinningTeam === team.teamNumber) categoriesWon.push(`CTP Front${frontHole ? ` (Hole ${frontHole})` : ''}`);
+    if (backWinningTeam === team.teamNumber) categoriesWon.push(`CTP Back${backHole ? ` (Hole ${backHole})` : ''}`);
+
+    const payouts = distributeTeamMoney(team, players, share);
+    for (const entry of team.players) {
+      const amount = payouts[entry.playerId] ?? 0;
+      if (amount <= 0) continue;
+      rows.push({
+        playerId: entry.playerId,
+        player: players.find((p) => p.id === entry.playerId),
+        teamNumber: team.teamNumber,
+        amount,
+        categoriesWon,
+      });
+    }
+  }
+  return rows;
+}
+
 // $3 per golfer, split evenly across front/back/total (each category's pot equals the golfer count).
-export function computeMoneyList(teams: Team[], players: Player[]): MoneyRow[] {
+export function computeMoneyList(teams: Team[], players: Player[], closestToPin?: ClosestToPin): MoneyRow[] {
   const playerCount = new Set(teams.flatMap((team) => team.players.map((entry) => entry.playerId))).size;
   const categoryPot = playerCount;
 
@@ -182,5 +221,20 @@ export function computeMoneyList(teams: Team[], players: Player[]): MoneyRow[] {
     }
   }
 
-  return rows;
+  const ctpRows = computeClosestToPinMoney(closestToPin, teams, players);
+  if (ctpRows.length === 0) return rows;
+
+  const merged = new Map<string, MoneyRow>();
+  for (const row of [...rows, ...ctpRows]) {
+    const existing = merged.get(row.playerId);
+    if (existing) {
+      existing.amount += row.amount;
+      for (const category of row.categoriesWon) {
+        if (!existing.categoriesWon.includes(category)) existing.categoriesWon.push(category);
+      }
+    } else {
+      merged.set(row.playerId, { ...row, categoriesWon: [...row.categoriesWon] });
+    }
+  }
+  return Array.from(merged.values());
 }

@@ -35,6 +35,13 @@ export type DailyMessage = {
   updatedAt: string | null;
 };
 
+export type ClosestToPin = {
+  frontHole?: 4 | 6 | 8;
+  backHole?: 12 | 14 | 17;
+  frontWinningTeam?: number;
+  backWinningTeam?: number;
+};
+
 export type LeagueDay = {
   id: string;
   date: string;
@@ -43,6 +50,7 @@ export type LeagueDay = {
   status: 'draft' | 'teamsGenerated' | 'scoring' | 'finalized' | 'reopened';
   selectedPlayers: SelectedPlayer[];
   teams: Team[];
+  closestToPin?: ClosestToPin;
   createdAt: string;
   updatedAt: string;
 };
