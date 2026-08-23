@@ -135,7 +135,6 @@ export default function GeneratedTeamsPage() {
 
   return (
     <div className="page-card generated-teams-page">
-      <h2 className="section-title">Generated Teams</h2>
       {error && <div className="alert">{error}</div>}
       <DailyMessageEditor date={leagueDay.date} />
       <div className="page-toolbar">

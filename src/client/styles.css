@@ -624,13 +624,13 @@ main {
 }
 
 .generated-teams-page .button.secondary {
-  background: #ffffff;
-  color: var(--color-text);
-  border: 1px solid var(--color-border-strong);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-primary-100);
 }
 
 .generated-teams-page .button.secondary:hover {
-  background: #f1f5f9;
+  background: var(--color-primary-100);
   box-shadow: none;
 }
 
