@@ -567,6 +567,16 @@ main {
   font-weight: 500;
 }
 
+.announcement {
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary-100);
+  color: var(--color-primary-darker);
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.1rem;
+  white-space: pre-wrap;
+}
+
 /* ============================================================
    Select-players / panels
    ============================================================ */

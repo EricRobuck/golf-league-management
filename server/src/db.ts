@@ -37,6 +37,12 @@ db.exec(`
     createdAt TEXT NOT NULL,
     updatedAt TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS daily_messages (
+    date TEXT PRIMARY KEY,
+    message TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+  );
 `);
 
 const playerColumns = db.prepare('PRAGMA table_info(players)').all() as { name: string }[];

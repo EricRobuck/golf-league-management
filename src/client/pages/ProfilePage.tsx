@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { addLeagueDayPlayer, ensureTodayLeagueDay, getLeagueDays, removeLeagueDayPlayer } from '../api';
+import { addLeagueDayPlayer, ensureTodayLeagueDay, getDailyMessage, getLeagueDays, removeLeagueDayPlayer, setDailyMessage } from '../api';
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
@@ -44,6 +44,10 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageDraft, setMessageDraft] = useState('');
+  const [messageSaving, setMessageSaving] = useState(false);
+  const [messageSaved, setMessageSaved] = useState(false);
   const today = todayDateString();
 
   const loadTodayLeagueDay = () => {
@@ -58,6 +62,29 @@ export default function ProfilePage() {
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today]);
+
+  useEffect(() => {
+    getDailyMessage(today)
+      .then((result) => {
+        setMessage(result.message);
+        setMessageDraft(result.message);
+      })
+      .catch(() => {});
+  }, [today]);
+
+  const handleSaveMessage = async () => {
+    setMessageSaving(true);
+    setMessageSaved(false);
+    try {
+      const updated = await setDailyMessage(today, messageDraft);
+      setMessage(updated.message);
+      setMessageSaved(true);
+    } catch (_err) {
+      setError('Unable to save the message.');
+    } finally {
+      setMessageSaving(false);
+    }
+  };
 
   const isInToday = useMemo(
     () =>
@@ -154,6 +181,27 @@ export default function ProfilePage() {
     <div className="page-card">
       <h2 className="section-title">My Profile</h2>
       {error && <div className="alert">{error}</div>}
+      {message && <div className="announcement">{message}</div>}
+      {currentPlayer.isAdmin && (
+        <div className="form-field" style={{ marginBottom: '1.1rem' }}>
+          <label>Message of the Day</label>
+          <textarea
+            value={messageDraft}
+            onChange={(event) => {
+              setMessageDraft(event.target.value);
+              setMessageSaved(false);
+            }}
+            placeholder="Leave a note for everyone today..."
+            rows={3}
+          />
+          <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <button className="button secondary" onClick={handleSaveMessage} disabled={messageSaving || messageDraft === message}>
+              {messageSaving ? 'Saving...' : 'Save Message'}
+            </button>
+            {messageSaved && <span className="unsaved-note" style={{ color: '#15803d' }}>Saved!</span>}
+          </div>
+        </div>
+      )}
 
       <div className="profile-name">{playerLabel(currentPlayer)}</div>
       <div className="league-day-meta">

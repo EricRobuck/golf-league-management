@@ -42,3 +42,9 @@ export type Team = {
   teamNumber: number;
   players: SelectedPlayer[];
 };
+
+export type DailyMessage = {
+  date: string;
+  message: string;
+  updatedAt: string;
+};

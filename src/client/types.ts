@@ -29,6 +29,12 @@ export type Team = {
   players: SelectedPlayer[];
 };
 
+export type DailyMessage = {
+  date: string;
+  message: string;
+  updatedAt: string | null;
+};
+
 export type LeagueDay = {
   id: string;
   date: string;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LeagueDay, Player, SelectedPlayer } from './types';
+import { DailyMessage, LeagueDay, Player, SelectedPlayer } from './types';
 import { DEFAULT_COURSE_ID, DEFAULT_SCORING_NINE, todayDateString } from './constants';
 
 const api = axios.create({
@@ -81,5 +81,15 @@ export async function generateLeagueDayTeams(leagueDayId: string) {
 
 export async function updateLeagueDayTeams(leagueDayId: string, teams: { teamNumber: number; players: SelectedPlayer[] }[]) {
   const response = await api.put(`/league-days/${leagueDayId}/teams`, { teams });
+  return response.data;
+}
+
+export async function getDailyMessage(date: string) {
+  const response = await api.get<DailyMessage>(`/daily-message/${date}`);
+  return response.data;
+}
+
+export async function setDailyMessage(date: string, message: string) {
+  const response = await api.put<DailyMessage>(`/daily-message/${date}`, { message });
   return response.data;
 }
