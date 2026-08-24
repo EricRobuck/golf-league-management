@@ -56,43 +56,16 @@ export default function LeagueDayResults({
 
   return (
     <>
-      <div className="winners-grid">
-        <div className="winner-card">
-          <div className="winner-label">Front Winner</div>
-          {frontHasScores ? (
-            <>
-              <div className="winner-team">{frontWinners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ')}</div>
-              <div className="winner-diff">{formatDiff(frontWinners.value)}</div>
-            </>
-          ) : (
-            <div className="winner-empty">No scores yet</div>
-          )}
-          <div className="winner-pot">{formatMoney(categoryPot)} available</div>
-        </div>
-        <div className="winner-card">
-          <div className="winner-label">Back Winner</div>
-          {backHasScores ? (
-            <>
-              <div className="winner-team">{backWinners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ')}</div>
-              <div className="winner-diff">{formatDiff(backWinners.value)}</div>
-            </>
-          ) : (
-            <div className="winner-empty">No scores yet</div>
-          )}
-          <div className="winner-pot">{formatMoney(categoryPot)} available</div>
-        </div>
-        <div className="winner-card">
-          <div className="winner-label">Total Winner</div>
-          {totalHasScores ? (
-            <>
-              <div className="winner-team">{totalWinners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ')}</div>
-              <div className="winner-diff">{formatDiff(totalWinners.value)}</div>
-            </>
-          ) : (
-            <div className="winner-empty">No scores yet</div>
-          )}
-          <div className="winner-pot">{formatMoney(categoryPot)} available</div>
-        </div>
+      <div className="league-day-meta" style={{ marginBottom: '1.1rem' }}>
+        <span className="meta-chip meta-chip-accent">
+          Front — {frontHasScores ? `${frontWinners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ')} (${formatDiff(frontWinners.value)})` : 'No scores yet'} · {formatMoney(categoryPot)}
+        </span>
+        <span className="meta-chip meta-chip-accent">
+          Back — {backHasScores ? `${backWinners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ')} (${formatDiff(backWinners.value)})` : 'No scores yet'} · {formatMoney(categoryPot)}
+        </span>
+        <span className="meta-chip meta-chip-accent">
+          Total — {totalHasScores ? `${totalWinners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ')} (${formatDiff(totalWinners.value)})` : 'No scores yet'} · {formatMoney(categoryPot)}
+        </span>
       </div>
 
       <ClosestToPinSummary closestToPin={closestToPin} />

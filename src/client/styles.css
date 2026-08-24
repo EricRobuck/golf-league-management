@@ -461,66 +461,6 @@ main {
 }
 
 /* ============================================================
-   Winners / money
-   ============================================================ */
-.winners-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.1rem;
-  margin-bottom: 1.6rem;
-}
-
-.winner-card {
-  background: linear-gradient(160deg, #fffaf0 0%, #fef3c7 100%);
-  border: 1px solid #f5cf7e;
-  border-radius: var(--radius-lg);
-  padding: 1.4rem 1.25rem;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-}
-
-.winner-label {
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-gold-dark);
-  margin-bottom: 0.5rem;
-}
-
-.winner-team {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.winner-pot {
-  font-size: 0.78rem;
-  color: var(--color-gold);
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #fde68a;
-}
-
-.winner-diff {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--color-gold);
-  margin-top: 0.25rem;
-}
-
-.winner-empty {
-  color: var(--color-text-faint);
-  font-size: 0.95rem;
-}
-
-@media (max-width: 720px) {
-  .winners-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ============================================================
    Forms
    ============================================================ */
 .form-grid {
@@ -1079,10 +1019,6 @@ main {
   .button-icon {
     width: 2.9rem;
     height: 2.9rem;
-  }
-
-  .winner-diff {
-    font-size: 1.4rem;
   }
 
   .current-player-badge {
