@@ -4,7 +4,7 @@ import { addLeagueDayPlayer, ensureTodayLeagueDay, getDailyMessage, getLeagueDay
 import { todayDateString } from '../constants';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import { LeagueDay, Player, SelectedPlayer } from '../types';
-import { isRoundComplete } from '../utils/money';
+import { findWinners, isRoundComplete } from '../utils/money';
 import { playerLabel } from '../utils/playerName';
 import LeagueDayResults from '../components/LeagueDayResults';
 import ClosestToPinSummary from '../components/ClosestToPinSummary';
@@ -121,6 +121,16 @@ export default function ProfilePage() {
     [todayLeagueDay]
   );
 
+  const winnersText = useMemo(() => {
+    if (!todayLeagueDay || !roundComplete) return null;
+    const label = (winners: ReturnType<typeof findWinners>) =>
+      winners.teams.map((team) => `Team ${team.teamNumber}`).join(' & ');
+    const front = findWinners(todayLeagueDay.teams, players, 'frontDiff');
+    const back = findWinners(todayLeagueDay.teams, players, 'backDiff');
+    const total = findWinners(todayLeagueDay.teams, players, 'totalDiff');
+    return `Today's Winners — Front: ${label(front)} · Back: ${label(back)} · Total: ${label(total)}`;
+  }, [todayLeagueDay, roundComplete, players]);
+
   const myScoresEntered = useMemo(
     () => Boolean(myTeam && myTeam.players.every((entry) => entry.frontScore !== undefined && entry.backScore !== undefined)),
     [myTeam]
@@ -160,6 +170,7 @@ export default function ProfilePage() {
 
   return (
     <div className="page-card">
+      {winnersText && <p className="winners-banner">{winnersText}</p>}
       <h2 className="section-title">My Profile</h2>
       {error && <div className="alert">{error}</div>}
       {message && <div className="announcement">{message}</div>}

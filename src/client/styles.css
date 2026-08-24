@@ -517,6 +517,13 @@ main {
   white-space: pre-wrap;
 }
 
+.winners-banner {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin: 0 0 0.75rem;
+}
+
 /* ============================================================
    Generated Teams (admin) — compact, understated controls
    ============================================================ */
