@@ -4,6 +4,7 @@ import { getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../
 import { LeagueDay, Player, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
+import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import DailyMessageEditor from '../components/DailyMessageEditor';
 import ClosestToPinEditor from '../components/ClosestToPinEditor';
 
@@ -32,6 +33,7 @@ function teamTotals(team: Team, players: Player[]) {
 export default function GeneratedTeamsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentPlayer } = useCurrentPlayer();
   const [leagueDay, setLeagueDay] = useState<LeagueDay | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -121,7 +123,7 @@ export default function GeneratedTeamsPage() {
         };
       });
 
-      await updateLeagueDayTeams(id, normalized);
+      await updateLeagueDayTeams(id, normalized, currentPlayer?.isAdmin ?? false);
       await Promise.all(targetPatches);
 
       setLeagueDay((current) => (current ? { ...current, teams: normalized } : current));

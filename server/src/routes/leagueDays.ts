@@ -158,7 +158,27 @@ router.put('/:id/teams', async (req, res, next) => {
     if (!leagueDay) {
       return res.status(404).json({ message: 'League day not found.' });
     }
-    const payload = req.body as { teams: Team[] };
+    const payload = req.body as { teams: Team[]; isAdmin?: boolean };
+
+    // Re-checked against the current DB row (not whatever the client loaded
+    // earlier) so that if two teammates save close together, whichever
+    // request lands first locks the team for the second — closes the race
+    // rather than just hiding the button client-side.
+    if (!payload.isAdmin) {
+      const lockedTeam = payload.teams.find((incomingTeam) => {
+        const currentTeam = leagueDay.teams.find((team) => team.teamNumber === incomingTeam.teamNumber);
+        if (!currentTeam) return false;
+        const alreadySaved = currentTeam.players.some((entry) => entry.targetAdjusted);
+        if (!alreadySaved) return false;
+        return JSON.stringify(currentTeam) !== JSON.stringify(incomingTeam);
+      });
+      if (lockedTeam) {
+        return res
+          .status(409)
+          .json({ message: 'Scores have already been saved for this team. Ask an admin to make changes.' });
+      }
+    }
+
     leagueDay.teams = payload.teams;
     leagueDay.updatedAt = new Date().toISOString();
     await leagueDayRepository.update(leagueDay.id, { teams: leagueDay.teams, updatedAt: leagueDay.updatedAt });

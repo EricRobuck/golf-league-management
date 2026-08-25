@@ -105,12 +105,22 @@ export default function EnterScoresPage() {
           }),
         };
       });
-      await updateLeagueDayTeams(id, updatedTeams);
+      await updateLeagueDayTeams(id, updatedTeams, currentPlayer?.isAdmin ?? false);
       await Promise.all(targetPatches);
 
       navigate('/profile');
-    } catch (_err) {
-      setError('Unable to save scores.');
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        // Someone else's save for this team landed first — pull the current
+        // state so the form locks instead of leaving a stale, still-editable
+        // form the next click would just fail against again.
+        setError(err.response.data?.message ?? 'Scores have already been saved for this team.');
+        getLeagueDay(id)
+          .then((day) => setLeagueDay(day))
+          .catch(() => {});
+      } else {
+        setError('Unable to save scores.');
+      }
     } finally {
       setSaving(false);
     }

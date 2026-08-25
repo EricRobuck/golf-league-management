@@ -79,8 +79,12 @@ export async function generateLeagueDayTeams(leagueDayId: string) {
   return response.data;
 }
 
-export async function updateLeagueDayTeams(leagueDayId: string, teams: { teamNumber: number; players: SelectedPlayer[] }[]) {
-  const response = await api.put(`/league-days/${leagueDayId}/teams`, { teams });
+export async function updateLeagueDayTeams(
+  leagueDayId: string,
+  teams: { teamNumber: number; players: SelectedPlayer[] }[],
+  isAdmin: boolean
+) {
+  const response = await api.put(`/league-days/${leagueDayId}/teams`, { teams, isAdmin });
   return response.data;
 }
 
