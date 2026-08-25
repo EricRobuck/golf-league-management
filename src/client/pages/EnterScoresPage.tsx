@@ -27,6 +27,13 @@ export default function EnterScoresPage() {
     return leagueDay.teams.find((team) => team.players.some((entry) => entry.playerId === currentPlayer.id)) ?? null;
   }, [leagueDay, currentPlayer]);
 
+  // Once any score on the team has been saved, the team's entry is locked
+  // for everyone but an admin — no re-editing after the round is in.
+  const isLocked = useMemo(
+    () => Boolean(myTeam && !currentPlayer?.isAdmin && myTeam.players.some((entry) => entry.targetAdjusted)),
+    [myTeam, currentPlayer]
+  );
+
   useEffect(() => {
     if (!myTeam) return;
     setScores((current) => {
@@ -50,7 +57,7 @@ export default function EnterScoresPage() {
   };
 
   const handleSave = async () => {
-    if (!id || !leagueDay || !myTeam) return;
+    if (!id || !leagueDay || !myTeam || isLocked) return;
 
     const parsed: Record<string, { front?: number; back?: number }> = {};
     for (const entry of myTeam.players) {
@@ -130,6 +137,9 @@ export default function EnterScoresPage() {
     <div className="page-card">
       <h2 className="section-title">Enter Scores — Team {myTeam.teamNumber}</h2>
       {error && <div className="alert">{error}</div>}
+      {isLocked && (
+        <p className="hint-note">Scores have already been saved for this round — ask an admin to make changes.</p>
+      )}
 
       <div className="form-grid">
         {myTeam.players.map((entry) => {
@@ -149,6 +159,7 @@ export default function EnterScoresPage() {
                     type="number"
                     min="0"
                     value={value.front}
+                    disabled={isLocked}
                     onChange={(event) => handleScoreChange(entry.playerId, 'front', event.target.value)}
                   />
                 </div>
@@ -158,6 +169,7 @@ export default function EnterScoresPage() {
                     type="number"
                     min="0"
                     value={value.back}
+                    disabled={isLocked}
                     onChange={(event) => handleScoreChange(entry.playerId, 'back', event.target.value)}
                   />
                 </div>
@@ -168,7 +180,7 @@ export default function EnterScoresPage() {
       </div>
 
       <div style={{ marginTop: '1.25rem' }}>
-        <button className="button" onClick={handleSave} disabled={saving}>
+        <button className="button" onClick={handleSave} disabled={saving || isLocked}>
           {saving ? 'Saving...' : 'Save'}
         </button>
       </div>
