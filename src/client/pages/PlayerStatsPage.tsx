@@ -5,7 +5,7 @@ import { LeagueDay, Player } from '../types';
 import { compareByLastName, playerLabel } from '../utils/playerName';
 import ScoreTrendChart from '../components/ScoreTrendChart';
 
-type PairingRow = { player: Player; count: number };
+type PairingRow = { player: Player; count: number; lastPlayed?: string };
 type RoundRow = { date: string; front: number; back: number; total: number };
 
 export default function PlayerStatsPage() {
@@ -29,6 +29,7 @@ export default function PlayerStatsPage() {
     if (!id) return null;
 
     const pairingCounts = new Map<string, number>();
+    const pairingLastDates = new Map<string, string>();
     let firstCount = 0;
     let lastCount = 0;
     let roundsPlayed = 0;
@@ -49,6 +50,10 @@ export default function PlayerStatsPage() {
       for (const entry of team.players) {
         if (entry.playerId === id) continue;
         pairingCounts.set(entry.playerId, (pairingCounts.get(entry.playerId) ?? 0) + 1);
+        const existingLastDate = pairingLastDates.get(entry.playerId);
+        if (!existingLastDate || day.date > existingLastDate) {
+          pairingLastDates.set(entry.playerId, day.date);
+        }
       }
 
       const myEntry = team.players.find((entry) => entry.playerId === id);
@@ -61,12 +66,13 @@ export default function PlayerStatsPage() {
 
     recentRounds.sort((a, b) => b.date.localeCompare(a.date));
 
-    const pairings: PairingRow[] = [...pairingCounts.entries()]
-      .map(([playerId, count]) => {
-        const teammate = players.find((p) => p.id === playerId);
-        return teammate ? { player: teammate, count } : null;
-      })
-      .filter((row): row is PairingRow => row !== null)
+    const pairings: PairingRow[] = players
+      .filter((p) => p.id !== id)
+      .map((teammate) => ({
+        player: teammate,
+        count: pairingCounts.get(teammate.id) ?? 0,
+        lastPlayed: pairingLastDates.get(teammate.id),
+      }))
       .sort((a, b) => b.count - a.count || compareByLastName(a.player, b.player));
 
     return {
@@ -156,7 +162,7 @@ export default function PlayerStatsPage() {
 
       <h3 style={{ marginTop: '1.75rem' }}>Played With</h3>
       {stats.pairings.length === 0 ? (
-        <p className="empty-state">No rounds played with anyone yet.</p>
+        <p className="empty-state">No other golfers yet.</p>
       ) : (
         <div className="table-scroll">
           <table className="table signed-up-table">
@@ -164,13 +170,15 @@ export default function PlayerStatsPage() {
               <tr>
                 <th>Golfer</th>
                 <th>Times Played Together</th>
+                <th>Latest Date</th>
               </tr>
             </thead>
             <tbody>
-              {stats.pairings.map(({ player: teammate, count }) => (
+              {stats.pairings.map(({ player: teammate, count, lastPlayed }) => (
                 <tr key={teammate.id}>
                   <td>{playerLabel(teammate)}</td>
                   <td>{count}</td>
+                  <td>{lastPlayed ?? '–'}</td>
                 </tr>
               ))}
             </tbody>
