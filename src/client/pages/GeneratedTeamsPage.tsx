@@ -40,6 +40,8 @@ export default function GeneratedTeamsPage() {
   const [dirtyTeams, setDirtyTeams] = useState<Set<number>>(new Set());
   const [savingTeam, setSavingTeam] = useState<number | null>(null);
   const [savedTeam, setSavedTeam] = useState<number | null>(null);
+  const [swapSelection, setSwapSelection] = useState<string[]>([]);
+  const [swapping, setSwapping] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -140,6 +142,62 @@ export default function GeneratedTeamsPage() {
     }
   };
 
+  const toggleSwapSelection = (playerId: string) => {
+    setSwapSelection((current) => {
+      if (current.includes(playerId)) return current.filter((pid) => pid !== playerId);
+      if (current.length >= 2) return [current[1], playerId];
+      return [...current, playerId];
+    });
+  };
+
+  const handleSwap = async () => {
+    if (!id || !leagueDay || swapSelection.length !== 2) return;
+    const [idA, idB] = swapSelection;
+
+    const locate = (playerId: string) => {
+      for (let ti = 0; ti < teams.length; ti += 1) {
+        const pi = teams[ti].players.findIndex((entry) => entry.playerId === playerId);
+        if (pi !== -1) return { ti, pi };
+      }
+      return null;
+    };
+    const locA = locate(idA);
+    const locB = locate(idB);
+    if (!locA || !locB) {
+      setSwapSelection([]);
+      return;
+    }
+    if (locA.ti === locB.ti) {
+      setError('Select two golfers on different teams to swap them.');
+      return;
+    }
+
+    const updatedTeams = teams.map((team) => ({ ...team, players: [...team.players] }));
+    const entryA = updatedTeams[locA.ti].players[locA.pi];
+    const entryB = updatedTeams[locB.ti].players[locB.pi];
+    updatedTeams[locA.ti].players[locA.pi] = entryB;
+    updatedTeams[locB.ti].players[locB.pi] = entryA;
+
+    setSwapping(true);
+    setError(null);
+    try {
+      const normalized = normalizeTeams(updatedTeams);
+      await updateLeagueDayTeams(id, normalized, currentPlayer?.isAdmin ?? false);
+      setLeagueDay((current) => (current ? { ...current, teams: normalized } : current));
+      setDirtyTeams((current) => {
+        const next = new Set(current);
+        next.delete(updatedTeams[locA.ti].teamNumber);
+        next.delete(updatedTeams[locB.ti].teamNumber);
+        return next;
+      });
+      setSwapSelection([]);
+    } catch (_error) {
+      setError('Unable to swap players.');
+    } finally {
+      setSwapping(false);
+    }
+  };
+
   const canPrint = () => teams.length > 0;
 
   if (!leagueDay) {
@@ -172,6 +230,25 @@ export default function GeneratedTeamsPage() {
       <div style={{ marginBottom: '1rem' }}>
         <strong>League Date:</strong> {leagueDay.date} · <strong>Players:</strong> {selectedPlayers.length}
       </div>
+      {swapSelection.length > 0 && (
+        <div className="league-day-meta" style={{ marginBottom: '1rem', alignItems: 'center' }}>
+          <span className="meta-chip meta-chip-accent">
+            Swap:{' '}
+            {swapSelection
+              .map((playerId) => {
+                const player = findPlayer(players, playerId);
+                return player ? playerLabel(player) : playerId;
+              })
+              .join(' ⇄ ')}
+          </span>
+          <button className="button" onClick={handleSwap} disabled={swapSelection.length !== 2 || swapping}>
+            {swapping ? 'Swapping...' : 'Swap'}
+          </button>
+          <button className="button secondary" onClick={() => setSwapSelection([])} disabled={swapping}>
+            Cancel
+          </button>
+        </div>
+      )}
       {teams.length > 0 ? (
         <div className="team-grid">
           {teams.map((team, teamIndex) => {
@@ -192,6 +269,7 @@ export default function GeneratedTeamsPage() {
                         <th>Golfer</th>
                         <th>Front</th>
                         <th>Back</th>
+                        <th>Swap</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -222,6 +300,14 @@ export default function GeneratedTeamsPage() {
                                 style={{ width: '4.5rem' }}
                                 value={entry.backScore ?? ''}
                                 onChange={(event) => handleScoreChange(teamIndex, playerIndex, 'backScore', event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={swapSelection.includes(entry.playerId)}
+                                title="Select for swap"
+                                onChange={() => toggleSwapSelection(entry.playerId)}
                               />
                             </td>
                             <td>
