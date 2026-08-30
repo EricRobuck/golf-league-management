@@ -412,15 +412,6 @@ main {
   background: #444e5a;
 }
 
-.button-icon-active {
-  background: #d97706;
-  color: #ffffff;
-}
-
-.button-icon-active:hover {
-  background: #b45309;
-}
-
 /* ============================================================
    Tables
    ============================================================ */
@@ -787,7 +778,7 @@ main {
   font-size: 0.98rem;
 }
 
-.goes-first-chip {
+.assigned-team-chip {
   margin-left: 0.5rem;
   font-size: 0.7rem;
   padding: 0.12rem 0.55rem;

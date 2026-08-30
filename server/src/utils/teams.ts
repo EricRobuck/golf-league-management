@@ -2,7 +2,7 @@ import { LeagueDay, SelectedPlayer, Team } from '../types/models';
 
 export type TeamRotationRestrictions = {
   // Golfers on Team 1 (first tee-off) last time they played — kept off Team 1
-  // again this round unless their goesFirst star overrides it.
+  // again this round unless a deliberate team assignment overrides it.
   avoidFirstTeamIds?: Set<string>;
   // Golfers on the last team (last tee-off) last time they played — kept off
   // the last team again this round. No override exists for this one.
@@ -137,17 +137,22 @@ export function generateTeams(
   const slots: SelectedPlayer[][] = teamSizes.map(() => []);
   const lastSlotIndex = slots.length - 1;
 
-  // goesFirst players fill the front slots of team 1 first (so they sit in the
-  // first tee-off spots there); any overflow beyond team 1's capacity spills
-  // into the front of team 2, and so on. This is a deliberate admin action, so
-  // it overrides the "no repeat" rotation below even for someone who was on
-  // Team 1 last time.
-  const flaggedQueue = shuffle(players.filter((player) => player.goesFirst));
-  slots.forEach((slot, i) => {
-    while (flaggedQueue.length > 0 && slot.length < teamSizes[i]) {
-      slot.push(flaggedQueue.shift()!);
+  // Players who requested a specific team (1, 2, or 3 — "Random" leaves
+  // assignedTeam unset) are seated there first. This is a deliberate choice,
+  // so it overrides the "no repeat" rotation below even for someone who was
+  // on that team last time. If the requested team number doesn't exist for
+  // this round's size, or is already full, the player falls through to the
+  // normal pairing-based placement instead of being dropped.
+  const assignedPlayers = shuffle(players.filter((player) => player.assignedTeam));
+  const unplacedAssigned: SelectedPlayer[] = [];
+  for (const player of assignedPlayers) {
+    const slotIndex = player.assignedTeam! - 1;
+    if (slotIndex < slots.length && slots[slotIndex].length < teamSizes[slotIndex]) {
+      slots[slotIndex].push(player);
+    } else {
+      unplacedAssigned.push(player);
     }
-  });
+  }
 
   // Remaining players are placed most-entangled-first: whoever has the most
   // pairing history against the rest of the field gets seated while every
@@ -157,7 +162,7 @@ export function generateTeams(
   // anywhere without creating a repeat. Filling teams in parallel like this
   // (rather than completing one team before starting the next) avoids two
   // conflicting players both being left stranded for the same last team.
-  const remaining = players.filter((player) => !player.goesFirst);
+  const remaining = [...players.filter((player) => !player.assignedTeam), ...unplacedAssigned];
   const ordered = shuffle(remaining)
     .map((player) => ({ player, weight: totalWeight(player.playerId, remaining, pairHistory) }))
     .sort((a, b) => b.weight - a.weight)

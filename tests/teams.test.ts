@@ -78,17 +78,51 @@ describe('generateTeams', () => {
     expect(teams[0].players).toHaveLength(5);
   });
 
-  it('places a goesFirst player into team 1, teeing off first', () => {
-    const input = players(7).map((player, index) => (index === 4 ? { ...player, goesFirst: true } : player));
+  it('places a player with assignedTeam 1 onto team 1', () => {
+    const input = players(7).map((player, index) => (index === 4 ? { ...player, assignedTeam: 1 as const } : player));
     const teams = generateTeams(input);
-    expect(teams[0].players[0].playerId).toBe('player-5');
+    expect(teams[0].players.map((p) => p.playerId)).toContain('player-5');
   });
 
-  it('places multiple goesFirst players into team 1 when they fit', () => {
-    const input = players(7).map((player, index) => ([1, 4].includes(index) ? { ...player, goesFirst: true } : player));
+  it('places a player with assignedTeam 2 onto team 2', () => {
+    const input = players(7).map((player, index) => (index === 4 ? { ...player, assignedTeam: 2 as const } : player));
     const teams = generateTeams(input);
-    const team1Ids = teams[0].players.map((player) => player.playerId);
-    expect(team1Ids).toEqual(expect.arrayContaining(['player-2', 'player-5']));
+    expect(teams[1].players.map((p) => p.playerId)).toContain('player-5');
+  });
+
+  it('places a player with assignedTeam 3 onto team 3', () => {
+    const input = players(10).map((player, index) => (index === 4 ? { ...player, assignedTeam: 3 as const } : player));
+    const teams = generateTeams(input);
+    expect(teams[2].players.map((p) => p.playerId)).toContain('player-5');
+  });
+
+  it('places multiple assigned players onto their requested teams when they fit', () => {
+    const input = players(7).map((player, index) => {
+      if (index === 1) return { ...player, assignedTeam: 1 as const };
+      if (index === 4) return { ...player, assignedTeam: 2 as const };
+      return player;
+    });
+    const teams = generateTeams(input);
+    expect(teams[0].players.map((p) => p.playerId)).toContain('player-2');
+    expect(teams[1].players.map((p) => p.playerId)).toContain('player-5');
+  });
+
+  it('falls back to normal placement when the requested team does not exist for this round size', () => {
+    // 3 players makes a single team (team 1 only) — requesting team 3 has nowhere to go.
+    const input = players(3).map((player, index) => (index === 0 ? { ...player, assignedTeam: 3 as const } : player));
+    const teams = generateTeams(input);
+    const ids = teams.flatMap((team) => team.players.map((p) => p.playerId)).sort();
+    expect(ids).toEqual(input.map((p) => p.playerId).sort());
+  });
+
+  it('falls back to normal placement when the requested team is already full', () => {
+    // 6 players -> two threesomes. Four players all request team 1 (capacity 3) — the
+    // fourth has to land somewhere else, but every player still gets placed exactly once.
+    const input = players(6).map((player, index) => (index <= 3 ? { ...player, assignedTeam: 1 as const } : player));
+    const teams = generateTeams(input);
+    const ids = teams.flatMap((team) => team.players.map((p) => p.playerId)).sort();
+    expect(ids).toEqual(input.map((p) => p.playerId).sort());
+    expect(teams[0].players).toHaveLength(3);
   });
 
   it('throws for fewer than three golfers', () => {

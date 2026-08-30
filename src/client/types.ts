@@ -16,7 +16,7 @@ export type Player = {
 export type SelectedPlayer = {
   playerId: string;
   selectionOrder: number;
-  goesFirst?: boolean;
+  assignedTeam?: 1 | 2 | 3;
   frontScore?: number;
   backScore?: number;
   targetAdjusted?: boolean;

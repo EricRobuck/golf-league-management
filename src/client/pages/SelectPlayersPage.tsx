@@ -81,16 +81,17 @@ export default function SelectPlayersPage() {
     }
   };
 
-  const toggleGoesFirst = async (playerId: string) => {
+  const changeAssignedTeam = async (playerId: string, value: string) => {
     if (!id || !leagueDay) return;
+    const assignedTeam = value === '' ? undefined : (Number(value) as 1 | 2 | 3);
     const updatedSelectedPlayers = leagueDay.selectedPlayers.map((entry) =>
-      entry.playerId === playerId ? { ...entry, goesFirst: !entry.goesFirst } : entry
+      entry.playerId === playerId ? { ...entry, assignedTeam } : entry
     );
     try {
       await updateLeagueDayPlayerOrder(id, updatedSelectedPlayers);
       setLeagueDay((current) => (current ? { ...current, selectedPlayers: updatedSelectedPlayers } : current));
     } catch (_error) {
-      setError('Unable to update go-first flag.');
+      setError('Unable to update team assignment.');
     }
   };
 
@@ -189,7 +190,9 @@ export default function SelectPlayersPage() {
                         <div>
                           <div className="player-name">
                             {playerLabel(player)}
-                            {entry.goesFirst && <span className="meta-chip meta-chip-accent goes-first-chip">Goes First</span>}
+                            {entry.assignedTeam && (
+                              <span className="meta-chip meta-chip-accent assigned-team-chip">Team {entry.assignedTeam}</span>
+                            )}
                           </div>
                           <div className="player-meta">
                             Front {player.frontTarget} / Back {player.backTarget}
@@ -197,13 +200,16 @@ export default function SelectPlayersPage() {
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                        <button
-                          className={`button-icon ${entry.goesFirst ? 'button-icon-active' : 'secondary'}`}
-                          title={entry.goesFirst ? 'Remove go-first flag' : 'Mark to go first when teams are created'}
-                          onClick={() => toggleGoesFirst(entry.playerId)}
+                        <select
+                          value={entry.assignedTeam ?? ''}
+                          title="Which team this golfer should be placed on when teams are created"
+                          onChange={(event) => changeAssignedTeam(entry.playerId, event.target.value)}
                         >
-                          ★
-                        </button>
+                          <option value="">Random</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                        </select>
                         <button
                           className="button-icon button-icon-danger"
                           title="Remove from roster"
