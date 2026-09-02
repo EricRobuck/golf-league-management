@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ClosestToPin, DailyMessage, LeagueDay, Player, PlayerConflict, SelectedPlayer } from './types';
+import { ClosestToPin, DailyMessage, ExceptionEntry, LeagueDay, Player, SelectedPlayer } from './types';
 import { DEFAULT_COURSE_ID, DEFAULT_SCORING_NINE, todayDateString } from './constants';
 
 const api = axios.create({
@@ -105,16 +105,16 @@ export async function setDailyMessage(date: string, message: string) {
   return response.data;
 }
 
-export async function getPlayerConflicts() {
-  const response = await api.get<PlayerConflict[]>('/player-conflicts');
+export async function getExceptionList() {
+  const response = await api.get<ExceptionEntry[]>('/exception-list');
   return response.data;
 }
 
-export async function createPlayerConflict(playerAId: string, playerBId: string) {
-  const response = await api.post<PlayerConflict>('/player-conflicts', { playerAId, playerBId });
+export async function addToExceptionList(playerId: string) {
+  const response = await api.post<ExceptionEntry>('/exception-list', { playerId });
   return response.data;
 }
 
-export async function deletePlayerConflict(id: string) {
-  await api.delete(`/player-conflicts/${id}`);
+export async function removeFromExceptionList(playerId: string) {
+  await api.delete(`/exception-list/${playerId}`);
 }

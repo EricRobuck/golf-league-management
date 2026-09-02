@@ -4,7 +4,7 @@ import path from 'path';
 import playerRoutes from './routes/players';
 import leagueDayRoutes from './routes/leagueDays';
 import dailyMessageRoutes from './routes/dailyMessage';
-import playerConflictRoutes from './routes/playerConflicts';
+import exceptionListRoutes from './routes/exceptionList';
 
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 4000;
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/api/players', playerRoutes);
 app.use('/api/league-days', leagueDayRoutes);
 app.use('/api/daily-message', dailyMessageRoutes);
-app.use('/api/player-conflicts', playerConflictRoutes);
+app.use('/api/exception-list', exceptionListRoutes);
 
 const clientDist = path.resolve(__dirname, '../../dist');
 app.use(express.static(clientDist));

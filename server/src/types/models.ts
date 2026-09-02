@@ -60,9 +60,7 @@ export type DailyMessage = {
   updatedAt: string;
 };
 
-export type PlayerConflict = {
-  id: string;
-  playerAId: string;
-  playerBId: string;
+export type ExceptionEntry = {
+  playerId: string;
   createdAt: string;
 };

@@ -77,8 +77,8 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
           </Link>
         )}
         {isAdmin && (
-          <Link to="/player-conflicts" onClick={close}>
-            Cannot Play Together
+          <Link to="/exception-list" onClick={close}>
+            Exception List
           </Link>
         )}
       </nav>

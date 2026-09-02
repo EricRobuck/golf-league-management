@@ -45,13 +45,13 @@ db.exec(`
     updatedAt TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS player_conflicts (
-    id TEXT PRIMARY KEY,
-    playerAId TEXT NOT NULL,
-    playerBId TEXT NOT NULL,
+  CREATE TABLE IF NOT EXISTS exception_list (
+    playerId TEXT PRIMARY KEY,
     createdAt TEXT NOT NULL
   );
 `);
+
+db.exec('DROP TABLE IF EXISTS player_conflicts');
 
 const playerColumns = db.prepare('PRAGMA table_info(players)').all() as { name: string }[];
 if (!playerColumns.some((column) => column.name === 'isAdmin')) {

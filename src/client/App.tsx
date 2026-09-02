@@ -13,7 +13,7 @@ import ViewPointsPage from './pages/ViewPointsPage';
 import PastRoundsPage from './pages/PastRoundsPage';
 import RoundStatusReportPage from './pages/RoundStatusReportPage';
 import GroupStatsPage from './pages/GroupStatsPage';
-import PlayerConflictsPage from './pages/PlayerConflictsPage';
+import ExceptionListPage from './pages/ExceptionListPage';
 import TeamScoresPage from './pages/TeamScoresPage';
 import TodayScorePage from './pages/TodayScorePage';
 import EnterScoresPage from './pages/EnterScoresPage';
@@ -102,10 +102,10 @@ export default function App() {
             }
           />
           <Route
-            path="/player-conflicts"
+            path="/exception-list"
             element={
               <AdminRoute>
-                <PlayerConflictsPage />
+                <ExceptionListPage />
               </AdminRoute>
             }
           />

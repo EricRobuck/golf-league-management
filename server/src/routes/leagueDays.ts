@@ -1,14 +1,14 @@
 import express from 'express';
 import { SqlitePlayerRepository } from '../repositories/playerRepository';
 import { SqliteLeagueDayRepository } from '../repositories/leagueDayRepository';
-import { SqlitePlayerConflictRepository } from '../repositories/playerConflictRepository';
+import { SqliteExceptionListRepository } from '../repositories/exceptionListRepository';
 import { ClosestToPin, CTP_BACK_HOLES, CTP_FRONT_HOLES, LeagueDay, SelectedPlayer, Team } from '../types/models';
 import { buildPairHistory, buildRotationRestrictions, generateTeams, HARD_CONFLICT_WEIGHT, pairKey } from '../utils/teams';
 
 const router = express.Router();
 const playerRepository = new SqlitePlayerRepository();
 const leagueDayRepository = new SqliteLeagueDayRepository();
-const playerConflictRepository = new SqlitePlayerConflictRepository();
+const exceptionListRepository = new SqliteExceptionListRepository();
 
 router.get('/', async (_req, res, next) => {
   try {
@@ -243,11 +243,19 @@ router.post('/:id/generate-teams', async (req, res, next) => {
     }
     const allLeagueDays = await leagueDayRepository.getAll();
     const pairHistory = buildPairHistory(allLeagueDays, leagueDay.id);
-    const conflicts = await playerConflictRepository.getAll();
-    for (const conflict of conflicts) {
-      const key = pairKey(conflict.playerAId, conflict.playerBId);
-      pairHistory.set(key, (pairHistory.get(key) ?? 0) + HARD_CONFLICT_WEIGHT);
+
+    // Everyone on the exception list is mutually off-limits with everyone
+    // else on it — every pairwise combination within the group gets folded
+    // into pairHistory at a hard-avoidance weight.
+    const exceptionEntries = await exceptionListRepository.getAll();
+    const exceptionIds = exceptionEntries.map((entry) => entry.playerId);
+    for (let i = 0; i < exceptionIds.length; i += 1) {
+      for (let j = i + 1; j < exceptionIds.length; j += 1) {
+        const key = pairKey(exceptionIds[i], exceptionIds[j]);
+        pairHistory.set(key, (pairHistory.get(key) ?? 0) + HARD_CONFLICT_WEIGHT);
+      }
     }
+
     const rotationRestrictions = buildRotationRestrictions(allLeagueDays, leagueDay.date, leagueDay.id);
     const teams: Team[] = generateTeams(leagueDay.selectedPlayers, pairHistory, rotationRestrictions);
     leagueDay.teams = teams;
