@@ -44,6 +44,13 @@ db.exec(`
     message TEXT NOT NULL,
     updatedAt TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS player_conflicts (
+    id TEXT PRIMARY KEY,
+    playerAId TEXT NOT NULL,
+    playerBId TEXT NOT NULL,
+    createdAt TEXT NOT NULL
+  );
 `);
 
 const playerColumns = db.prepare('PRAGMA table_info(players)').all() as { name: string }[];

@@ -59,3 +59,10 @@ export type DailyMessage = {
   message: string;
   updatedAt: string;
 };
+
+export type PlayerConflict = {
+  id: string;
+  playerAId: string;
+  playerBId: string;
+  createdAt: string;
+};

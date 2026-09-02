@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPairHistory, generateTeams } from '../server/src/utils/teams';
+import { buildPairHistory, generateTeams, HARD_CONFLICT_WEIGHT, pairKey } from '../server/src/utils/teams';
 import { LeagueDay } from '../server/src/types/models';
 
 describe('generateTeams', () => {
@@ -156,6 +156,29 @@ describe('generateTeams', () => {
   it('with no history, still produces every player exactly once', () => {
     const input = players(10);
     const teams = generateTeams(input, new Map());
+    const ids = teams.flatMap((team) => team.players.map((p) => p.playerId)).sort();
+    expect(ids).toEqual(input.map((p) => p.playerId).sort());
+  });
+
+  it('keeps a hard-conflict pair apart when another team has room', () => {
+    // Mirrors how the /generate-teams route folds admin "cannot play
+    // together" pairs into pairHistory before calling generateTeams.
+    const input = players(6);
+    const pairHistory = new Map<string, number>([[pairKey('player-1', 'player-2'), HARD_CONFLICT_WEIGHT]]);
+
+    for (let i = 0; i < 20; i += 1) {
+      const teams = generateTeams(input, pairHistory);
+      const team1 = teams.find((t) => t.players.some((p) => p.playerId === 'player-1'));
+      expect(team1?.players.some((p) => p.playerId === 'player-2')).toBe(false);
+    }
+  });
+
+  it('still seats everyone when a hard-conflict pair cannot be separated', () => {
+    // Only 3 golfers total, two of whom conflict — there is nowhere else to put them.
+    const input = players(3);
+    const pairHistory = new Map<string, number>([[pairKey('player-1', 'player-2'), HARD_CONFLICT_WEIGHT]]);
+
+    const teams = generateTeams(input, pairHistory);
     const ids = teams.flatMap((team) => team.players.map((p) => p.playerId)).sort();
     expect(ids).toEqual(input.map((p) => p.playerId).sort());
   });

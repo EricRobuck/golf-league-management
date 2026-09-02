@@ -35,6 +35,13 @@ export type DailyMessage = {
   updatedAt: string | null;
 };
 
+export type PlayerConflict = {
+  id: string;
+  playerAId: string;
+  playerBId: string;
+  createdAt: string;
+};
+
 export type ClosestToPin = {
   frontHole?: 4 | 6 | 8;
   backHole?: 12 | 14 | 17;

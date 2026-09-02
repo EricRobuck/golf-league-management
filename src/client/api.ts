@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ClosestToPin, DailyMessage, LeagueDay, Player, SelectedPlayer } from './types';
+import { ClosestToPin, DailyMessage, LeagueDay, Player, PlayerConflict, SelectedPlayer } from './types';
 import { DEFAULT_COURSE_ID, DEFAULT_SCORING_NINE, todayDateString } from './constants';
 
 const api = axios.create({
@@ -103,4 +103,18 @@ export async function getDailyMessage(date: string) {
 export async function setDailyMessage(date: string, message: string) {
   const response = await api.put<DailyMessage>(`/daily-message/${date}`, { message });
   return response.data;
+}
+
+export async function getPlayerConflicts() {
+  const response = await api.get<PlayerConflict[]>('/player-conflicts');
+  return response.data;
+}
+
+export async function createPlayerConflict(playerAId: string, playerBId: string) {
+  const response = await api.post<PlayerConflict>('/player-conflicts', { playerAId, playerBId });
+  return response.data;
+}
+
+export async function deletePlayerConflict(id: string) {
+  await api.delete(`/player-conflicts/${id}`);
 }

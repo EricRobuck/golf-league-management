@@ -76,6 +76,11 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
             Status Report
           </Link>
         )}
+        {isAdmin && (
+          <Link to="/player-conflicts" onClick={close}>
+            Cannot Play Together
+          </Link>
+        )}
       </nav>
     </>
   );

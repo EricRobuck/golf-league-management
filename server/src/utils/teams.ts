@@ -1,5 +1,13 @@
 import { LeagueDay, SelectedPlayer, Team } from '../types/models';
 
+// Admin-declared "cannot play together" pairs are folded into pairHistory
+// with this weight before generateTeams runs, so the existing repeat-
+// avoidance scoring keeps them apart far more strongly than any real
+// pairing history ever would — without making it a hard failure in the
+// rare case (e.g. only 3 golfers, two of whom conflict) where there's
+// genuinely no way to seat everyone apart.
+export const HARD_CONFLICT_WEIGHT = 10000;
+
 export type TeamRotationRestrictions = {
   // Golfers on Team 1 (first tee-off) last time they played — kept off Team 1
   // again this round unless a deliberate team assignment overrides it.
@@ -41,7 +49,7 @@ function shuffle<T>(items: T[]): T[] {
   return shuffled;
 }
 
-function pairKey(a: string, b: string): string {
+export function pairKey(a: string, b: string): string {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
 }
 
