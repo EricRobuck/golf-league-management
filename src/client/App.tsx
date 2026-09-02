@@ -12,6 +12,7 @@ import GeneratedTeamsPage from './pages/GeneratedTeamsPage';
 import ViewPointsPage from './pages/ViewPointsPage';
 import PastRoundsPage from './pages/PastRoundsPage';
 import RoundStatusReportPage from './pages/RoundStatusReportPage';
+import GroupStatsPage from './pages/GroupStatsPage';
 import TeamScoresPage from './pages/TeamScoresPage';
 import TodayScorePage from './pages/TodayScorePage';
 import EnterScoresPage from './pages/EnterScoresPage';
@@ -120,6 +121,7 @@ export default function App() {
             }
           />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/group-stats" element={<GroupStatsPage />} />
         </Routes>
       </main>
     </div>

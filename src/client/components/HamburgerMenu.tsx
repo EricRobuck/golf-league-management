@@ -57,6 +57,9 @@ export default function HamburgerMenu({ currentPlayer, isAdmin, switchPlayer }: 
         <Link to="/leaderboard" onClick={close}>
           Leaderboard
         </Link>
+        <Link to="/group-stats" onClick={close}>
+          Group Stats
+        </Link>
         <Link to="/points" onClick={close}>
           Today
         </Link>
