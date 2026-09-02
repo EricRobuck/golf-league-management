@@ -7,16 +7,47 @@ import {
   getPlayers,
   removeLeagueDayPlayer,
   updateLeagueDayPlayerOrder,
+  updateLeagueDayTeams,
 } from '../api';
-import { LeagueDay, Player } from '../types';
+import { LeagueDay, Player, SelectedPlayer, Team } from '../types';
 import { playerLabel } from '../utils/playerName';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 
 const REFRESH_INTERVAL_MS = 12000;
+
+type LateEntryPlan = { teams: Team[]; targetTeamNumber: number; createdNewTeam: boolean };
+
+// A late arrival goes on the bottom of the last threesome, turning it into a
+// foursome. If every team is already a foursome, the last player from each
+// of the first three teams is pulled off to form a brand new team with the
+// late entry, rather than overloading any one team to five.
+function planLateEntry(teams: Team[], newEntry: SelectedPlayer): LateEntryPlan {
+  const cloned = teams.map((team) => ({ ...team, players: [...team.players] }));
+  const lastThreesomeIndex = cloned.reduce(
+    (lastIndex, team, index) => (team.players.length === 3 ? index : lastIndex),
+    -1
+  );
+
+  if (lastThreesomeIndex !== -1) {
+    cloned[lastThreesomeIndex].players.push(newEntry);
+    return { teams: cloned, targetTeamNumber: cloned[lastThreesomeIndex].teamNumber, createdNewTeam: false };
+  }
+
+  const pulled: SelectedPlayer[] = [];
+  for (let i = 0; i < Math.min(3, cloned.length); i += 1) {
+    const removed = cloned[i].players.pop();
+    if (removed) pulled.push(removed);
+  }
+  const newTeamNumber = cloned.length + 1;
+  cloned.push({ teamNumber: newTeamNumber, players: [...pulled, newEntry] });
+  return { teams: cloned, targetTeamNumber: newTeamNumber, createdNewTeam: true };
+}
 
 export default function SelectPlayersPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentPlayer } = useCurrentPlayer();
   const [leagueDay, setLeagueDay] = useState<LeagueDay | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +84,31 @@ export default function SelectPlayersPage() {
   const canCreateRound = selectedPlayers.length >= 3;
 
   const addPlayer = async (playerId: string) => {
-    if (!id) return;
+    if (!id || !leagueDay) return;
+    const teamsAlreadyExist = leagueDay.teams.length > 0;
+
+    if (teamsAlreadyExist) {
+      const player = players.find((p) => p.id === playerId);
+      const name = player ? playerLabel(player) : 'this golfer';
+      const nextSelectionOrder = leagueDay.selectedPlayers.length + 1;
+      const plan = planLateEntry(leagueDay.teams, { playerId, selectionOrder: nextSelectionOrder });
+      const confirmMessage = plan.createdNewTeam
+        ? `Teams have already been created. Add ${name} as a late entry on a new Team ${plan.targetTeamNumber}?`
+        : `Teams have already been created. Add ${name} as a late entry to Team ${plan.targetTeamNumber}?`;
+      if (!window.confirm(confirmMessage)) return;
+
+      try {
+        const updatedSelectedPlayers = await addLeagueDayPlayer(id, playerId);
+        await updateLeagueDayTeams(id, plan.teams, currentPlayer?.isAdmin ?? false);
+        setLeagueDay((current) =>
+          current ? { ...current, selectedPlayers: updatedSelectedPlayers, teams: plan.teams } : current
+        );
+      } catch (error: any) {
+        setError(error.response?.data?.message ?? 'Unable to add late entry.');
+      }
+      return;
+    }
+
     try {
       const updated = await addLeagueDayPlayer(id, playerId);
       setLeagueDay((current) => (current ? { ...current, selectedPlayers: updated } : current));
@@ -133,6 +188,11 @@ export default function SelectPlayersPage() {
       </div>
 
       {error && <div className="alert">{error}</div>}
+      {leagueDay.teams.length > 0 && (
+        <p className="hint-note" style={{ marginBottom: '1rem' }}>
+          Teams have already been created — adding a golfer now adds them as a late entry directly onto a team.
+        </p>
+      )}
 
       <div className="split-columns">
         <section className="panel">
