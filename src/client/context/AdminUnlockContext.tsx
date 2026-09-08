@@ -1,9 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { todayDateString } from '../constants';
 import { useCurrentPlayer } from './CurrentPlayerContext';
 
 const ADMIN_PASSWORD = '11235813';
-const STORAGE_PREFIX = 'golf-admin-unlocked-';
 
 type AdminUnlockContextValue = {
   isUnlocked: boolean;
@@ -14,26 +12,24 @@ const AdminUnlockContext = createContext<AdminUnlockContextValue | null>(null);
 
 export function AdminUnlockProvider({ children }: { children: ReactNode }) {
   const { currentPlayer } = useCurrentPlayer();
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [unlockedPlayerId, setUnlockedPlayerId] = useState<string | null>(null);
 
-  // Re-check whenever the active player changes (e.g. "Switch player") so one
-  // admin's unlock never carries over to a different player on a shared device.
+  // Not persisted to storage on purpose: every fresh check-in (picking who
+  // you are) must re-enter the password, even if this same admin already
+  // unlocked earlier today.
   useEffect(() => {
-    if (!currentPlayer) {
-      setIsUnlocked(false);
-      return;
-    }
-    setIsUnlocked(localStorage.getItem(STORAGE_PREFIX + currentPlayer.id) === todayDateString());
-  }, [currentPlayer]);
+    setUnlockedPlayerId(null);
+  }, [currentPlayer?.id]);
 
   const unlock = (password: string) => {
     if (!currentPlayer || password !== ADMIN_PASSWORD) {
       return false;
     }
-    localStorage.setItem(STORAGE_PREFIX + currentPlayer.id, todayDateString());
-    setIsUnlocked(true);
+    setUnlockedPlayerId(currentPlayer.id);
     return true;
   };
+
+  const isUnlocked = currentPlayer !== null && unlockedPlayerId === currentPlayer.id;
 
   return <AdminUnlockContext.Provider value={{ isUnlocked, unlock }}>{children}</AdminUnlockContext.Provider>;
 }

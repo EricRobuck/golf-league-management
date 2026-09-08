@@ -23,7 +23,7 @@ export default function AdminPasswordGate({ children }: { children?: ReactNode }
   return (
     <div className="page-card">
       <h2 className="section-title">Admin Password Required</h2>
-      <p>Enter the admin password to continue. You only need to do this once per day.</p>
+      <p>Enter the admin password to continue.</p>
       {error && <div className="alert">{error}</div>}
       <form onSubmit={handleSubmit} className="form-grid">
         <div className="form-field">
