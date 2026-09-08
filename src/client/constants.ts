@@ -1,9 +1,11 @@
-import { MemberStatus } from './types';
+import { MemberStatus, PlayerLeague } from './types';
 
 export const DEFAULT_COURSE_ID = 'Rich Maiden';
 export const DEFAULT_SCORING_NINE = 'both' as const;
 
 export const MEMBER_STATUSES: MemberStatus[] = ['Riding Member', 'Walking Member', 'Non Member', 'Employee'];
+
+export const PLAYER_LEAGUES: PlayerLeague[] = ['Locker Room', 'Perry'];
 
 export const CTP_FRONT_HOLES = [4, 6, 8] as const;
 export const CTP_BACK_HOLES = [12, 14, 17] as const;

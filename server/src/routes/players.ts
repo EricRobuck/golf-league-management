@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { SqlitePlayerRepository } from '../repositories/playerRepository';
-import { MEMBER_STATUSES, Player } from '../types/models';
+import { MEMBER_STATUSES, PLAYER_LEAGUES, Player } from '../types/models';
 
 const router = express.Router();
 const repository = new SqlitePlayerRepository();
@@ -14,6 +14,12 @@ function isValidTarget(value: unknown): value is number {
 // null (not undefined) for players who haven't been assigned one yet.
 function isValidStatus(value: unknown): value is Player['status'] | null {
   return value === null || (typeof value === 'string' && (MEMBER_STATUSES as string[]).includes(value));
+}
+
+// null means "no league set" — the DB column is nullable and round-trips as
+// null (not undefined) for players who haven't been assigned one yet.
+function isValidLeague(value: unknown): value is Player['league'] | null {
+  return value === null || (typeof value === 'string' && (PLAYER_LEAGUES as string[]).includes(value));
 }
 
 router.get('/', async (_req, res, next) => {
@@ -52,6 +58,9 @@ router.post('/', async (req, res, next) => {
     if (payload.status !== undefined && !isValidStatus(payload.status)) {
       return res.status(400).json({ message: 'Invalid status.' });
     }
+    if (payload.league !== undefined && !isValidLeague(payload.league)) {
+      return res.status(400).json({ message: 'Invalid league.' });
+    }
 
     const players = await repository.getAll();
     const duplicate = players.find(
@@ -71,6 +80,7 @@ router.post('/', async (req, res, next) => {
       notes: payload.notes,
       isAdmin: false,
       status: payload.status,
+      league: payload.league,
       createdAt: now,
       updatedAt: now,
     };
@@ -97,6 +107,9 @@ router.put('/:id', async (req, res, next) => {
     if (payload.status !== undefined && !isValidStatus(payload.status)) {
       return res.status(400).json({ message: 'Invalid status.' });
     }
+    if (payload.league !== undefined && !isValidLeague(payload.league)) {
+      return res.status(400).json({ message: 'Invalid league.' });
+    }
 
     const updated = await repository.update(req.params.id, payload);
     if (!updated) {
@@ -122,6 +135,9 @@ router.patch('/:id', async (req, res, next) => {
     }
     if (payload.status !== undefined && !isValidStatus(payload.status)) {
       return res.status(400).json({ message: 'Invalid status.' });
+    }
+    if (payload.league !== undefined && !isValidLeague(payload.league)) {
+      return res.status(400).json({ message: 'Invalid league.' });
     }
 
     const updated = await repository.update(req.params.id, payload);

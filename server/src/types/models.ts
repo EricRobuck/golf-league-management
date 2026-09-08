@@ -2,6 +2,10 @@ export type MemberStatus = 'Riding Member' | 'Walking Member' | 'Non Member' | '
 
 export const MEMBER_STATUSES: MemberStatus[] = ['Riding Member', 'Walking Member', 'Non Member', 'Employee'];
 
+export type PlayerLeague = 'Locker Room' | 'Perry';
+
+export const PLAYER_LEAGUES: PlayerLeague[] = ['Locker Room', 'Perry'];
+
 export type Player = {
   id: string;
   firstName: string;
@@ -11,6 +15,7 @@ export type Player = {
   notes?: string;
   isAdmin: boolean;
   status?: MemberStatus;
+  league?: PlayerLeague;
   createdAt: string;
   updatedAt: string;
 };

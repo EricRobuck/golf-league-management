@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPlayer } from '../api';
-import { MEMBER_STATUSES } from '../constants';
-import { MemberStatus } from '../types';
+import { MEMBER_STATUSES, PLAYER_LEAGUES } from '../constants';
+import { MemberStatus, PlayerLeague } from '../types';
 
 export default function AddPlayerPage() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export default function AddPlayerPage() {
     backTarget: 0,
     notes: '',
     status: '' as MemberStatus | '',
+    league: '' as PlayerLeague | '',
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +36,7 @@ export default function AddPlayerPage() {
         notes: form.notes || undefined,
         isAdmin: false,
         status: form.status || undefined,
+        league: form.league || undefined,
       });
       navigate('/players');
     } catch (error: any) {
@@ -74,6 +76,17 @@ export default function AddPlayerPage() {
             {MEMBER_STATUSES.map((status) => (
               <option key={status} value={status}>
                 {status}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-field">
+          <label>League</label>
+          <select value={form.league} onChange={(e) => handleChange('league', e.target.value)}>
+            <option value="">—</option>
+            {PLAYER_LEAGUES.map((league) => (
+              <option key={league} value={league}>
+                {league}
               </option>
             ))}
           </select>

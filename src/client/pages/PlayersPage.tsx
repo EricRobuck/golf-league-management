@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getPlayers, patchPlayer } from '../api';
-import { MEMBER_STATUSES } from '../constants';
+import { MEMBER_STATUSES, PLAYER_LEAGUES } from '../constants';
 import { Player } from '../types';
 import { Link } from 'react-router-dom';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
+import { useAdminUnlock } from '../context/AdminUnlockContext';
+import AdminPasswordGate from '../components/AdminPasswordGate';
 import { playerLabel } from '../utils/playerName';
 
-type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'status' | 'isAdmin';
+type SortKey = 'name' | 'frontTarget' | 'backTarget' | 'total' | 'status' | 'league' | 'isAdmin';
 type SortDirection = 'asc' | 'desc';
 
 const COLUMNS: { key: SortKey; label: string }[] = [
@@ -15,6 +17,7 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: 'backTarget', label: 'Back Target' },
   { key: 'total', label: 'Total' },
   { key: 'status', label: 'Status' },
+  { key: 'league', label: 'League' },
   { key: 'isAdmin', label: 'Admin' },
 ];
 
@@ -24,6 +27,8 @@ function sortValue(player: Player, key: SortKey): string | number {
       return player.frontTarget + player.backTarget;
     case 'status':
       return player.status ?? '';
+    case 'league':
+      return player.league ?? '';
     case 'isAdmin':
       return player.isAdmin ? 1 : 0;
     case 'name':
@@ -35,7 +40,9 @@ function sortValue(player: Player, key: SortKey): string | number {
 
 export default function PlayersPage() {
   const { currentPlayer } = useCurrentPlayer();
-  const isAdmin = currentPlayer?.isAdmin ?? false;
+  const rawIsAdmin = currentPlayer?.isAdmin ?? false;
+  const { isUnlocked } = useAdminUnlock();
+  const isAdmin = rawIsAdmin && isUnlocked;
   const [players, setPlayers] = useState<Player[]>([]);
   const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +99,14 @@ export default function PlayersPage() {
     setSavedRowId(null);
   };
 
+  const handleLeagueChange = (playerId: string, value: string) => {
+    const league = (value || undefined) as Player['league'];
+    setPlayers((current) => current.map((p) => (p.id === playerId ? { ...p, league } : p)));
+    setDirtyIds((current) => new Set(current).add(playerId));
+    setSaved(false);
+    setSavedRowId(null);
+  };
+
   const handleSave = async () => {
     if (dirtyIds.size === 0) return;
     setSaving(true);
@@ -104,6 +119,7 @@ export default function PlayersPage() {
             frontTarget: player.frontTarget,
             backTarget: player.backTarget,
             status: player.status,
+            league: player.league,
           });
         })
       );
@@ -127,6 +143,7 @@ export default function PlayersPage() {
         frontTarget: player.frontTarget,
         backTarget: player.backTarget,
         status: player.status,
+        league: player.league,
       });
       setPlayers((current) => current.map((p) => (p.id === playerId ? updated : p)));
       setDirtyIds((current) => {
@@ -159,6 +176,7 @@ export default function PlayersPage() {
     <div className="page-card">
       <h2 className="section-title">Players</h2>
       {error && <div className="alert">{error}</div>}
+      {rawIsAdmin && !isUnlocked && <AdminPasswordGate />}
       <div className="panel-search" style={{ marginBottom: '1rem' }}>
         <input
           type="search"
@@ -227,6 +245,23 @@ export default function PlayersPage() {
                     </select>
                   ) : (
                     player.status ?? ''
+                  )}
+                </td>
+                <td>
+                  {isAdmin ? (
+                    <select
+                      value={player.league ?? ''}
+                      onChange={(event) => handleLeagueChange(player.id, event.target.value)}
+                    >
+                      <option value="">—</option>
+                      {PLAYER_LEAGUES.map((league) => (
+                        <option key={league} value={league}>
+                          {league}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    player.league ?? ''
                   )}
                 </td>
                 <td>

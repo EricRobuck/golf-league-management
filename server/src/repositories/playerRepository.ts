@@ -15,7 +15,7 @@ function rowToPlayer(row: PlayerRow): Player {
   return { ...row, isAdmin: Boolean(row.isAdmin) };
 }
 
-const UPDATABLE_FIELDS: (keyof Player)[] = ['firstName', 'lastName', 'frontTarget', 'backTarget', 'notes', 'isAdmin', 'status'];
+const UPDATABLE_FIELDS: (keyof Player)[] = ['firstName', 'lastName', 'frontTarget', 'backTarget', 'notes', 'isAdmin', 'status', 'league'];
 
 export class SqlitePlayerRepository implements PlayerRepository {
   async getAll(): Promise<Player[]> {
@@ -30,8 +30,8 @@ export class SqlitePlayerRepository implements PlayerRepository {
 
   async create(player: Player): Promise<Player> {
     db.prepare(
-      `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, isAdmin, status, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, isAdmin, status, league, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       player.id,
       player.firstName,
@@ -41,6 +41,7 @@ export class SqlitePlayerRepository implements PlayerRepository {
       player.notes ?? null,
       player.isAdmin ? 1 : 0,
       player.status ?? null,
+      player.league ?? null,
       player.createdAt,
       player.updatedAt
     );
@@ -62,6 +63,7 @@ export class SqlitePlayerRepository implements PlayerRepository {
       updated.notes ?? null,
       updated.isAdmin ? 1 : 0,
       updated.status ?? null,
+      updated.league ?? null,
       updated.updatedAt,
       id
     );

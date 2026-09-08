@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPlayer, updatePlayer } from '../api';
-import { MEMBER_STATUSES } from '../constants';
+import { MEMBER_STATUSES, PLAYER_LEAGUES } from '../constants';
 import { Player } from '../types';
 
 export default function EditPlayerPage() {
@@ -33,6 +33,7 @@ export default function EditPlayerPage() {
         backTarget: player.backTarget,
         notes: player.notes,
         status: player.status,
+        league: player.league,
       });
       navigate('/players');
     } catch (error: any) {
@@ -87,6 +88,17 @@ export default function EditPlayerPage() {
             {MEMBER_STATUSES.map((status) => (
               <option key={status} value={status}>
                 {status}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-field">
+          <label>League</label>
+          <select value={player.league ?? ''} onChange={(e) => handleChange('league', e.target.value)}>
+            <option value="">—</option>
+            {PLAYER_LEAGUES.map((league) => (
+              <option key={league} value={league}>
+                {league}
               </option>
             ))}
           </select>

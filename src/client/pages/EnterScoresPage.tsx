@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getLeagueDay, patchPlayer, updateLeagueDayTeams } from '../api';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
+import { useAdminUnlock } from '../context/AdminUnlockContext';
 import { LeagueDay, Player, SelectedPlayer, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
@@ -10,6 +11,8 @@ export default function EnterScoresPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentPlayer, players } = useCurrentPlayer();
+  const { isUnlocked } = useAdminUnlock();
+  const isAdmin = (currentPlayer?.isAdmin ?? false) && isUnlocked;
   const [leagueDay, setLeagueDay] = useState<LeagueDay | null>(null);
   const [scores, setScores] = useState<Record<string, { front: string; back: string }>>({});
   const [error, setError] = useState<string | null>(null);
@@ -30,8 +33,8 @@ export default function EnterScoresPage() {
   // Once any score on the team has been saved, the team's entry is locked
   // for everyone but an admin — no re-editing after the round is in.
   const isLocked = useMemo(
-    () => Boolean(myTeam && !currentPlayer?.isAdmin && myTeam.players.some((entry) => entry.targetAdjusted)),
-    [myTeam, currentPlayer]
+    () => Boolean(myTeam && !isAdmin && myTeam.players.some((entry) => entry.targetAdjusted)),
+    [myTeam, isAdmin]
   );
 
   useEffect(() => {
@@ -105,7 +108,7 @@ export default function EnterScoresPage() {
           }),
         };
       });
-      await updateLeagueDayTeams(id, updatedTeams, currentPlayer?.isAdmin ?? false);
+      await updateLeagueDayTeams(id, updatedTeams, isAdmin);
       await Promise.all(targetPatches);
 
       navigate('/profile');

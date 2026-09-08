@@ -22,6 +22,7 @@ db.exec(`
     notes TEXT,
     isAdmin INTEGER NOT NULL DEFAULT 0,
     status TEXT,
+    league TEXT,
     createdAt TEXT NOT NULL,
     updatedAt TEXT NOT NULL
   );
@@ -59,6 +60,9 @@ if (!playerColumns.some((column) => column.name === 'isAdmin')) {
 }
 if (!playerColumns.some((column) => column.name === 'status')) {
   db.exec('ALTER TABLE players ADD COLUMN status TEXT');
+}
+if (!playerColumns.some((column) => column.name === 'league')) {
+  db.exec('ALTER TABLE players ADD COLUMN league TEXT');
 }
 
 const leagueDayColumns = db.prepare('PRAGMA table_info(league_days)').all() as { name: string }[];

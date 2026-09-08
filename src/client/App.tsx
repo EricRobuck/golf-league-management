@@ -20,13 +20,14 @@ import EnterScoresPage from './pages/EnterScoresPage';
 import WhoAreYouPage from './pages/WhoAreYouPage';
 import ProfilePage from './pages/ProfilePage';
 import { useCurrentPlayer } from './context/CurrentPlayerContext';
+import AdminPasswordGate from './components/AdminPasswordGate';
 
 function AdminRoute({ children }: { children: ReactElement }) {
   const { currentPlayer } = useCurrentPlayer();
   if (!currentPlayer?.isAdmin) {
     return <Navigate to="/profile" replace />;
   }
-  return children;
+  return <AdminPasswordGate>{children}</AdminPasswordGate>;
 }
 
 export default function App() {
