@@ -80,7 +80,7 @@ router.post('/', async (req, res, next) => {
       notes: payload.notes,
       isAdmin: false,
       status: payload.status,
-      league: payload.league,
+      league: payload.league ?? 'Locker Room',
       createdAt: now,
       updatedAt: now,
     };

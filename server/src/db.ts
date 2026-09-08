@@ -63,6 +63,7 @@ if (!playerColumns.some((column) => column.name === 'status')) {
 }
 if (!playerColumns.some((column) => column.name === 'league')) {
   db.exec('ALTER TABLE players ADD COLUMN league TEXT');
+  db.exec("UPDATE players SET league = 'Locker Room' WHERE league IS NULL");
 }
 
 const leagueDayColumns = db.prepare('PRAGMA table_info(league_days)').all() as { name: string }[];
@@ -80,8 +81,8 @@ function migrateLegacyJsonFiles(): void {
     const players = JSON.parse(fs.readFileSync(legacyPlayersFile, 'utf-8')) as any[];
     if (players.length > 0) {
       const insert = db.prepare(
-        `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, isAdmin, createdAt, updatedAt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO players (id, firstName, lastName, frontTarget, backTarget, notes, isAdmin, league, createdAt, updatedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
       for (const p of players) {
         insert.run(
@@ -92,6 +93,7 @@ function migrateLegacyJsonFiles(): void {
           p.backTarget,
           p.notes ?? null,
           p.isAdmin ? 1 : 0,
+          p.league ?? 'Locker Room',
           p.createdAt,
           p.updatedAt
         );

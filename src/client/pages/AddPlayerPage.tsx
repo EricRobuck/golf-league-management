@@ -13,7 +13,7 @@ export default function AddPlayerPage() {
     backTarget: 0,
     notes: '',
     status: '' as MemberStatus | '',
-    league: '' as PlayerLeague | '',
+    league: 'Locker Room' as PlayerLeague | '',
   });
   const [error, setError] = useState<string | null>(null);
 
