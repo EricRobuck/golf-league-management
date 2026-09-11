@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
+import { addLeagueDayPlayer, getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
 import { LeagueDay, Player, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
+import { planLateEntry } from '../utils/lateEntry';
 import { useCurrentPlayer } from '../context/CurrentPlayerContext';
 import DailyMessageEditor from '../components/DailyMessageEditor';
 import ClosestToPinEditor from '../components/ClosestToPinEditor';
@@ -42,6 +43,9 @@ export default function GeneratedTeamsPage() {
   const [savedTeam, setSavedTeam] = useState<number | null>(null);
   const [swapSelection, setSwapSelection] = useState<string[]>([]);
   const [swapping, setSwapping] = useState(false);
+  const [showLateGolferPanel, setShowLateGolferPanel] = useState(false);
+  const [lateGolferSearch, setLateGolferSearch] = useState('');
+  const [addingLateGolferId, setAddingLateGolferId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +59,42 @@ export default function GeneratedTeamsPage() {
 
   const selectedPlayers = useMemo(() => leagueDay?.selectedPlayers ?? [], [leagueDay]);
   const teams = useMemo(() => leagueDay?.teams ?? [], [leagueDay]);
+
+  const availableForLateEntry = useMemo(() => {
+    const query = lateGolferSearch.trim().toLowerCase();
+    return players
+      .filter((player) => !selectedPlayers.some((entry) => entry.playerId === player.id))
+      .filter((player) => !query || playerLabel(player).toLowerCase().includes(query))
+      .sort((a, b) => playerLabel(a).localeCompare(playerLabel(b)));
+  }, [players, selectedPlayers, lateGolferSearch]);
+
+  const handleAddLateGolfer = async (playerId: string) => {
+    if (!id || !leagueDay) return;
+    const player = players.find((p) => p.id === playerId);
+    const name = player ? playerLabel(player) : 'this golfer';
+    const nextSelectionOrder = leagueDay.selectedPlayers.length + 1;
+    const plan = planLateEntry(teams, { playerId, selectionOrder: nextSelectionOrder });
+    const confirmMessage = plan.createdNewTeam
+      ? `Add ${name} as a late entry on a new Team ${plan.targetTeamNumber}?`
+      : `Add ${name} as a late entry to Team ${plan.targetTeamNumber}?`;
+    if (!window.confirm(confirmMessage)) return;
+
+    setAddingLateGolferId(playerId);
+    setError(null);
+    try {
+      const updatedSelectedPlayers = await addLeagueDayPlayer(id, playerId);
+      const normalized = normalizeTeams(plan.teams);
+      await updateLeagueDayTeams(id, normalized, currentPlayer?.isAdmin ?? false);
+      setLeagueDay((current) =>
+        current ? { ...current, selectedPlayers: updatedSelectedPlayers, teams: normalized } : current
+      );
+      setLateGolferSearch('');
+    } catch (error: any) {
+      setError(error.response?.data?.message ?? 'Unable to add late golfer.');
+    } finally {
+      setAddingLateGolferId(null);
+    }
+  };
 
   const updateLocalTeams = (updatedTeams: Team[], changedTeamNumber: number) => {
     setLeagueDay((current) => (current ? { ...current, teams: normalizeTeams(updatedTeams) } : current));
@@ -224,9 +264,56 @@ export default function GeneratedTeamsPage() {
           View Team Scores
         </Link>
         <Link className="button secondary" to="/players/add">
-          Add Player
+          Add Golfer
         </Link>
+        <button
+          className="button secondary"
+          onClick={() => setShowLateGolferPanel((current) => !current)}
+          disabled={teams.length === 0}
+          title={teams.length === 0 ? 'Generate teams first' : 'Add an existing golfer to today’s round'}
+        >
+          Late Golfer
+        </button>
       </div>
+      {showLateGolferPanel && (
+        <div className="page-card" style={{ marginBottom: '1rem' }}>
+          <h3 style={{ marginTop: 0 }}>Add Late Golfer</h3>
+          <p className="hint-note" style={{ marginBottom: '0.75rem' }}>
+            Picking a golfer here adds them to today's round and slots them onto a team using the late-entry rules
+            — it does not create a new golfer in the system.
+          </p>
+          <div className="panel-search" style={{ marginBottom: '0.75rem' }}>
+            <input
+              type="search"
+              placeholder="Search golfers..."
+              value={lateGolferSearch}
+              onChange={(event) => setLateGolferSearch(event.target.value)}
+              autoFocus
+            />
+          </div>
+          {availableForLateEntry.length === 0 ? (
+            <p className="empty-state">
+              {lateGolferSearch ? 'No golfers match your search.' : 'Everyone is already in today’s round.'}
+            </p>
+          ) : (
+            <ul className="roster-list">
+              {availableForLateEntry.map((player) => (
+                <li key={player.id} className="roster-item">
+                  <div className="player-name">{playerLabel(player)}</div>
+                  <button
+                    className="button-icon"
+                    title="Add as late entry"
+                    onClick={() => handleAddLateGolfer(player.id)}
+                    disabled={addingLateGolferId !== null}
+                  >
+                    {addingLateGolferId === player.id ? '...' : '+'}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       <div style={{ marginBottom: '1rem' }}>
         <strong>League Date:</strong> {leagueDay.date} · <strong>Players:</strong> {selectedPlayers.length}
       </div>
