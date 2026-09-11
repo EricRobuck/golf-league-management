@@ -164,6 +164,11 @@ export default function EnterScoresPage() {
               <div className="player-name" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>
                 {label}
                 {player?.id === currentPlayer?.id ? ' (You)' : ''}
+                {entry.playingForPoints && (
+                  <span className="meta-chip" style={{ marginLeft: '0.5rem' }}>
+                    Playing for Points
+                  </span>
+                )}
               </div>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <div className="form-field" style={{ flex: '1 1 140px' }}>

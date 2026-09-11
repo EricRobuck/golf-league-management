@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { addLeagueDayPlayer, getLeagueDay, getPlayers, patchPlayer, updateLeagueDayTeams } from '../api';
-import { LeagueDay, Player, Team } from '../types';
+import { LeagueDay, Player, SelectedPlayer, Team } from '../types';
 import { adjustTargets } from '../utils/targetAdjustment';
 import { playerLabel } from '../utils/playerName';
 import { planLateEntry } from '../utils/lateEntry';
@@ -18,17 +18,25 @@ function normalizeTeams(teams: Team[]) {
 }
 
 function teamTotals(team: Team, players: Player[]) {
-  const totals = team.players.reduce(
-    (acc, entry) => {
-      const player = findPlayer(players, entry.playerId);
-      return {
-        front: acc.front + (player?.frontTarget ?? 0),
-        back: acc.back + (player?.backTarget ?? 0),
-      };
-    },
-    { front: 0, back: 0 }
-  );
+  const totals = team.players
+    .filter((entry) => !entry.playingForPoints)
+    .reduce(
+      (acc, entry) => {
+        const player = findPlayer(players, entry.playerId);
+        return {
+          front: acc.front + (player?.frontTarget ?? 0),
+          back: acc.back + (player?.backTarget ?? 0),
+        };
+      },
+      { front: 0, back: 0 }
+    );
   return { ...totals, total: totals.front + totals.back };
+}
+
+function escortLabel(entry: SelectedPlayer, players: Player[]) {
+  if (!entry.escortId) return null;
+  const escort = findPlayer(players, entry.escortId);
+  return escort ? playerLabel(escort) : null;
 }
 
 export default function GeneratedTeamsPage() {
@@ -46,6 +54,10 @@ export default function GeneratedTeamsPage() {
   const [showLateGolferPanel, setShowLateGolferPanel] = useState(false);
   const [lateGolferSearch, setLateGolferSearch] = useState('');
   const [addingLateGolferId, setAddingLateGolferId] = useState<string | null>(null);
+  const [showPointsPanel, setShowPointsPanel] = useState(false);
+  const [pointsPlayerId, setPointsPlayerId] = useState('');
+  const [escortPlayerId, setEscortPlayerId] = useState('');
+  const [addingPointsPlayer, setAddingPointsPlayer] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -93,6 +105,75 @@ export default function GeneratedTeamsPage() {
       setError(error.response?.data?.message ?? 'Unable to add late golfer.');
     } finally {
       setAddingLateGolferId(null);
+    }
+  };
+
+  // Only golfers currently on a threesome can escort a points player — pairing
+  // onto a team that's already a foursome would leave no way to tell which
+  // three of the resulting five players are supposed to count.
+  const eligibleEscorts = useMemo(() => {
+    const result: { player: Player; teamNumber: number }[] = [];
+    for (const team of teams) {
+      if (team.players.length !== 3) continue;
+      for (const entry of team.players) {
+        const player = findPlayer(players, entry.playerId);
+        if (player) result.push({ player, teamNumber: team.teamNumber });
+      }
+    }
+    return result.sort((a, b) => playerLabel(a.player).localeCompare(playerLabel(b.player)));
+  }, [teams, players]);
+
+  const handleAddPointsPlayer = async () => {
+    if (!id || !leagueDay || !pointsPlayerId || !escortPlayerId) return;
+    const escort = eligibleEscorts.find((entry) => entry.player.id === escortPlayerId);
+    if (!escort) {
+      setError('Choose an escort who is currently on a threesome.');
+      return;
+    }
+    const escortTeam = teams.find((team) => team.teamNumber === escort.teamNumber);
+    if (!escortTeam || escortTeam.players.length !== 3) {
+      setError('That escort is no longer on a threesome — pick another escort.');
+      return;
+    }
+
+    const pointsPlayer = players.find((p) => p.id === pointsPlayerId);
+    const name = pointsPlayer ? playerLabel(pointsPlayer) : 'this golfer';
+    const confirmMessage = `Add ${name} to Team ${escort.teamNumber} playing for points, paired with ${playerLabel(
+      escort.player
+    )}? Their score will not count toward the team.`;
+    if (!window.confirm(confirmMessage)) return;
+
+    setAddingPointsPlayer(true);
+    setError(null);
+    try {
+      const updatedSelectedPlayers = await addLeagueDayPlayer(id, pointsPlayerId);
+      const nextSelectionOrder = leagueDay.selectedPlayers.length + 1;
+      const updatedTeams = teams.map((team) => {
+        if (team.teamNumber !== escort.teamNumber) return team;
+        return {
+          ...team,
+          players: [
+            ...team.players,
+            {
+              playerId: pointsPlayerId,
+              selectionOrder: nextSelectionOrder,
+              playingForPoints: true,
+              escortId: escortPlayerId,
+            },
+          ],
+        };
+      });
+      const normalized = normalizeTeams(updatedTeams);
+      await updateLeagueDayTeams(id, normalized, currentPlayer?.isAdmin ?? false);
+      setLeagueDay((current) =>
+        current ? { ...current, selectedPlayers: updatedSelectedPlayers, teams: normalized } : current
+      );
+      setPointsPlayerId('');
+      setEscortPlayerId('');
+    } catch (error: any) {
+      setError(error.response?.data?.message ?? 'Unable to add points player.');
+    } finally {
+      setAddingPointsPlayer(false);
     }
   };
 
@@ -274,6 +355,18 @@ export default function GeneratedTeamsPage() {
         >
           Late Golfer
         </button>
+        <button
+          className="button secondary"
+          onClick={() => setShowPointsPanel((current) => !current)}
+          disabled={eligibleEscorts.length === 0}
+          title={
+            eligibleEscorts.length === 0
+              ? 'Need a team with exactly 3 players to pair a points player with'
+              : 'Add a golfer playing to establish their points'
+          }
+        >
+          Playing for Points
+        </button>
       </div>
       {showLateGolferPanel && (
         <div className="page-card" style={{ marginBottom: '1rem' }}>
@@ -312,6 +405,48 @@ export default function GeneratedTeamsPage() {
               ))}
             </ul>
           )}
+        </div>
+      )}
+      {showPointsPanel && (
+        <div className="page-card" style={{ marginBottom: '1rem' }}>
+          <h3 style={{ marginTop: 0 }}>Add Golfer Playing for Points</h3>
+          <p className="hint-note" style={{ marginBottom: '0.75rem' }}>
+            Pairs a golfer with an escort already on a threesome, adding them to that team as a fourth. Their score
+            is still recorded and adjusts their own target, but it does not count toward the team's score or money.
+          </p>
+          <div className="form-grid">
+            <div className="form-field">
+              <label>Playing for Points</label>
+              <select value={pointsPlayerId} onChange={(event) => setPointsPlayerId(event.target.value)}>
+                <option value="">Select a golfer...</option>
+                {availableForLateEntry.map((player) => (
+                  <option key={player.id} value={player.id}>
+                    {playerLabel(player)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-field">
+              <label>Escort</label>
+              <select value={escortPlayerId} onChange={(event) => setEscortPlayerId(event.target.value)}>
+                <option value="">Select an escort...</option>
+                {eligibleEscorts.map(({ player, teamNumber }) => (
+                  <option key={player.id} value={player.id}>
+                    {playerLabel(player)} — Team {teamNumber}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <button
+                className="button"
+                onClick={handleAddPointsPlayer}
+                disabled={!pointsPlayerId || !escortPlayerId || addingPointsPlayer}
+              >
+                {addingPointsPlayer ? 'Adding...' : 'Add to Round'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
       <div style={{ marginBottom: '1rem' }}>
@@ -367,6 +502,11 @@ export default function GeneratedTeamsPage() {
                           <tr key={entry.playerId}>
                             <td>
                               {player ? playerLabel(player) : entry.playerId}
+                              {entry.playingForPoints && (
+                                <span className="meta-chip" style={{ marginLeft: '0.5rem' }}>
+                                  Playing for Points{escortLabel(entry, players) ? ` (w/ ${escortLabel(entry, players)})` : ''}
+                                </span>
+                              )}
                               <div className="player-meta">
                                 Target: Front {player?.frontTarget ?? '-'} / Back {player?.backTarget ?? '-'}
                               </div>

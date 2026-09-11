@@ -25,6 +25,7 @@ function teamPointTotals(team: Team, players: Player[]) {
   let front = 0;
   let back = 0;
   for (const entry of team.players) {
+    if (entry.playingForPoints) continue;
     const player = players.find((p) => p.id === entry.playerId);
     if (player) {
       const target = entryTarget(entry, player);
@@ -106,7 +107,10 @@ export default function ViewPointsPage() {
                       : undefined;
                   return (
                     <div key={entry.playerId} className="points-board-item">
-                      <span className="points-board-name">{playerLabel(player)}</span>
+                      <span className="points-board-name">
+                        {playerLabel(player)}
+                        {entry.playingForPoints && <span className="meta-chip" style={{ marginLeft: '0.5rem' }}>Playing for Points</span>}
+                      </span>
                       <div className="points-board-row">
                         <span className="points-board-row-label">Needed</span>
                         <span className="points-board-stats">

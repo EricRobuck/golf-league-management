@@ -43,7 +43,10 @@ export default function LeagueDayResults({
   const totalWinners = useMemo(() => findWinners(sortedTeams, players, 'totalDiff'), [sortedTeams, players]);
 
   const playerCount = useMemo(
-    () => new Set(sortedTeams.flatMap((team) => team.players.map((entry) => entry.playerId))).size,
+    () =>
+      new Set(
+        sortedTeams.flatMap((team) => team.players.filter((entry) => !entry.playingForPoints).map((entry) => entry.playerId))
+      ).size,
     [sortedTeams]
   );
   const categoryPot = playerCount; // $3 per golfer, split evenly across front/back/total
@@ -132,7 +135,14 @@ export default function LeagueDayResults({
                       const totalDiff = individualDiff(entry, player, 'total');
                       return (
                         <tr key={entry.playerId}>
-                          <td>{player ? playerLabel(player) : entry.playerId}</td>
+                          <td>
+                            {player ? playerLabel(player) : entry.playerId}
+                            {entry.playingForPoints && (
+                              <span className="meta-chip" style={{ marginLeft: '0.5rem' }}>
+                                Playing for Points
+                              </span>
+                            )}
+                          </td>
                           <td>{entry.frontScore ?? '-'}</td>
                           <td>{entry.backScore ?? '-'}</td>
                           <td>{formatDiff(frontDiff)}</td>

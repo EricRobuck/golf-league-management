@@ -29,6 +29,12 @@ export type SelectedPlayer = {
   targetAdjusted?: boolean;
   frontTargetAtSave?: number;
   backTargetAtSave?: number;
+  // Set when this entry is a golfer playing to establish their points, paired
+  // with an existing teammate (escortId) who is already on the team. Their
+  // score still feeds their own target adjustment on save, but they're left
+  // out of the team's win/loss diff totals and money — see utils/money.ts.
+  playingForPoints?: boolean;
+  escortId?: string;
 };
 
 export const CTP_FRONT_HOLES = [4, 6, 8] as const;

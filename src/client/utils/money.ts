@@ -1,11 +1,18 @@
 import { ClosestToPin, Player, SelectedPlayer, Team } from '../types';
 
+// Golfers playing for points are on the team to establish their own target,
+// not to compete — they're excluded from every team-level total, the win
+// diff, and money (pot size and payouts alike).
+function countedPlayers(team: Team) {
+  return team.players.filter((entry) => !entry.playingForPoints);
+}
+
 export function teamFrontTotal(team: Team) {
-  return team.players.reduce((total, entry) => total + (entry.frontScore ?? 0), 0);
+  return countedPlayers(team).reduce((total, entry) => total + (entry.frontScore ?? 0), 0);
 }
 
 export function teamBackTotal(team: Team) {
-  return team.players.reduce((total, entry) => total + (entry.backScore ?? 0), 0);
+  return countedPlayers(team).reduce((total, entry) => total + (entry.backScore ?? 0), 0);
 }
 
 export function teamTotal(team: Team) {
@@ -28,7 +35,7 @@ function targetAtSave(entry: SelectedPlayer, player: Player) {
 export function teamDiffTotals(team: Team, players: Player[]) {
   let frontDiff = 0;
   let backDiff = 0;
-  for (const entry of team.players) {
+  for (const entry of countedPlayers(team)) {
     const player = players.find((p) => p.id === entry.playerId);
     if (!player) continue;
     const target = targetAtSave(entry, player);
@@ -50,7 +57,7 @@ export function findWinners(teams: Team[], players: Player[], key: DiffKey) {
 }
 
 export function hasAnyScore(teams: Team[], field: 'frontScore' | 'backScore') {
-  return teams.some((team) => team.players.some((entry) => entry[field] !== undefined));
+  return teams.some((team) => countedPlayers(team).some((entry) => entry[field] !== undefined));
 }
 
 // Every player on every team must have both scores entered before the round's
@@ -102,7 +109,7 @@ export function formatMoney(amount: number) {
 // When the lump sum doesn't divide evenly, the extra dollars go to whichever teammates
 // had the better individual differential overall.
 export function distributeTeamMoney(team: Team, players: Player[], pot: number) {
-  const members = team.players;
+  const members = countedPlayers(team);
   const payouts: Record<string, number> = {};
   if (members.length === 0 || pot === 0) return payouts;
 
@@ -144,7 +151,7 @@ export function computeClosestToPinMoney(closestToPin: ClosestToPin | undefined,
   const { frontHole, backHole, frontWinningTeam, backWinningTeam } = closestToPin;
   if (frontWinningTeam === undefined && backWinningTeam === undefined) return [];
 
-  const playerCount = new Set(teams.flatMap((team) => team.players.map((entry) => entry.playerId))).size;
+  const playerCount = new Set(teams.flatMap((team) => countedPlayers(team).map((entry) => entry.playerId))).size;
   const pot = playerCount;
 
   const winningTeamNumbers = [...new Set([frontWinningTeam, backWinningTeam].filter((value): value is number => value !== undefined))];
@@ -177,7 +184,7 @@ export function computeClosestToPinMoney(closestToPin: ClosestToPin | undefined,
 
 // $3 per golfer, split evenly across front/back/total (each category's pot equals the golfer count).
 export function computeMoneyList(teams: Team[], players: Player[], closestToPin?: ClosestToPin): MoneyRow[] {
-  const playerCount = new Set(teams.flatMap((team) => team.players.map((entry) => entry.playerId))).size;
+  const playerCount = new Set(teams.flatMap((team) => countedPlayers(team).map((entry) => entry.playerId))).size;
   const categoryPot = playerCount;
 
   const frontHasScores = hasAnyScore(teams, 'frontScore');
