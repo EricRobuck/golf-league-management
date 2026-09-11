@@ -980,6 +980,24 @@ main {
   break-inside: avoid;
 }
 
+.status-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0 1.5rem;
+}
+
+.status-report-category {
+  break-inside: avoid;
+  margin-bottom: 0.75rem;
+}
+
+.status-report-category ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 /* ============================================================
    Responsive tweaks
    ============================================================ */

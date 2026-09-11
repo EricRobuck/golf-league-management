@@ -76,25 +76,27 @@ export default function RoundStatusReportPage() {
               </span>
             ))}
           </div>
-          {CATEGORY_LABELS.map((label) => {
-            const rows = report.categories.get(label)!;
-            if (rows.length === 0) return null;
-            return (
-              <div key={label} style={{ marginBottom: '0.75rem' }}>
-                <strong>
-                  {label} ({rows.length})
-                </strong>
-                <ul style={{ margin: '0.25rem 0 0', paddingLeft: '1.25rem' }}>
-                  {rows
-                    .slice()
-                    .sort((a, b) => playerLabel(a).localeCompare(playerLabel(b)))
-                    .map((player) => (
-                      <li key={player.id}>{playerLabel(player)}</li>
-                    ))}
-                </ul>
-              </div>
-            );
-          })}
+          <div className="status-report-grid">
+            {CATEGORY_LABELS.map((label) => {
+              const rows = report.categories.get(label)!;
+              if (rows.length === 0) return null;
+              return (
+                <div key={label} className="status-report-category">
+                  <strong>
+                    {label} ({rows.length})
+                  </strong>
+                  <ul>
+                    {rows
+                      .slice()
+                      .sort((a, b) => playerLabel(a).localeCompare(playerLabel(b)))
+                      .map((player) => (
+                        <li key={player.id}>{playerLabel(player)}</li>
+                      ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ) : null}
     </div>
